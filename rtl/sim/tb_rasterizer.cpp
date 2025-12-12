@@ -77,12 +77,14 @@ void write_pixel(int x, int y, uint16_t color) {
 }
 
 // Set vertex data on the DUT
+// Verilator represents the 288-bit vertex_t as VlWide<9> (9 x 32-bit words)
+// SystemVerilog packed struct packs fields MSB-first in declaration order:
+//   vertex_t = {x, y, z, w, u, v, r, g, b}
+// Verilator stores LSB in word[0]:
+//   word[0] = b, word[1] = g, word[2] = r, word[3] = v, word[4] = u,
+//   word[5] = w, word[6] = z, word[7] = y, word[8] = x
 void set_vertex(Vrasterizer_top* dut, int idx, float x, float y, float z,
                 float u, float v, float r, float g, float b) {
-    // Access vertex through the packed structure
-    // The vertex_t is 288 bits (9 x 32-bit fixed-point values)
-    // Order in struct: x, y, z, w, u, v, r, g, b
-
     int32_t fp_x = float_to_fp(x);
     int32_t fp_y = float_to_fp(y);
     int32_t fp_z = float_to_fp(z);
@@ -93,24 +95,70 @@ void set_vertex(Vrasterizer_top* dut, int idx, float x, float y, float z,
     int32_t fp_g = float_to_fp(g);
     int32_t fp_b = float_to_fp(b);
 
-    // Pack into vertex array (MSB first in SystemVerilog packed struct)
-    // vertex_t = {x, y, z, w, u, v, r, g, b}
-    // Each field is 32 bits
+    // Select the vertex port
     uint32_t* vptr;
-    if (idx == 0) vptr = (uint32_t*)&dut->v0;
-    else if (idx == 1) vptr = (uint32_t*)&dut->v1;
-    else vptr = (uint32_t*)&dut->v2;
+    if (idx == 0) vptr = dut->v0.data();
+    else if (idx == 1) vptr = dut->v1.data();
+    else vptr = dut->v2.data();
 
-    // Note: Verilator packs structs as arrays, indexing may vary
-    // For now, we'll use direct signal access if available
-    // This is a simplified approach - actual implementation depends on
-    // how Verilator exposes the packed struct
+    // Pack into Verilator's word array (LSB-first ordering)
+    vptr[0] = (uint32_t)fp_b;  // bits [31:0]
+    vptr[1] = (uint32_t)fp_g;  // bits [63:32]
+    vptr[2] = (uint32_t)fp_r;  // bits [95:64]
+    vptr[3] = (uint32_t)fp_v;  // bits [127:96]
+    vptr[4] = (uint32_t)fp_u;  // bits [159:128]
+    vptr[5] = (uint32_t)fp_w;  // bits [191:160]
+    vptr[6] = (uint32_t)fp_z;  // bits [223:192]
+    vptr[7] = (uint32_t)fp_y;  // bits [255:224]
+    vptr[8] = (uint32_t)fp_x;  // bits [287:256]
+}
 
-    // For the testbench, we'll work with the flat representation
-    if (idx == 0) {
-        // v0 is a 288-bit packed struct
-        // We need to pack it correctly based on Verilator's representation
-    }
+// Extract fragment data from the DUT output
+// fragment_t (217 bits) = {x[12], y[12], z[32], u[32], v[32], r[32], g[32], b[32], valid[1]}
+// Verilator stores as VlWide<7> (7 x 32-bit words)
+void get_fragment(Vrasterizer_top* dut, int* x, int* y, float* r, float* g, float* b) {
+    uint32_t* fptr = dut->frag_out.data();
+
+    // Extract fields from packed representation
+    // valid is bit 0, b is bits [32:1], g is bits [64:33], etc.
+    // word[0] = {b[30:0], valid}
+    // word[1] = {g[29:0], b[31]}
+    // etc. - need to handle bit alignment
+
+    // Simpler extraction using bit operations on the full width:
+    // valid = bit 0
+    // b = bits [32:1]
+    // g = bits [64:33]
+    // r = bits [96:65]
+    // v = bits [128:97]
+    // u = bits [160:129]
+    // z = bits [192:161]
+    // y = bits [204:193]
+    // x = bits [216:205]
+
+    uint64_t w0 = fptr[0];
+    uint64_t w1 = fptr[1];
+    uint64_t w2 = fptr[2];
+    uint64_t w3 = fptr[3];
+    uint64_t w4 = fptr[4];
+    uint64_t w5 = fptr[5];
+    uint64_t w6 = fptr[6];
+
+    // Extract b: bits [32:1] - crosses word boundary
+    int32_t fp_b = (int32_t)((w0 >> 1) | ((w1 & 0x1) << 31));
+    // Extract g: bits [64:33]
+    int32_t fp_g = (int32_t)((w1 >> 1) | ((w2 & 0x1) << 31));
+    // Extract r: bits [96:65]
+    int32_t fp_r = (int32_t)((w2 >> 1) | ((w3 & 0x1) << 31));
+    // Extract y: bits [204:193]
+    *y = (int)((w6 >> 1) & 0xFFF);
+    // Extract x: bits [216:205]
+    *x = (int)((w6 >> 13) & 0xFFF);
+
+    // Convert fixed-point color to float
+    *r = fp_to_float(fp_r);
+    *g = fp_to_float(fp_g);
+    *b = fp_to_float(fp_b);
 }
 
 int main(int argc, char** argv) {
@@ -147,18 +195,35 @@ int main(int argc, char** argv) {
 
     // Simulation time
     uint64_t sim_time = 10;
-    int triangles_rendered = 0;
     int fragments_generated = 0;
 
-    // For this initial test, we'll manually construct a simple triangle
-    // and feed it to the rasterizer
+    // Set up a test triangle (CCW winding)
+    // A red-green-blue gradient triangle in the center of the screen
+    //   v0: top center (red)
+    //   v1: bottom left (green)
+    //   v2: bottom right (blue)
+    set_vertex(dut, 0,
+        320.0f, 100.0f, 0.5f,   // x, y, z (top center)
+        0.5f, 0.0f,             // u, v
+        1.0f, 0.0f, 0.0f);      // r, g, b (red)
 
-    // Note: Due to the complexity of setting packed struct signals in Verilator,
-    // we'll implement a simpler test that verifies the module compiles and
-    // the state machine operates correctly.
+    set_vertex(dut, 1,
+        160.0f, 380.0f, 0.5f,   // x, y, z (bottom left)
+        0.0f, 1.0f,             // u, v
+        0.0f, 1.0f, 0.0f);      // r, g, b (green)
+
+    set_vertex(dut, 2,
+        480.0f, 380.0f, 0.5f,   // x, y, z (bottom right)
+        1.0f, 1.0f,             // u, v
+        0.0f, 0.0f, 1.0f);      // r, g, b (blue)
+
+    printf("Triangle vertices set:\n");
+    printf("  v0: (320, 100) red\n");
+    printf("  v1: (160, 380) green\n");
+    printf("  v2: (480, 380) blue\n");
 
     // Run simulation for a fixed number of cycles
-    int max_cycles = 100000;
+    int max_cycles = 500000;
     bool triangle_submitted = false;
 
     for (int cycle = 0; cycle < max_cycles; cycle++) {
@@ -168,23 +233,31 @@ int main(int argc, char** argv) {
         tfp->dump(sim_time++);
 
         // Check for fragment output
-        if (dut->frag_valid) {
+        if (dut->frag_valid && dut->frag_ready) {
             fragments_generated++;
 
-            // Read fragment data and write to framebuffer
-            // The fragment output contains x, y, and color
-            // Due to Verilator's handling of packed structs, we'd need to
-            // extract the fields properly
+            // Extract fragment data and write to framebuffer
+            int frag_x, frag_y;
+            float frag_r, frag_g, frag_b;
+            get_fragment(dut, &frag_x, &frag_y, &frag_r, &frag_g, &frag_b);
 
-            // For now, just count fragments
-            if (fragments_generated % 1000 == 0) {
-                printf("Fragments: %d\n", fragments_generated);
+            // Clamp colors to [0, 1]
+            frag_r = frag_r < 0.0f ? 0.0f : (frag_r > 1.0f ? 1.0f : frag_r);
+            frag_g = frag_g < 0.0f ? 0.0f : (frag_g > 1.0f ? 1.0f : frag_g);
+            frag_b = frag_b < 0.0f ? 0.0f : (frag_b > 1.0f ? 1.0f : frag_b);
+
+            uint16_t color = pack_rgb565(frag_r, frag_g, frag_b);
+            write_pixel(frag_x, frag_y, color);
+
+            if (fragments_generated % 10000 == 0) {
+                printf("Fragments: %d (last at %d, %d)\n",
+                       fragments_generated, frag_x, frag_y);
             }
         }
 
-        // Submit triangle after reset (simplified - just testing state machine)
+        // Submit triangle after reset
         if (cycle == 20 && !triangle_submitted && dut->tri_ready) {
-            printf("Submitting test triangle...\n");
+            printf("Submitting test triangle at cycle %d...\n", cycle);
             dut->tri_valid = 1;
             triangle_submitted = true;
         } else {

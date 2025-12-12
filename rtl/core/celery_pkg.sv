@@ -13,8 +13,14 @@ package celery_pkg;
     parameter FP_FRAC_BITS = 16;
     parameter FP_TOTAL_BITS = FP_INT_BITS + FP_FRAC_BITS;
 
-    // Fixed-point type
+    // Fixed-point type (standard 32-bit for attributes)
     typedef logic signed [FP_TOTAL_BITS-1:0] fp32_t;
+
+    // Wide fixed-point type for edge equation computations
+    // S31.16 format: handles products of screen coordinates without overflow
+    // Needed because edge constant C = x0*y1 - x1*y0 can exceed 32 bits
+    parameter FP_WIDE_BITS = 48;
+    typedef logic signed [FP_WIDE_BITS-1:0] fp48_t;
 
     // Screen coordinate type (12 bits = 0-4095, plenty for 640x480)
     typedef logic [11:0] screen_coord_t;
@@ -41,10 +47,12 @@ package celery_pkg;
     // Edge equation coefficients
     // Edge equation: E(x,y) = A*x + B*y + C
     // Pixel is inside if E >= 0 (for CCW winding)
+    // Using fp48_t (wide) for all coefficients to prevent overflow
+    // when evaluating edge equations at screen coordinates
     typedef struct packed {
-        fp32_t a;           // dY coefficient (y0 - y1)
-        fp32_t b;           // dX coefficient (x1 - x0)
-        fp32_t c;           // Constant term
+        fp48_t a;           // dY coefficient (y0 - y1)
+        fp48_t b;           // dX coefficient (x1 - x0)
+        fp48_t c;           // Constant term
         logic  top_left;    // Is this a top or left edge?
     } edge_t;
 
@@ -94,12 +102,38 @@ package celery_pkg;
     endfunction
 
     // Fixed-point multiplication: (a * b) >> FRAC_BITS
-    // Result is 64-bit intermediate, then truncated
+    // Result is 64-bit intermediate, then truncated to 32 bits
     function automatic fp32_t fp_mul(input fp32_t a, input fp32_t b);
         logic signed [63:0] product;
         product = 64'(a) * 64'(b);
         return fp32_t'(product >>> FP_FRAC_BITS);
     endfunction
+
+    // Wide fixed-point multiplication: returns 48-bit result
+    // Used for edge equation computations where products can exceed 32 bits
+    function automatic fp48_t fp_mul_wide(input fp32_t a, input fp32_t b);
+        logic signed [63:0] product;
+        product = 64'(a) * 64'(b);
+        return fp48_t'(product >>> FP_FRAC_BITS);
+    endfunction
+
+    // Sign-extend fp32_t to fp48_t
+    function automatic fp48_t fp32_to_fp48(input fp32_t val);
+        return fp48_t'(val);  // Sign extension happens automatically
+    endfunction
+
+    // Multiply fp48_t by fp32_t, return fp48_t
+    // Used for edge equation evaluation: E = A*x + B*y + C
+    // where A,B,C are fp48_t and x,y are fp32_t
+    function automatic fp48_t fp48_mul_fp32(input fp48_t a, input fp32_t b);
+        logic signed [95:0] product;
+        product = 96'(a) * 96'(signed'(b));
+        return fp48_t'(product >>> FP_FRAC_BITS);
+    endfunction
+
+    // Wide fixed-point constant zero
+    parameter fp48_t FP48_ZERO = 48'h0;
+    parameter fp48_t FP48_HALF = 48'h000000008000;  // 0.5 in S31.16
 
     // Fixed-point constants
     parameter fp32_t FP_ZERO = 32'h00000000;

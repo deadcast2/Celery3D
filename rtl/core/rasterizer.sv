@@ -36,15 +36,15 @@ module rasterizer
     // Current pixel position
     screen_coord_t cur_x, cur_y;
 
-    // Edge equation values at current pixel
-    fp32_t e0_val, e1_val, e2_val;
+    // Edge equation values at current pixel (wide to prevent overflow)
+    fp48_t e0_val, e1_val, e2_val;
 
-    // Edge equation increments (cached from triangle setup)
-    fp32_t e0_a, e1_a, e2_a;  // X increments
-    fp32_t e0_b, e1_b, e2_b;  // Y increments
+    // Edge equation increments (cached from triangle setup, wide)
+    fp48_t e0_a, e1_a, e2_a;  // X increments
+    fp48_t e0_b, e1_b, e2_b;  // Y increments
 
-    // Row start values (for Y stepping)
-    fp32_t e0_row, e1_row, e2_row;
+    // Row start values (for Y stepping, wide)
+    fp48_t e0_row, e1_row, e2_row;
 
     // Interpolated attributes at current pixel
     fp32_t cur_z, cur_w;
@@ -60,7 +60,8 @@ module rasterizer
     logic ccw;
 
     // Intermediate calculations (for avoiding automatic in always_ff)
-    fp32_t init_px, init_py, init_dx, init_dy;
+    fp32_t init_px, init_py;            // Pixel center at bounding box min
+    fp32_t init_dx, init_dy;            // Delta from reference point
 
     // Check if pixel is inside all three edges
     logic inside_e0, inside_e1, inside_e2, inside_all;
@@ -138,18 +139,18 @@ module rasterizer
         if (!rst_n) begin
             cur_x <= '0;
             cur_y <= '0;
-            e0_val <= FP_ZERO;
-            e1_val <= FP_ZERO;
-            e2_val <= FP_ZERO;
-            e0_row <= FP_ZERO;
-            e1_row <= FP_ZERO;
-            e2_row <= FP_ZERO;
-            e0_a <= FP_ZERO;
-            e1_a <= FP_ZERO;
-            e2_a <= FP_ZERO;
-            e0_b <= FP_ZERO;
-            e1_b <= FP_ZERO;
-            e2_b <= FP_ZERO;
+            e0_val <= FP48_ZERO;
+            e1_val <= FP48_ZERO;
+            e2_val <= FP48_ZERO;
+            e0_row <= FP48_ZERO;
+            e1_row <= FP48_ZERO;
+            e2_row <= FP48_ZERO;
+            e0_a <= FP48_ZERO;
+            e1_a <= FP48_ZERO;
+            e2_a <= FP48_ZERO;
+            e0_b <= FP48_ZERO;
+            e1_b <= FP48_ZERO;
+            e2_b <= FP48_ZERO;
             ccw <= 1'b1;
             cur_z <= FP_ZERO;
             cur_w <= FP_ZERO;
@@ -181,15 +182,15 @@ module rasterizer
                     // Evaluate edge equations at (min_x + 0.5, min_y + 0.5)
                     // For pixel centers (init_px, init_py computed combinationally)
 
-                    // E(x,y) = A*x + B*y + C
-                    e0_val <= fp_mul(tri_in.e0.a, init_px) + fp_mul(tri_in.e0.b, init_py) + tri_in.e0.c;
-                    e1_val <= fp_mul(tri_in.e1.a, init_px) + fp_mul(tri_in.e1.b, init_py) + tri_in.e1.c;
-                    e2_val <= fp_mul(tri_in.e2.a, init_px) + fp_mul(tri_in.e2.b, init_py) + tri_in.e2.c;
+                    // E(x,y) = A*x + B*y + C (using wide arithmetic)
+                    e0_val <= fp48_mul_fp32(tri_in.e0.a, init_px) + fp48_mul_fp32(tri_in.e0.b, init_py) + tri_in.e0.c;
+                    e1_val <= fp48_mul_fp32(tri_in.e1.a, init_px) + fp48_mul_fp32(tri_in.e1.b, init_py) + tri_in.e1.c;
+                    e2_val <= fp48_mul_fp32(tri_in.e2.a, init_px) + fp48_mul_fp32(tri_in.e2.b, init_py) + tri_in.e2.c;
 
                     // Also compute row start values
-                    e0_row <= fp_mul(tri_in.e0.a, init_px) + fp_mul(tri_in.e0.b, init_py) + tri_in.e0.c;
-                    e1_row <= fp_mul(tri_in.e1.a, init_px) + fp_mul(tri_in.e1.b, init_py) + tri_in.e1.c;
-                    e2_row <= fp_mul(tri_in.e2.a, init_px) + fp_mul(tri_in.e2.b, init_py) + tri_in.e2.c;
+                    e0_row <= fp48_mul_fp32(tri_in.e0.a, init_px) + fp48_mul_fp32(tri_in.e0.b, init_py) + tri_in.e0.c;
+                    e1_row <= fp48_mul_fp32(tri_in.e1.a, init_px) + fp48_mul_fp32(tri_in.e1.b, init_py) + tri_in.e1.c;
+                    e2_row <= fp48_mul_fp32(tri_in.e2.a, init_px) + fp48_mul_fp32(tri_in.e2.b, init_py) + tri_in.e2.c;
 
                     // Initialize attributes at starting position
                     // (init_dx, init_dy computed combinationally)

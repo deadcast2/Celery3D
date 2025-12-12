@@ -95,25 +95,26 @@ module triangle_setup
                 CALC_EDGES: begin
                     // Edge 0: v0 -> v1
                     // E0(x,y) = (y0-y1)*x + (x1-x0)*y + (x0*y1 - x1*y0)
-                    setup_reg.e0.a <= v0.y - v1.y;
-                    setup_reg.e0.b <= v1.x - v0.x;
-                    setup_reg.e0.c <= fp_mul(v0.x, v1.y) - fp_mul(v1.x, v0.y);
+                    // Using wide types (fp48_t) to prevent overflow
+                    setup_reg.e0.a <= fp32_to_fp48(v0.y - v1.y);
+                    setup_reg.e0.b <= fp32_to_fp48(v1.x - v0.x);
+                    setup_reg.e0.c <= fp_mul_wide(v0.x, v1.y) - fp_mul_wide(v1.x, v0.y);
                     // Top edge: horizontal and v0 right of v1
                     // Left edge: going up (dy > 0)
                     setup_reg.e0.top_left <= ((v0.y == v1.y) && (v1.x > v0.x)) ||
                                              (v0.y > v1.y);
 
                     // Edge 1: v1 -> v2
-                    setup_reg.e1.a <= v1.y - v2.y;
-                    setup_reg.e1.b <= v2.x - v1.x;
-                    setup_reg.e1.c <= fp_mul(v1.x, v2.y) - fp_mul(v2.x, v1.y);
+                    setup_reg.e1.a <= fp32_to_fp48(v1.y - v2.y);
+                    setup_reg.e1.b <= fp32_to_fp48(v2.x - v1.x);
+                    setup_reg.e1.c <= fp_mul_wide(v1.x, v2.y) - fp_mul_wide(v2.x, v1.y);
                     setup_reg.e1.top_left <= ((v1.y == v2.y) && (v2.x > v1.x)) ||
                                              (v1.y > v2.y);
 
                     // Edge 2: v2 -> v0
-                    setup_reg.e2.a <= v2.y - v0.y;
-                    setup_reg.e2.b <= v0.x - v2.x;
-                    setup_reg.e2.c <= fp_mul(v2.x, v0.y) - fp_mul(v0.x, v2.y);
+                    setup_reg.e2.a <= fp32_to_fp48(v2.y - v0.y);
+                    setup_reg.e2.b <= fp32_to_fp48(v0.x - v2.x);
+                    setup_reg.e2.c <= fp_mul_wide(v2.x, v0.y) - fp_mul_wide(v0.x, v2.y);
                     setup_reg.e2.top_left <= ((v2.y == v0.y) && (v0.x > v2.x)) ||
                                              (v2.y > v0.y);
 
@@ -125,11 +126,15 @@ module triangle_setup
                 CALC_AREA: begin
                     // 2x area = (v1-v0) cross (v2-v0)
                     // = dx01 * dy02 - dx02 * dy01
-                    area2 <= fp_mul(dx01, dy02) - fp_mul(dx02, dy01);
+                    automatic fp32_t computed_area2 = fp_mul(dx01, dy02) - fp_mul(dx02, dy01);
+                    area2 <= computed_area2;
 
-                    // Check for degenerate triangle
-                    setup_reg.valid <= (area2 != FP_ZERO);
-                    setup_reg.ccw <= (area2 > 0);
+                    // Check for degenerate triangle (use computed value, not registered)
+                    setup_reg.valid <= (computed_area2 != FP_ZERO);
+                    // ccw flag determines inside test polarity:
+                    // - If area2 > 0: interior has E > 0, use CCW test (E > 0)
+                    // - If area2 < 0: interior has E < 0, use CW test (E < 0)
+                    setup_reg.ccw <= (computed_area2 > 0);
 
                     // Store starting attribute values
                     setup_reg.z0 <= v0.z;
