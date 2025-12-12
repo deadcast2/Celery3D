@@ -188,11 +188,17 @@ make synth BOARD=av7k325
 - [x] **Phase 1:** Software reference renderer
 - [ ] **Phase 2:** Video output (HDMI test pattern)
 - [ ] **Phase 3:** DDR3 framebuffer controller
-- [ ] **Phase 4:** Rasterization pipeline
+- [x] **Phase 4:** Rasterization pipeline (in progress - basic Gouraud shading working!)
 - [ ] **Phase 5:** PCIe integration
 - [ ] **Phase 6:** Linux driver
 - [ ] **Phase 7:** Graphics API library
 - [ ] **Phase 8:** Demos and polish
+
+### Rasterizer Output
+
+The RTL rasterizer with Gouraud shading, rendering a test triangle with per-vertex colors (red, green, blue):
+
+![Rasterizer Output](docs/rasterizer_output.png)
 
 ## Resources
 

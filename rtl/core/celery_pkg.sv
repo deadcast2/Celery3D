@@ -109,6 +109,47 @@ package celery_pkg;
         return fp32_t'(product >>> FP_FRAC_BITS);
     endfunction
 
+    // Fixed-point division: (a << FRAC_BITS) / b
+    // Returns a/b in fixed-point format
+    // Note: Returns 0 if b is 0 to avoid divide-by-zero
+    function automatic fp32_t fp_div(input fp32_t a, input fp32_t b);
+        logic signed [63:0] numerator;
+        logic signed [63:0] result;
+        if (b == 0)
+            return FP_ZERO;
+        numerator = 64'(a) <<< FP_FRAC_BITS;
+        result = numerator / 64'(b);
+        return fp32_t'(result);
+    endfunction
+
+    // Compute attribute gradient with full precision
+    // gradient = (diff1*delta1 - diff2*delta2) / area
+    // Uses 64-bit intermediates to avoid overflow for large triangles
+    function automatic fp32_t fp_gradient(
+        input fp32_t diff1, input fp32_t delta1,
+        input fp32_t diff2, input fp32_t delta2,
+        input logic signed [63:0] area
+    );
+        logic signed [63:0] term1, term2, numerator, result;
+        if (area == 0)
+            return FP_ZERO;
+        // Compute products with full precision
+        term1 = (64'(diff1) * 64'(delta1)) >>> FP_FRAC_BITS;
+        term2 = (64'(diff2) * 64'(delta2)) >>> FP_FRAC_BITS;
+        numerator = term1 - term2;
+        // Divide by area: shift numerator up, then divide
+        result = (numerator <<< FP_FRAC_BITS) / area;
+        return fp32_t'(result);
+    endfunction
+
+    // Wide fixed-point multiplication returning 64-bit result
+    // For computing area and other large intermediate values
+    function automatic logic signed [63:0] fp_mul64(input fp32_t a, input fp32_t b);
+        logic signed [63:0] product;
+        product = 64'(a) * 64'(b);
+        return product >>> FP_FRAC_BITS;
+    endfunction
+
     // Wide fixed-point multiplication: returns 48-bit result
     // Used for edge equation computations where products can exceed 32 bits
     function automatic fp48_t fp_mul_wide(input fp32_t a, input fp32_t b);

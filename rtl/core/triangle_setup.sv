@@ -31,8 +31,8 @@ module triangle_setup
     state_t state, next_state;
 
     // Intermediate calculations
-    fp32_t area2;           // 2x triangle area (signed)
-    fp32_t inv_area2;       // 1 / area2 (computed via iterative division)
+    logic signed [63:0] area2;  // 2x triangle area (64-bit to avoid overflow)
+    fp32_t inv_area2;           // 1 / area2 (computed via iterative division)
 
     // Edge deltas
     fp32_t dx01, dy01, dx02, dy02, dx12, dy12;
@@ -80,7 +80,7 @@ module triangle_setup
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             setup_reg <= '0;
-            area2 <= FP_ZERO;
+            area2 <= 64'h0;
             div_count <= '0;
             div_result <= FP_ZERO;
         end else begin
@@ -126,11 +126,12 @@ module triangle_setup
                 CALC_AREA: begin
                     // 2x area = (v1-v0) cross (v2-v0)
                     // = dx01 * dy02 - dx02 * dy01
-                    automatic fp32_t computed_area2 = fp_mul(dx01, dy02) - fp_mul(dx02, dy01);
+                    // Use 64-bit arithmetic to avoid overflow for large triangles
+                    automatic logic signed [63:0] computed_area2 = fp_mul64(dx01, dy02) - fp_mul64(dx02, dy01);
                     area2 <= computed_area2;
 
                     // Check for degenerate triangle (use computed value, not registered)
-                    setup_reg.valid <= (computed_area2 != FP_ZERO);
+                    setup_reg.valid <= (computed_area2 != 64'h0);
                     // ccw flag determines inside test polarity:
                     // - If area2 > 0: interior has E > 0, use CCW test (E > 0)
                     // - If area2 < 0: interior has E < 0, use CW test (E < 0)
@@ -147,35 +148,39 @@ module triangle_setup
                 end
 
                 CALC_GRADIENTS: begin
-                    // Simplified gradient calculation
-                    // For proper implementation, we'd divide by area2
-                    // Here we use a simplified approximation for initial testing
+                    // Compute attribute gradients with proper division by area2
+                    // dA/dx = (dA01 * dy02 - dA02 * dy01) / area2
+                    // dA/dy = (dA02 * dx01 - dA01 * dx02) / area2
+                    // Uses fp_gradient for full 64-bit precision to avoid overflow
 
                     if (div_count > 0) begin
                         div_count <= div_count - 1;
-
-                        // Iterative reciprocal calculation would go here
-                        // For now, we'll use a lookup table approach in synthesis
-                        // or accept the approximation for simulation
                     end
 
-                    // Approximate gradients (will refine with proper division)
-                    // dA/dx = (dA01 * dy02 - dA02 * dy01) / area2
                     if (div_count == 1) begin
-                        // For simulation, we'll compute gradients directly
-                        // In hardware, this would use the reciprocal
-
                         // Depth gradients
-                        setup_reg.dzdx <= fp_mul(v1.z - v0.z, dy02) -
-                                          fp_mul(v2.z - v0.z, dy01);
-                        setup_reg.dzdy <= fp_mul(v2.z - v0.z, dx01) -
-                                          fp_mul(v1.z - v0.z, dx02);
+                        setup_reg.dzdx <= fp_gradient(v1.z - v0.z, dy02, v2.z - v0.z, dy01, area2);
+                        setup_reg.dzdy <= fp_gradient(v2.z - v0.z, dx01, v1.z - v0.z, dx02, area2);
 
                         // W gradients
-                        setup_reg.dwdx <= fp_mul(v1.w - v0.w, dy02) -
-                                          fp_mul(v2.w - v0.w, dy01);
-                        setup_reg.dwdy <= fp_mul(v2.w - v0.w, dx01) -
-                                          fp_mul(v1.w - v0.w, dx02);
+                        setup_reg.dwdx <= fp_gradient(v1.w - v0.w, dy02, v2.w - v0.w, dy01, area2);
+                        setup_reg.dwdy <= fp_gradient(v2.w - v0.w, dx01, v1.w - v0.w, dx02, area2);
+
+                        // Color gradients (perspective-corrected: r*w, g*w, b*w)
+                        setup_reg.drdx <= fp_gradient(fp_mul(v1.r, v1.w) - fp_mul(v0.r, v0.w), dy02,
+                                                      fp_mul(v2.r, v2.w) - fp_mul(v0.r, v0.w), dy01, area2);
+                        setup_reg.drdy <= fp_gradient(fp_mul(v2.r, v2.w) - fp_mul(v0.r, v0.w), dx01,
+                                                      fp_mul(v1.r, v1.w) - fp_mul(v0.r, v0.w), dx02, area2);
+
+                        setup_reg.dgdx <= fp_gradient(fp_mul(v1.g, v1.w) - fp_mul(v0.g, v0.w), dy02,
+                                                      fp_mul(v2.g, v2.w) - fp_mul(v0.g, v0.w), dy01, area2);
+                        setup_reg.dgdy <= fp_gradient(fp_mul(v2.g, v2.w) - fp_mul(v0.g, v0.w), dx01,
+                                                      fp_mul(v1.g, v1.w) - fp_mul(v0.g, v0.w), dx02, area2);
+
+                        setup_reg.dbdx <= fp_gradient(fp_mul(v1.b, v1.w) - fp_mul(v0.b, v0.w), dy02,
+                                                      fp_mul(v2.b, v2.w) - fp_mul(v0.b, v0.w), dy01, area2);
+                        setup_reg.dbdy <= fp_gradient(fp_mul(v2.b, v2.w) - fp_mul(v0.b, v0.w), dx01,
+                                                      fp_mul(v1.b, v1.w) - fp_mul(v0.b, v0.w), dx02, area2);
                     end
                 end
 
