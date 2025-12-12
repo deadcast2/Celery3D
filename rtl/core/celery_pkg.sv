@@ -103,6 +103,7 @@ package celery_pkg;
 
     // Fixed-point multiplication: (a * b) >> FRAC_BITS
     // Result is 64-bit intermediate, then truncated to 32 bits
+    // Vivado will auto-infer DSP48 blocks for this multiplication
     function automatic fp32_t fp_mul(input fp32_t a, input fp32_t b);
         logic signed [63:0] product;
         product = 64'(a) * 64'(b);

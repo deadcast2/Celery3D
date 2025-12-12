@@ -1,6 +1,7 @@
 // Celery3D GPU - Rasterizer Core
 // Iterates over triangle bounding box, tests pixels against edge equations,
 // interpolates attributes, and outputs fragments
+// Synthesis-friendly: pipelined initialization to meet timing
 
 module rasterizer
     import celery_pkg::*;
@@ -22,10 +23,11 @@ module rasterizer
     output logic        busy
 );
 
-    // State machine
+    // State machine - expanded for pipelined initialization
     typedef enum logic [2:0] {
         IDLE,
-        INIT_ROW,
+        INIT_EDGES,     // Evaluate edge equations at start position
+        INIT_ATTR,      // Initialize attribute interpolants
         RASTERIZE,
         NEXT_ROW,
         DONE_STATE
@@ -59,14 +61,15 @@ module rasterizer
     // Triangle winding (determines inside test polarity)
     logic ccw;
 
-    // Intermediate calculations (for avoiding automatic in always_ff)
-    fp32_t init_px, init_py;            // Pixel center at bounding box min
-    fp32_t init_dx, init_dy;            // Delta from reference point
+    // Pre-computed values (registered to break combinational paths)
+    fp32_t init_px_r, init_py_r;    // Pixel center at bounding box min
+    fp32_t init_dx_r, init_dy_r;    // Delta from reference point
 
     // Check if pixel is inside all three edges
     logic inside_e0, inside_e1, inside_e2, inside_all;
 
-    // Compute init values combinationally
+    // Combinational init values (only used during IDLE->INIT transition)
+    fp32_t init_px, init_py, init_dx, init_dy;
     always_comb begin
         init_px = int_to_fp(tri_in.min_x) + FP_HALF;
         init_py = int_to_fp(tri_in.min_y) + FP_HALF;
@@ -103,10 +106,14 @@ module rasterizer
         case (state)
             IDLE: begin
                 if (start && tri_in.valid)
-                    next_state = INIT_ROW;
+                    next_state = INIT_EDGES;
             end
 
-            INIT_ROW: begin
+            INIT_EDGES: begin
+                next_state = INIT_ATTR;
+            end
+
+            INIT_ATTR: begin
                 next_state = RASTERIZE;
             end
 
@@ -159,6 +166,17 @@ module rasterizer
             cur_rw <= FP_ZERO;
             cur_gw <= FP_ZERO;
             cur_bw <= FP_ZERO;
+            z_row <= FP_ZERO;
+            w_row <= FP_ZERO;
+            uw_row <= FP_ZERO;
+            vw_row <= FP_ZERO;
+            rw_row <= FP_ZERO;
+            gw_row <= FP_ZERO;
+            bw_row <= FP_ZERO;
+            init_px_r <= FP_ZERO;
+            init_py_r <= FP_ZERO;
+            init_dx_r <= FP_ZERO;
+            init_dy_r <= FP_ZERO;
         end else begin
             case (state)
                 IDLE: begin
@@ -175,40 +193,53 @@ module rasterizer
                         // Start position
                         cur_x <= tri_in.min_x;
                         cur_y <= tri_in.min_y;
+
+                        // Register init values for use in next states
+                        init_px_r <= init_px;
+                        init_py_r <= init_py;
+                        init_dx_r <= init_dx;
+                        init_dy_r <= init_dy;
                     end
                 end
 
-                INIT_ROW: begin
+                INIT_EDGES: begin
                     // Evaluate edge equations at (min_x + 0.5, min_y + 0.5)
-                    // For pixel centers (init_px, init_py computed combinationally)
-
+                    // Uses registered init values
                     // E(x,y) = A*x + B*y + C (using wide arithmetic)
-                    e0_val <= fp48_mul_fp32(tri_in.e0.a, init_px) + fp48_mul_fp32(tri_in.e0.b, init_py) + tri_in.e0.c;
-                    e1_val <= fp48_mul_fp32(tri_in.e1.a, init_px) + fp48_mul_fp32(tri_in.e1.b, init_py) + tri_in.e1.c;
-                    e2_val <= fp48_mul_fp32(tri_in.e2.a, init_px) + fp48_mul_fp32(tri_in.e2.b, init_py) + tri_in.e2.c;
+                    e0_val <= fp48_mul_fp32(tri_in.e0.a, init_px_r) +
+                              fp48_mul_fp32(tri_in.e0.b, init_py_r) + tri_in.e0.c;
+                    e1_val <= fp48_mul_fp32(tri_in.e1.a, init_px_r) +
+                              fp48_mul_fp32(tri_in.e1.b, init_py_r) + tri_in.e1.c;
+                    e2_val <= fp48_mul_fp32(tri_in.e2.a, init_px_r) +
+                              fp48_mul_fp32(tri_in.e2.b, init_py_r) + tri_in.e2.c;
 
                     // Also compute row start values
-                    e0_row <= fp48_mul_fp32(tri_in.e0.a, init_px) + fp48_mul_fp32(tri_in.e0.b, init_py) + tri_in.e0.c;
-                    e1_row <= fp48_mul_fp32(tri_in.e1.a, init_px) + fp48_mul_fp32(tri_in.e1.b, init_py) + tri_in.e1.c;
-                    e2_row <= fp48_mul_fp32(tri_in.e2.a, init_px) + fp48_mul_fp32(tri_in.e2.b, init_py) + tri_in.e2.c;
+                    e0_row <= fp48_mul_fp32(tri_in.e0.a, init_px_r) +
+                              fp48_mul_fp32(tri_in.e0.b, init_py_r) + tri_in.e0.c;
+                    e1_row <= fp48_mul_fp32(tri_in.e1.a, init_px_r) +
+                              fp48_mul_fp32(tri_in.e1.b, init_py_r) + tri_in.e1.c;
+                    e2_row <= fp48_mul_fp32(tri_in.e2.a, init_px_r) +
+                              fp48_mul_fp32(tri_in.e2.b, init_py_r) + tri_in.e2.c;
+                end
 
+                INIT_ATTR: begin
                     // Initialize attributes at starting position
-                    // (init_dx, init_dy computed combinationally)
-                    cur_z <= tri_in.z0 + fp_mul(tri_in.dzdx, init_dx) + fp_mul(tri_in.dzdy, init_dy);
-                    cur_w <= tri_in.w0 + fp_mul(tri_in.dwdx, init_dx) + fp_mul(tri_in.dwdy, init_dy);
-                    cur_uw <= tri_in.uw0 + fp_mul(tri_in.dudx, init_dx) + fp_mul(tri_in.dudy, init_dy);
-                    cur_vw <= tri_in.vw0 + fp_mul(tri_in.dvdx, init_dx) + fp_mul(tri_in.dvdy, init_dy);
-                    cur_rw <= tri_in.rw0 + fp_mul(tri_in.drdx, init_dx) + fp_mul(tri_in.drdy, init_dy);
-                    cur_gw <= tri_in.gw0 + fp_mul(tri_in.dgdx, init_dx) + fp_mul(tri_in.dgdy, init_dy);
-                    cur_bw <= tri_in.bw0 + fp_mul(tri_in.dbdx, init_dx) + fp_mul(tri_in.dbdy, init_dy);
+                    // Uses registered init_dx_r, init_dy_r
+                    cur_z <= tri_in.z0 + fp_mul(tri_in.dzdx, init_dx_r) + fp_mul(tri_in.dzdy, init_dy_r);
+                    cur_w <= tri_in.w0 + fp_mul(tri_in.dwdx, init_dx_r) + fp_mul(tri_in.dwdy, init_dy_r);
+                    cur_uw <= tri_in.uw0 + fp_mul(tri_in.dudx, init_dx_r) + fp_mul(tri_in.dudy, init_dy_r);
+                    cur_vw <= tri_in.vw0 + fp_mul(tri_in.dvdx, init_dx_r) + fp_mul(tri_in.dvdy, init_dy_r);
+                    cur_rw <= tri_in.rw0 + fp_mul(tri_in.drdx, init_dx_r) + fp_mul(tri_in.drdy, init_dy_r);
+                    cur_gw <= tri_in.gw0 + fp_mul(tri_in.dgdx, init_dx_r) + fp_mul(tri_in.dgdy, init_dy_r);
+                    cur_bw <= tri_in.bw0 + fp_mul(tri_in.dbdx, init_dx_r) + fp_mul(tri_in.dbdy, init_dy_r);
 
-                    z_row <= tri_in.z0 + fp_mul(tri_in.dzdx, init_dx) + fp_mul(tri_in.dzdy, init_dy);
-                    w_row <= tri_in.w0 + fp_mul(tri_in.dwdx, init_dx) + fp_mul(tri_in.dwdy, init_dy);
-                    uw_row <= tri_in.uw0 + fp_mul(tri_in.dudx, init_dx) + fp_mul(tri_in.dudy, init_dy);
-                    vw_row <= tri_in.vw0 + fp_mul(tri_in.dvdx, init_dx) + fp_mul(tri_in.dvdy, init_dy);
-                    rw_row <= tri_in.rw0 + fp_mul(tri_in.drdx, init_dx) + fp_mul(tri_in.drdy, init_dy);
-                    gw_row <= tri_in.gw0 + fp_mul(tri_in.dgdx, init_dx) + fp_mul(tri_in.dgdy, init_dy);
-                    bw_row <= tri_in.bw0 + fp_mul(tri_in.dbdx, init_dx) + fp_mul(tri_in.dbdy, init_dy);
+                    z_row <= tri_in.z0 + fp_mul(tri_in.dzdx, init_dx_r) + fp_mul(tri_in.dzdy, init_dy_r);
+                    w_row <= tri_in.w0 + fp_mul(tri_in.dwdx, init_dx_r) + fp_mul(tri_in.dwdy, init_dy_r);
+                    uw_row <= tri_in.uw0 + fp_mul(tri_in.dudx, init_dx_r) + fp_mul(tri_in.dudy, init_dy_r);
+                    vw_row <= tri_in.vw0 + fp_mul(tri_in.dvdx, init_dx_r) + fp_mul(tri_in.dvdy, init_dy_r);
+                    rw_row <= tri_in.rw0 + fp_mul(tri_in.drdx, init_dx_r) + fp_mul(tri_in.drdy, init_dy_r);
+                    gw_row <= tri_in.gw0 + fp_mul(tri_in.dgdx, init_dx_r) + fp_mul(tri_in.dgdy, init_dy_r);
+                    bw_row <= tri_in.bw0 + fp_mul(tri_in.dbdx, init_dx_r) + fp_mul(tri_in.dbdy, init_dy_r);
                 end
 
                 RASTERIZE: begin
@@ -223,7 +254,7 @@ module rasterizer
                             e1_val <= e1_val + e1_a;
                             e2_val <= e2_val + e2_a;
 
-                            // Incremental attribute update
+                            // Incremental attribute update (just additions - very fast)
                             cur_z <= cur_z + tri_in.dzdx;
                             cur_w <= cur_w + tri_in.dwdx;
                             cur_uw <= cur_uw + tri_in.dudx;
@@ -240,7 +271,7 @@ module rasterizer
                     cur_x <= tri_in.min_x;
                     cur_y <= cur_y + 1;
 
-                    // Update row start values: E_row(y+1) = E_row(y) + B
+                    // Update row start values: E_row(y+1) = E_row(y) + B (just additions)
                     e0_row <= e0_row + e0_b;
                     e1_row <= e1_row + e1_b;
                     e2_row <= e2_row + e2_b;
@@ -248,7 +279,7 @@ module rasterizer
                     e1_val <= e1_row + e1_b;
                     e2_val <= e2_row + e2_b;
 
-                    // Update attribute row values
+                    // Update attribute row values (just additions - very fast)
                     z_row <= z_row + tri_in.dzdy;
                     w_row <= w_row + tri_in.dwdy;
                     uw_row <= uw_row + tri_in.dudy;
