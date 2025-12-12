@@ -2,11 +2,15 @@
 build/
 */build/
 
+# Verilator output
+obj_dir/
+*.vcd
+*.ppm
+
 # CMake
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
-Makefile
 
 # Compiled binaries
 *.o
