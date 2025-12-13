@@ -31,7 +31,7 @@ Build a functional retro-style GPU that can render textured, Gouraud-shaded 3D g
 | Network | 2x 10G SFP+, 2x Gigabit Ethernet |
 | Price | ~$341 USD |
 
-This board plugs directly into a PC's PCIe slot, enabling the GPU to communicate with the host via DMA while outputting video over HDMI - just like a real graphics card!
+This board plugs directly into a PC's PCIe slot, enabling the GPU to communicate with the host via DMA while outputting video over HDMI. Just like a real graphics card!
 
 ## Architecture
 
@@ -131,7 +131,7 @@ celery3d/
 ## Design Decisions
 
 ### Why Fixed-Function Pipeline?
-The Voodoo 1 had no programmable shaders - just configurable texture and blend modes. This dramatically simplifies the hardware while still enabling impressive 3D graphics. Shaders can be a future enhancement.
+The Voodoo 1 had no programmable shaders, just configurable texture and blend modes. This dramatically simplifies the hardware while still enabling impressive 3D graphics. Shaders can be a future enhancement.
 
 ### Why RGB565?
 - Authentic to the Voodoo era
@@ -233,10 +233,10 @@ The RTL rasterizer with Gouraud shading, rendering a test triangle with per-vert
 
 ## Resources
 
-- [3dfx Glide SDK Documentation](https://www.falconfly.de/glide.htm)
+- [3dfx Glide SDK Documentation](https://3dfx.retropc.se/reference.html)
 - [A Trip Through the Graphics Pipeline](https://fgiesen.wordpress.com/2011/07/09/a-trip-through-the-graphics-pipeline-2011-index/)
 - [Project F FPGA Graphics Tutorials](https://projectf.io/)
-- [Scratchapixel Rasterization](https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation)
+- [Scratchapixel Rasterization](https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/overview-rasterization-algorithm.html)
 
 ## License
 
