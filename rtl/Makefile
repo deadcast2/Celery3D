@@ -10,6 +10,7 @@ RTL_SRCS = \
     core/edge_eval.sv \
     core/triangle_setup.sv \
     core/rasterizer.sv \
+    core/perspective_correct.sv \
     core/rasterizer_top.sv
 
 # Testbench

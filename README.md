@@ -200,7 +200,7 @@ make wave
 
 ```bash
 # Source Vivado environment first
-source /opt/Xilinx/Vivado/2024.1/settings64.sh
+source /opt/Xilinx/2025.2/Vivado/settings64.sh
 
 # Run synthesis + timing analysis (target: 50 MHz)
 make synth
@@ -219,7 +219,7 @@ make clean-vivado
 - [x] **Phase 1:** Software reference renderer
 - [ ] **Phase 2:** Video output (HDMI test pattern)
 - [ ] **Phase 3:** DDR3 framebuffer controller
-- [x] **Phase 4:** Rasterization pipeline (in progress - basic Gouraud shading working!)
+- [x] **Phase 4:** Rasterization pipeline (Gouraud shading + perspective correction working!)
 - [ ] **Phase 5:** PCIe integration
 - [ ] **Phase 6:** Linux driver
 - [ ] **Phase 7:** Graphics API library
@@ -227,7 +227,7 @@ make clean-vivado
 
 ### Rasterizer Output
 
-The RTL rasterizer with Gouraud shading, rendering a test triangle with per-vertex colors (red, green, blue):
+RTL rasterizer with Gouraud shading and perspective-correct interpolation, rendering multiple triangles with varying depth. The perspective correction uses a pipelined Newton-Raphson reciprocal (8 stages, 50 MHz timing met):
 
 ![Rasterizer Output](docs/rasterizer_output.png)
 

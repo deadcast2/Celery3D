@@ -13,8 +13,9 @@ module rasterizer
     input  triangle_setup_t tri_in,
     input  logic        start,
 
-    // Fragment output (directly to framebuffer or pixel ops)
+    // Fragment output (to perspective correction or pixel ops)
     output fragment_t   frag_out,
+    output fp32_t       w_out,          // Interpolated w for perspective correction
     output logic        frag_valid,
     input  logic        frag_ready,     // Backpressure from downstream
 
@@ -304,15 +305,15 @@ module rasterizer
         end
     end
 
-    // Output fragment (perspective-correct attributes)
+    // Output fragment (perspective-incorrect attributes, corrected downstream)
     always_comb begin
         frag_out.x = cur_x;
         frag_out.y = cur_y;
         frag_out.z = cur_z;
 
-        // Perspective correction: attr = attr_w / w
-        // For now, output perspective-incorrect values (will add division later)
-        frag_out.u = cur_uw;  // Should be cur_uw / cur_w
+        // Output perspective-incorrect values (attr * w)
+        // These will be divided by w in the perspective_correct module
+        frag_out.u = cur_uw;
         frag_out.v = cur_vw;
         frag_out.r = cur_rw;
         frag_out.g = cur_gw;
@@ -321,6 +322,7 @@ module rasterizer
         frag_out.valid = (state == RASTERIZE) && inside_all;
     end
 
+    assign w_out = cur_w;  // Output interpolated w for perspective correction
     assign frag_valid = frag_out.valid;
     assign done = (state == DONE_STATE);
     assign busy = (state != IDLE);

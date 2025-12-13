@@ -1,5 +1,6 @@
 // Celery3D GPU - Rasterizer Top Level
-// Combines triangle setup and rasterizer core
+// Combines triangle setup, rasterizer core, and perspective correction
+// Pipeline: vertices → setup → rasterize → perspective correct → fragments
 
 module rasterizer_top
     import celery_pkg::*;
@@ -12,7 +13,7 @@ module rasterizer_top
     input  logic        tri_valid,
     output logic        tri_ready,
 
-    // Fragment output interface
+    // Fragment output interface (perspective-corrected)
     output fragment_t   frag_out,
     output logic        frag_valid,
     input  logic        frag_ready,
@@ -28,6 +29,16 @@ module rasterizer_top
     logic rast_start;
     logic rast_done;
     logic rast_busy;
+
+    // Rasterizer to perspective correction interface
+    fragment_t rast_frag;
+    fp32_t rast_w;
+    logic rast_frag_valid;
+    logic rast_frag_ready;
+
+    // Perspective correction to output interface
+    fragment_t pc_frag;
+    logic pc_frag_valid;
 
     // State for coordinating setup and rasterizer
     typedef enum logic [1:0] {
@@ -57,12 +68,31 @@ module rasterizer_top
         .rst_n      (rst_n),
         .tri_in     (setup),
         .start      (rast_start),
-        .frag_out   (frag_out),
-        .frag_valid (frag_valid),
-        .frag_ready (frag_ready),
+        .frag_out   (rast_frag),
+        .w_out      (rast_w),
+        .frag_valid (rast_frag_valid),
+        .frag_ready (rast_frag_ready),
         .done       (rast_done),
         .busy       (rast_busy)
     );
+
+    // Perspective correction unit (6-stage pipeline)
+    // BYPASS=0 enables perspective correction, BYPASS=1 for debugging
+    perspective_correct #(.BYPASS(0)) u_persp (
+        .clk            (clk),
+        .rst_n          (rst_n),
+        .frag_in        (rast_frag),
+        .frag_in_valid  (rast_frag_valid),
+        .frag_in_ready  (rast_frag_ready),
+        .w_in           (rast_w),
+        .frag_out       (pc_frag),
+        .frag_out_valid (pc_frag_valid),
+        .frag_out_ready (frag_ready)
+    );
+
+    // Output from perspective correction
+    assign frag_out = pc_frag;
+    assign frag_valid = pc_frag_valid;
 
     // State machine
     always_ff @(posedge clk or negedge rst_n) begin
