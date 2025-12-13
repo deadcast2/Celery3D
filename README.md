@@ -14,20 +14,24 @@ Build a functional retro-style GPU that can render textured, Gouraud-shaded 3D g
 | Color Depth | 16-bit (RGB565) | Authentic to era |
 | Texture Format | RGB565, up to 256x256 | Single TMU |
 | Features | Gouraud shading, depth buffer, bilinear filtering, alpha blending | Fixed-function pipeline |
-| Interface | PCIe x1 Gen2 | ~500 MB/s bandwidth |
+| Interface | PCIe x4 Gen2 | ~2 GB/s bandwidth |
 | Fill Rate | ~50 MPixels/sec | Voodoo 1 equivalent |
 
 ## Hardware Platform
 
-**Target Board:** [Alinx AV7K325](https://www.en.alinx.com/Product/FPGA-Development-Boards/Kintex-7/AV7K325.html)
+**Target Board:** [Open Source SDR Lab Kintex-7 XC7K325T](https://opensourcesdrlab.com/products/fpga-xilinx-kintex-7-xc7k325t-pcie-development-board-with-dual-gigabit-ethernet-ports-dual-10-gigabit-sfp-optical-communication)
 
 | Feature | Specification |
 |---------|---------------|
-| FPGA | Xilinx Kintex-7 XC7K325T |
-| Memory | 2GB DDR3 (64-bit) |
-| PCIe | x8 Gen2 (using x1) |
-| Video Output | 2x HDMI (4K capable) |
-| Price | ~$793 USD |
+| FPGA | Xilinx Kintex-7 XC7K325T-2FFG676I |
+| Logic | 326K cells, 840 DSPs, 16Mb BRAM |
+| Memory | 1GB DDR3, 32MB Flash |
+| PCIe | x4 Gen2 (x8 physical slot) |
+| Video Output | 2x HDMI out (1080p@60Hz), 1x HDMI in |
+| Network | 2x 10G SFP+, 2x Gigabit Ethernet |
+| Price | ~$341 USD |
+
+This board plugs directly into a PC's PCIe slot, enabling the GPU to communicate with the host via DMA while outputting video over HDMI - just like a real graphics card!
 
 ## Architecture
 
@@ -180,7 +184,7 @@ cd rtl
 make sim
 
 # Synthesis with Vivado
-make synth BOARD=av7k325
+make synth BOARD=opensdr_k7
 ```
 
 ## Implementation Phases
