@@ -176,16 +176,43 @@ make
 - `T` - Toggle texturing
 - `G` - Toggle Gouraud shading
 
-### RTL (Coming Soon)
+### RTL Simulation & Synthesis
+
+**Dependencies:** Verilator, Vivado ML Edition (2024.1+ recommended)
 
 ```bash
-# Simulation with Verilator
 cd rtl
+
+# Run Verilator simulation (outputs rasterizer_output.ppm)
 make sim
 
-# Synthesis with Vivado
-make synth BOARD=opensdr_k7
+# View the rendered output
+eog rasterizer_output.ppm  # or any image viewer
+
+# Run Verilator linting only
+make lint
+
+# Open waveform viewer (after simulation)
+make wave
 ```
+
+**Vivado Synthesis (requires Kintex-7 license or 30-day eval):**
+
+```bash
+# Source Vivado environment first
+source /opt/Xilinx/Vivado/2024.1/settings64.sh
+
+# Run synthesis + timing analysis (target: 50 MHz)
+make synth
+
+# View timing summary
+make timing
+
+# Clean Vivado build artifacts
+make clean-vivado
+```
+
+**Target Device:** Xilinx Kintex-7 XC7K325T-2FFG676 (Open Source SDR Lab board)
 
 ## Implementation Phases
 

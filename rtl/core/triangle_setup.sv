@@ -24,7 +24,8 @@ module triangle_setup
         CALC_EDGES,
         CALC_AREA,
         CALC_RECIP_INIT,    // Initialize reciprocal computation
-        CALC_RECIP,         // Iterative reciprocal (Newton-Raphson)
+        CALC_RECIP_MUL1,    // Newton-Raphson phase 1: ax = area2 * x
+        CALC_RECIP_MUL2,    // Newton-Raphson phase 2: x = x * (2 - ax)
         CALC_GRAD_Z,        // Compute z gradients
         CALC_GRAD_W,        // Compute w gradients
         CALC_GRAD_R,        // Compute r gradients
@@ -50,9 +51,11 @@ module triangle_setup
     fp32_t dgw01, dgw02;    // g*w differences
     fp32_t dbw01, dbw02;    // b*w differences
 
-    // Newton-Raphson iteration state
-    logic [4:0] recip_iter;         // Iteration counter (16 iterations)
-    logic signed [63:0] recip_x;    // Current estimate of 1/area2
+    // Newton-Raphson iteration state (pipelined: 2 cycles per iteration)
+    logic [4:0] recip_iter;              // Iteration counter (16 iterations)
+    logic signed [63:0] recip_x;         // Current estimate of 1/area2
+    logic signed [63:0] recip_ax;        // Intermediate: (area2 * x) >> 32
+    logic signed [63:0] recip_two_minus; // Intermediate: 2 - ax
 
     // Registered outputs
     triangle_setup_t setup_reg;
@@ -83,8 +86,15 @@ module triangle_setup
             IDLE:            if (start) next_state = CALC_EDGES;
             CALC_EDGES:      next_state = CALC_AREA;
             CALC_AREA:       next_state = CALC_RECIP_INIT;
-            CALC_RECIP_INIT: next_state = CALC_RECIP;
-            CALC_RECIP:      if (recip_iter == 0) next_state = CALC_GRAD_Z;
+            CALC_RECIP_INIT: next_state = CALC_RECIP_MUL1;
+            CALC_RECIP_MUL1: next_state = CALC_RECIP_MUL2;  // Phase 1 -> Phase 2
+            CALC_RECIP_MUL2: begin
+                // After phase 2, either continue iterating or move to gradients
+                if (recip_iter == 0)
+                    next_state = CALC_GRAD_Z;
+                else
+                    next_state = CALC_RECIP_MUL1;  // Loop back for next iteration
+            end
             CALC_GRAD_Z:     next_state = CALC_GRAD_W;
             CALC_GRAD_W:     next_state = CALC_GRAD_R;
             CALC_GRAD_R:     next_state = CALC_GRAD_G;
@@ -139,6 +149,8 @@ module triangle_setup
             inv_area2 <= 64'h0;
             recip_iter <= '0;
             recip_x <= 64'h0;
+            recip_ax <= 64'h0;
+            recip_two_minus <= 64'h0;
             dx01_r <= FP_ZERO;
             dy01_r <= FP_ZERO;
             dx02_r <= FP_ZERO;
@@ -228,6 +240,7 @@ module triangle_setup
                     // Newton-Raphson to compute: recip_x = 2^64 / area2
                     // This gives enough precision for gradient calculation
                     // Formula: x_{n+1} = x_n * (2 - area2 * x_n / 2^64)
+                    // Pipelined: 2 cycles per iteration (MUL1 and MUL2)
                     recip_iter <= 5'd16;  // 16 iterations for convergence
 
                     // Initial estimate based on area2 magnitude
@@ -240,22 +253,28 @@ module triangle_setup
                     end
                 end
 
-                CALC_RECIP: begin
-                    // Newton-Raphson iteration: x = x * (2 - area2 * x / 2^64)
-                    // We compute in Q31.32 for the intermediate (area2 * x / 2^32)
-                    // At convergence: area2 * x / 2^64 = 1, so (area2 * x) >> 32 = 2^32
-                    if (recip_iter > 0) begin
-                        automatic logic signed [127:0] ax_wide, two_minus_ax, new_x;
-                        // Compute (area2 * x) >> 32, which converges to 2^32 (representing 1.0 in Q31.32)
-                        ax_wide = (128'(area2) * 128'(recip_x)) >>> 32;
-                        // 2.0 in Q31.32 is 2 * 2^32 = 0x2_0000_0000
-                        two_minus_ax = (128'sh2_0000_0000) - ax_wide;
-                        // x * (2 - ax) >> 32 to maintain scaling
-                        new_x = (128'(recip_x) * two_minus_ax) >>> 32;
-                        recip_x <= 64'(new_x);
-                        recip_iter <= recip_iter - 1;
-                    end else begin
-                        inv_area2 <= recip_x;
+                CALC_RECIP_MUL1: begin
+                    // Phase 1: Compute ax = (area2 * x) >> 32
+                    // This is ONE 128-bit multiply per cycle (fits timing)
+                    automatic logic signed [127:0] ax_wide;
+                    ax_wide = (128'(area2) * 128'(recip_x)) >>> 32;
+                    recip_ax <= 64'(ax_wide);
+                    // Also compute (2 - ax) for next phase
+                    // 2.0 in Q31.32 is 2 * 2^32 = 0x2_0000_0000
+                    recip_two_minus <= (64'sh2_0000_0000) - 64'(ax_wide);
+                end
+
+                CALC_RECIP_MUL2: begin
+                    // Phase 2: Compute x = x * (2 - ax) >> 32
+                    // This is the second multiply, using registered intermediate
+                    automatic logic signed [127:0] new_x;
+                    new_x = (128'(recip_x) * 128'(recip_two_minus)) >>> 32;
+                    recip_x <= 64'(new_x);
+                    recip_iter <= recip_iter - 1;
+
+                    // When iterations complete, store final result
+                    if (recip_iter == 1) begin
+                        inv_area2 <= 64'(new_x);
                     end
                 end
 

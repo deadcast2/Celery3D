@@ -21,7 +21,7 @@ OBJ_DIR = obj_dir
 # Top module
 TOP = rasterizer_top
 
-.PHONY: all sim clean lint wave help
+.PHONY: all sim clean lint wave help synth impl timing
 
 all: sim
 
@@ -58,14 +58,58 @@ clean:
 	rm -f rasterizer.vcd
 	rm -f rasterizer_output.ppm
 
+# ==============================================================================
+# Vivado Synthesis & Implementation
+# ==============================================================================
+VIVADO = vivado
+VIVADO_FLAGS = -mode batch -nojournal -nolog
+
+# Build directory for Vivado outputs
+BUILD_DIR = build
+
+# Synthesis only (fast, for checking resource usage)
+synth:
+	@echo "Running Vivado synthesis..."
+	@mkdir -p $(BUILD_DIR)
+	$(VIVADO) $(VIVADO_FLAGS) -source scripts/synth_rasterizer.tcl 2>&1 | tee $(BUILD_DIR)/vivado.log
+	@echo "Synthesis complete. Check $(BUILD_DIR)/post_synth_*.rpt"
+
+# Full implementation (synthesis + place + route)
+impl: synth
+
+# Quick timing check (shows timing summary)
+timing:
+	@if [ -f $(BUILD_DIR)/post_route_timing_summary.rpt ]; then \
+		cat $(BUILD_DIR)/post_route_timing_summary.rpt; \
+	elif [ -f $(BUILD_DIR)/post_synth_timing_summary.rpt ]; then \
+		cat $(BUILD_DIR)/post_synth_timing_summary.rpt; \
+	else \
+		echo "No timing reports found. Run 'make synth' first."; \
+	fi
+
+# Clean Vivado artifacts
+clean-vivado:
+	rm -rf $(BUILD_DIR)
+	rm -rf .Xil
+	rm -f vivado*.log vivado*.jou
+	rm -f *.dcp
+
 # Help
 help:
 	@echo "Celery3D RTL Build System"
 	@echo ""
-	@echo "Targets:"
+	@echo "Simulation (Verilator):"
 	@echo "  all   - Build and run simulation (default)"
 	@echo "  sim   - Build and run simulation"
 	@echo "  lint  - Run Verilator linting"
 	@echo "  wave  - Open waveform viewer"
-	@echo "  clean - Remove build artifacts"
+	@echo ""
+	@echo "Synthesis (Vivado):"
+	@echo "  synth - Run synthesis and implementation"
+	@echo "  timing- Show timing summary"
+	@echo ""
+	@echo "Cleanup:"
+	@echo "  clean       - Remove Verilator artifacts"
+	@echo "  clean-vivado- Remove Vivado artifacts"
+	@echo ""
 	@echo "  help  - Show this message"

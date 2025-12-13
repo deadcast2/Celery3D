@@ -95,11 +95,11 @@ void set_vertex(Vrasterizer_top* dut, int idx, float x, float y, float z,
     int32_t fp_g = float_to_fp(g);
     int32_t fp_b = float_to_fp(b);
 
-    // Select the vertex port
+    // Select the vertex port (Verilator exposes wide signals as arrays directly)
     uint32_t* vptr;
-    if (idx == 0) vptr = dut->v0.data();
-    else if (idx == 1) vptr = dut->v1.data();
-    else vptr = dut->v2.data();
+    if (idx == 0) vptr = dut->v0;
+    else if (idx == 1) vptr = dut->v1;
+    else vptr = dut->v2;
 
     // Pack into Verilator's word array (LSB-first ordering)
     vptr[0] = (uint32_t)fp_b;  // bits [31:0]
@@ -117,7 +117,7 @@ void set_vertex(Vrasterizer_top* dut, int idx, float x, float y, float z,
 // fragment_t (217 bits) = {x[12], y[12], z[32], u[32], v[32], r[32], g[32], b[32], valid[1]}
 // Verilator stores as VlWide<7> (7 x 32-bit words)
 void get_fragment(Vrasterizer_top* dut, int* x, int* y, float* r, float* g, float* b) {
-    uint32_t* fptr = dut->frag_out.data();
+    uint32_t* fptr = dut->frag_out;
 
     // Extract fields from packed representation
     // valid is bit 0, b is bits [32:1], g is bits [64:33], etc.
