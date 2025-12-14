@@ -1,6 +1,6 @@
 Celery3D GPU - Dual License
 
-Copyright (c) 2024 Caleb Cohoon
+Copyright (c) 2025 Caleb Cohoon
 
 This project uses a dual licensing model to appropriately cover both
 hardware and software components:

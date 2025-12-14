@@ -249,7 +249,7 @@ This project uses dual licensing to appropriately cover hardware and software:
 
 Both licenses are permissive and require attribution. You are free to use,
 study, modify, and distribute this project, provided you retain copyright
-notices. See [LICENSE](LICENSE) for details.
+notices. See [LICENSING.md](LICENSING.md) for details.
 
 ## Acknowledgments
 
