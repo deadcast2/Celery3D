@@ -10,6 +10,9 @@
 #include <cstring>
 #include <cmath>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 #define FP_FRAC_BITS 16
@@ -185,7 +188,71 @@ void load_triangle(Vrasterizer_top* dut, const Triangle& tri) {
     }
 }
 
-// Load a checkerboard texture into the texture unit
+// Load a PNG texture into the texture unit (resizes to TEX_SIZE x TEX_SIZE)
+bool load_png_texture(Vrasterizer_top* dut, const char* filename, uint64_t& sim_time) {
+    int width, height, channels;
+    unsigned char* img = stbi_load(filename, &width, &height, &channels, 3);  // Force RGB
+
+    if (!img) {
+        printf("Error: Could not load texture '%s': %s\n", filename, stbi_failure_reason());
+        return false;
+    }
+
+    printf("Loading texture '%s' (%dx%d) -> %dx%d...\n", filename, width, height, TEX_SIZE, TEX_SIZE);
+
+    // Box filter resize and convert to RGB565
+    float scale_x = (float)width / TEX_SIZE;
+    float scale_y = (float)height / TEX_SIZE;
+
+    for (int ty = 0; ty < TEX_SIZE; ty++) {
+        for (int tx = 0; tx < TEX_SIZE; tx++) {
+            // Sample region in source image
+            int sx0 = (int)(tx * scale_x);
+            int sy0 = (int)(ty * scale_y);
+            int sx1 = (int)((tx + 1) * scale_x);
+            int sy1 = (int)((ty + 1) * scale_y);
+            if (sx1 == sx0) sx1 = sx0 + 1;
+            if (sy1 == sy0) sy1 = sy0 + 1;
+
+            // Average pixels in the region (box filter)
+            int r_sum = 0, g_sum = 0, b_sum = 0, count = 0;
+            for (int sy = sy0; sy < sy1 && sy < height; sy++) {
+                for (int sx = sx0; sx < sx1 && sx < width; sx++) {
+                    int idx = (sy * width + sx) * 3;
+                    r_sum += img[idx + 0];
+                    g_sum += img[idx + 1];
+                    b_sum += img[idx + 2];
+                    count++;
+                }
+            }
+
+            // Convert to RGB565
+            uint8_t r = (r_sum / count) >> 3;  // 5 bits
+            uint8_t g = (g_sum / count) >> 2;  // 6 bits
+            uint8_t b = (b_sum / count) >> 3;  // 5 bits
+            uint16_t color = (r << 11) | (g << 5) | b;
+
+            // Write to texture memory
+            dut->tex_wr_addr = ty * TEX_SIZE + tx;
+            dut->tex_wr_data = color;
+            dut->tex_wr_en = 1;
+
+            dut->clk = 1;
+            dut->eval();
+            sim_time++;
+            dut->clk = 0;
+            dut->eval();
+            sim_time++;
+        }
+    }
+
+    dut->tex_wr_en = 0;
+    stbi_image_free(img);
+    printf("Texture loaded (%d texels)\n\n", TEX_SIZE * TEX_SIZE);
+    return true;
+}
+
+// Load a checkerboard texture (fallback)
 void load_checkerboard_texture(Vrasterizer_top* dut, int check_size, uint64_t& sim_time) {
     printf("Loading %dx%d checkerboard texture (check size %d)...\n", TEX_SIZE, TEX_SIZE, check_size);
 
@@ -254,9 +321,12 @@ int main(int argc, char** argv) {
     printf("==============================================\n");
     printf("Screen: %dx%d, Texture: %dx%d\n\n", SCREEN_WIDTH, SCREEN_HEIGHT, TEX_SIZE, TEX_SIZE);
 
-    // Load checkerboard texture
+    // Load texture (try PNG first, fall back to checkerboard)
     uint64_t sim_time = 10;
-    load_checkerboard_texture(dut, 8, sim_time);
+    if (!load_png_texture(dut, "sim/textures/leaves.png", sim_time)) {
+        printf("Falling back to checkerboard texture...\n");
+        load_checkerboard_texture(dut, 8, sim_time);
+    }
 
     // Define test triangles - first two form a textured quad with white vertices
     // All triangles use CCW winding
