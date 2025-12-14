@@ -1,6 +1,6 @@
 // Celery3D GPU - Verilator Testbench for Rasterizer
 // Outputs a PPM image file for visual verification
-// Renders multiple triangles to demonstrate perspective correction
+// Renders multiple triangles to demonstrate perspective correction and texture mapping
 
 #include <verilated.h>
 #include <verilated_vcd_c.h>
@@ -13,6 +13,7 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 #define FP_FRAC_BITS 16
+#define TEX_SIZE 64
 
 // Triangle vertex structure
 struct Vertex {
@@ -184,6 +185,34 @@ void load_triangle(Vrasterizer_top* dut, const Triangle& tri) {
     }
 }
 
+// Load a checkerboard texture into the texture unit
+void load_checkerboard_texture(Vrasterizer_top* dut, int check_size, uint64_t& sim_time) {
+    printf("Loading %dx%d checkerboard texture (check size %d)...\n", TEX_SIZE, TEX_SIZE, check_size);
+
+    for (int y = 0; y < TEX_SIZE; y++) {
+        for (int x = 0; x < TEX_SIZE; x++) {
+            int cx = x / check_size;
+            int cy = y / check_size;
+            // Alternate between white and blue
+            uint16_t color = ((cx + cy) % 2 == 0) ? 0xFFFF : 0x001F;
+
+            dut->tex_wr_addr = y * TEX_SIZE + x;
+            dut->tex_wr_data = color;
+            dut->tex_wr_en = 1;
+
+            // Clock cycle for write
+            dut->clk = 1;
+            dut->eval();
+            sim_time++;
+            dut->clk = 0;
+            dut->eval();
+            sim_time++;
+        }
+    }
+    dut->tex_wr_en = 0;
+    printf("Texture loaded (%d texels)\n\n", TEX_SIZE * TEX_SIZE);
+}
+
 int main(int argc, char** argv) {
     Verilated::commandArgs(argc, argv);
 
@@ -202,6 +231,13 @@ int main(int argc, char** argv) {
     dut->tri_valid = 0;
     dut->frag_ready = 1;
 
+    // Texture control - start with texturing enabled
+    dut->tex_enable = 1;
+    dut->modulate_enable = 1;
+    dut->tex_wr_en = 0;
+    dut->tex_wr_addr = 0;
+    dut->tex_wr_data = 0;
+
     // Clear framebuffer to dark blue
     clear_framebuffer(pack_rgb565(0.05f, 0.05f, 0.15f));
 
@@ -214,61 +250,45 @@ int main(int argc, char** argv) {
     dut->rst_n = 1;
 
     printf("==============================================\n");
-    printf("Celery3D Rasterizer - Perspective Correction Demo\n");
+    printf("Celery3D Rasterizer - Texture Mapping Demo\n");
     printf("==============================================\n");
-    printf("Screen: %dx%d\n\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+    printf("Screen: %dx%d, Texture: %dx%d\n\n", SCREEN_WIDTH, SCREEN_HEIGHT, TEX_SIZE, TEX_SIZE);
 
-    // Define test triangles showcasing perspective correction
+    // Load checkerboard texture
+    uint64_t sim_time = 10;
+    load_checkerboard_texture(dut, 8, sim_time);
+
+    // Define test triangles - first two form a textured quad with white vertices
     // All triangles use CCW winding
-    Triangle triangles[7];
+    Triangle triangles[4];
 
-    // Triangle 0: Classic RGB triangle with depth variation
-    // Top vertex close, bottom vertices far - shows perspective color shift
-    triangles[0].v[0] = {320.0f, 60.0f, 0.15f, 0.5f, 0.0f, 1.0f, 0.2f, 0.2f};   // top (red, very close)
-    triangles[0].v[1] = {180.0f, 220.0f, 0.7f, 0.0f, 1.0f, 0.2f, 1.0f, 0.2f};   // bottom-left (green, far)
-    triangles[0].v[2] = {460.0f, 220.0f, 0.7f, 1.0f, 1.0f, 0.2f, 0.2f, 1.0f};   // bottom-right (blue, far)
-    triangles[0].name = "RGB pyramid (top close)";
+    // Triangles 0-1: Large textured quad with WHITE vertices to show checkerboard clearly
+    // UV range [0,2] to show texture repeat/wrap
+    triangles[0].v[0] = {100.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};   // top-left, UV(0,0), white
+    triangles[0].v[1] = {100.0f, 300.0f, 0.5f, 0.0f, 2.0f, 1.0f, 1.0f, 1.0f};  // bottom-left, UV(0,2), white
+    triangles[0].v[2] = {400.0f, 300.0f, 0.5f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f};  // bottom-right, UV(2,2), white
+    triangles[0].name = "Textured quad (lower-left tri)";
 
-    // Triangle 1: Floor tile left - receding into distance
-    triangles[1].v[0] = {50.0f, 250.0f, 0.3f, 0.0f, 0.0f, 0.6f, 0.4f, 0.2f};    // front-left (close, brown)
-    triangles[1].v[1] = {50.0f, 450.0f, 0.9f, 0.0f, 1.0f, 0.2f, 0.15f, 0.1f};   // back-left (far, dark)
-    triangles[1].v[2] = {320.0f, 450.0f, 0.9f, 1.0f, 1.0f, 0.2f, 0.15f, 0.1f};  // back-right (far, dark)
-    triangles[1].name = "Floor left (front bright)";
+    triangles[1].v[0] = {100.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};   // top-left, UV(0,0), white
+    triangles[1].v[1] = {400.0f, 300.0f, 0.5f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f};  // bottom-right, UV(2,2), white
+    triangles[1].v[2] = {400.0f, 50.0f, 0.5f, 2.0f, 0.0f, 1.0f, 1.0f, 1.0f};   // top-right, UV(2,0), white
+    triangles[1].name = "Textured quad (upper-right tri)";
 
-    // Triangle 2: Floor tile right - matching the left tile
-    triangles[2].v[0] = {50.0f, 250.0f, 0.3f, 0.0f, 0.0f, 0.6f, 0.4f, 0.2f};    // front-left (close)
-    triangles[2].v[1] = {320.0f, 450.0f, 0.9f, 1.0f, 1.0f, 0.2f, 0.15f, 0.1f};  // back-right (far)
-    triangles[2].v[2] = {320.0f, 250.0f, 0.3f, 1.0f, 0.0f, 0.6f, 0.4f, 0.2f};   // front-right (close)
-    triangles[2].name = "Floor right (front bright)";
+    // Triangle 2: RGB triangle to test modulation (texture tinted by vertex color)
+    triangles[2].v[0] = {480.0f, 80.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.3f, 0.3f};   // top (red)
+    triangles[2].v[1] = {420.0f, 280.0f, 0.5f, 0.0f, 1.0f, 0.3f, 1.0f, 0.3f};  // bottom-left (green)
+    triangles[2].v[2] = {580.0f, 280.0f, 0.5f, 1.0f, 1.0f, 0.3f, 0.3f, 1.0f};  // bottom-right (blue)
+    triangles[2].name = "RGB triangle (texture modulated)";
 
-    // Triangle 3: Cyan pillar left side - vertical with depth
-    triangles[3].v[0] = {500.0f, 100.0f, 0.25f, 0.0f, 0.0f, 0.0f, 0.9f, 0.9f};  // top-front (cyan, close)
-    triangles[3].v[1] = {500.0f, 400.0f, 0.25f, 0.0f, 1.0f, 0.0f, 0.9f, 0.9f};  // bottom-front (cyan, close)
-    triangles[3].v[2] = {560.0f, 420.0f, 0.6f, 1.0f, 1.0f, 0.0f, 0.3f, 0.3f};   // bottom-back (dark, far)
-    triangles[3].name = "Pillar left face";
+    // Triangle 3: Yellow triangle to show texture+color modulation
+    triangles[3].v[0] = {450.0f, 320.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.2f};  // yellow
+    triangles[3].v[1] = {420.0f, 450.0f, 0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 0.1f};  // darker yellow
+    triangles[3].v[2] = {580.0f, 400.0f, 0.5f, 1.0f, 0.5f, 1.0f, 0.9f, 0.0f};  // orange-yellow
+    triangles[3].name = "Yellow triangle (texture modulated)";
 
-    // Triangle 4: Cyan pillar right side
-    triangles[4].v[0] = {500.0f, 100.0f, 0.25f, 0.0f, 0.0f, 0.0f, 0.9f, 0.9f};  // top-front (cyan, close)
-    triangles[4].v[1] = {560.0f, 420.0f, 0.6f, 1.0f, 1.0f, 0.0f, 0.3f, 0.3f};   // bottom-back (dark, far)
-    triangles[4].v[2] = {560.0f, 120.0f, 0.6f, 1.0f, 0.0f, 0.0f, 0.3f, 0.3f};   // top-back (dark, far)
-    triangles[4].name = "Pillar right face";
-
-    // Triangle 5: Magenta accent - tilted plane
-    triangles[5].v[0] = {580.0f, 200.0f, 0.2f, 0.0f, 0.0f, 1.0f, 0.0f, 0.8f};   // left (magenta, close)
-    triangles[5].v[1] = {580.0f, 350.0f, 0.5f, 0.0f, 1.0f, 0.5f, 0.0f, 0.4f};   // bottom (purple, mid)
-    triangles[5].v[2] = {630.0f, 275.0f, 0.8f, 1.0f, 0.5f, 0.2f, 0.0f, 0.2f};   // right (dark, far)
-    triangles[5].name = "Magenta accent";
-
-    // Triangle 6: Yellow warning stripe - dramatic depth
-    triangles[6].v[0] = {350.0f, 280.0f, 0.2f, 0.0f, 0.0f, 1.0f, 0.9f, 0.0f};   // front (yellow, close)
-    triangles[6].v[1] = {380.0f, 400.0f, 0.85f, 0.5f, 1.0f, 0.3f, 0.25f, 0.0f}; // back-left (dark yellow, far)
-    triangles[6].v[2] = {450.0f, 320.0f, 0.5f, 1.0f, 0.5f, 0.7f, 0.6f, 0.0f};   // mid-right (orange, mid)
-    triangles[6].name = "Yellow accent";
-
-    const int num_triangles = 7;
+    const int num_triangles = 4;
 
     // Simulation state
-    uint64_t sim_time = 10;
     int total_fragments = 0;
     int current_triangle = 0;
     bool triangle_submitted = false;
@@ -290,16 +310,15 @@ int main(int argc, char** argv) {
         if (dut->frag_valid && dut->frag_ready) {
             total_fragments++;
 
+            // Extract x, y from fragment (color comes from color_out now)
             int frag_x, frag_y;
-            float frag_r, frag_g, frag_b;
-            get_fragment(dut, &frag_x, &frag_y, &frag_r, &frag_g, &frag_b);
+            float unused_r, unused_g, unused_b;
+            get_fragment(dut, &frag_x, &frag_y, &unused_r, &unused_g, &unused_b);
 
-            // Clamp colors
-            frag_r = frag_r < 0.0f ? 0.0f : (frag_r > 1.0f ? 1.0f : frag_r);
-            frag_g = frag_g < 0.0f ? 0.0f : (frag_g > 1.0f ? 1.0f : frag_g);
-            frag_b = frag_b < 0.0f ? 0.0f : (frag_b > 1.0f ? 1.0f : frag_b);
+            // Use the RGB565 color directly from the texture unit
+            uint16_t color = dut->color_out;
+            write_pixel(frag_x, frag_y, color);
 
-            write_pixel(frag_x, frag_y, pack_rgb565(frag_r, frag_g, frag_b));
         }
 
         // Triangle submission state machine
@@ -322,8 +341,8 @@ int main(int argc, char** argv) {
                 // Wait for rasterizer to finish
                 if (!dut->busy) {
                     drain_cycles++;
-                    // Drain perspective correction pipeline (8 stages + margin)
-                    if (drain_cycles > 15) {
+                    // Drain perspective correction + texture pipeline (8 + 3 stages + margin)
+                    if (drain_cycles > 20) {
                         current_triangle++;
                         waiting_for_done = false;
                         drain_cycles = 0;

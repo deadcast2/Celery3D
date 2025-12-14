@@ -28,6 +28,8 @@ module triangle_setup
         CALC_RECIP_MUL2,    // Newton-Raphson phase 2: x = x * (2 - ax)
         CALC_GRAD_Z,        // Compute z gradients
         CALC_GRAD_W,        // Compute w gradients
+        CALC_GRAD_U,        // Compute u gradients
+        CALC_GRAD_V,        // Compute v gradients
         CALC_GRAD_R,        // Compute r gradients
         CALC_GRAD_G,        // Compute g gradients
         CALC_GRAD_B,        // Compute b gradients
@@ -47,6 +49,8 @@ module triangle_setup
     // Attribute differences (pre-computed and registered)
     fp32_t dz01, dz02;      // z differences
     fp32_t dw01, dw02;      // w differences
+    fp32_t duw01, duw02;    // u*w differences
+    fp32_t dvw01, dvw02;    // v*w differences
     fp32_t drw01, drw02;    // r*w differences
     fp32_t dgw01, dgw02;    // g*w differences
     fp32_t dbw01, dbw02;    // b*w differences
@@ -96,7 +100,9 @@ module triangle_setup
                     next_state = CALC_RECIP_MUL1;  // Loop back for next iteration
             end
             CALC_GRAD_Z:     next_state = CALC_GRAD_W;
-            CALC_GRAD_W:     next_state = CALC_GRAD_R;
+            CALC_GRAD_W:     next_state = CALC_GRAD_U;
+            CALC_GRAD_U:     next_state = CALC_GRAD_V;
+            CALC_GRAD_V:     next_state = CALC_GRAD_R;
             CALC_GRAD_R:     next_state = CALC_GRAD_G;
             CALC_GRAD_G:     next_state = CALC_GRAD_B;
             CALC_GRAD_B:     next_state = CALC_BBOX;
@@ -159,6 +165,10 @@ module triangle_setup
             dz02 <= FP_ZERO;
             dw01 <= FP_ZERO;
             dw02 <= FP_ZERO;
+            duw01 <= FP_ZERO;
+            duw02 <= FP_ZERO;
+            dvw01 <= FP_ZERO;
+            dvw02 <= FP_ZERO;
             drw01 <= FP_ZERO;
             drw02 <= FP_ZERO;
             dgw01 <= FP_ZERO;
@@ -228,6 +238,10 @@ module triangle_setup
                     dz02 <= v2.z - v0.z;
                     dw01 <= v1.w - v0.w;
                     dw02 <= v2.w - v0.w;
+                    duw01 <= fp_mul(v1.u, v1.w) - fp_mul(v0.u, v0.w);
+                    duw02 <= fp_mul(v2.u, v2.w) - fp_mul(v0.u, v0.w);
+                    dvw01 <= fp_mul(v1.v, v1.w) - fp_mul(v0.v, v0.w);
+                    dvw02 <= fp_mul(v2.v, v2.w) - fp_mul(v0.v, v0.w);
                     drw01 <= fp_mul(v1.r, v1.w) - fp_mul(v0.r, v0.w);
                     drw02 <= fp_mul(v2.r, v2.w) - fp_mul(v0.r, v0.w);
                     dgw01 <= fp_mul(v1.g, v1.w) - fp_mul(v0.g, v0.w);
@@ -288,6 +302,18 @@ module triangle_setup
                     // W gradients
                     setup_reg.dwdx <= compute_gradient_x(dw01, dw02, dy02_r, dy01_r, inv_area2);
                     setup_reg.dwdy <= compute_gradient_y(dw01, dw02, dx01_r, dx02_r, inv_area2);
+                end
+
+                CALC_GRAD_U: begin
+                    // U gradients (perspective-corrected: u*w)
+                    setup_reg.dudx <= compute_gradient_x(duw01, duw02, dy02_r, dy01_r, inv_area2);
+                    setup_reg.dudy <= compute_gradient_y(duw01, duw02, dx01_r, dx02_r, inv_area2);
+                end
+
+                CALC_GRAD_V: begin
+                    // V gradients (perspective-corrected: v*w)
+                    setup_reg.dvdx <= compute_gradient_x(dvw01, dvw02, dy02_r, dy01_r, inv_area2);
+                    setup_reg.dvdy <= compute_gradient_y(dvw01, dvw02, dx01_r, dx02_r, inv_area2);
                 end
 
                 CALC_GRAD_R: begin

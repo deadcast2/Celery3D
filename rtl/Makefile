@@ -11,6 +11,7 @@ RTL_SRCS = \
     core/triangle_setup.sv \
     core/rasterizer.sv \
     core/perspective_correct.sv \
+    core/texture_unit.sv \
     core/rasterizer_top.sv
 
 # Testbench
