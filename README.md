@@ -219,7 +219,7 @@ make clean-vivado
 - [x] **Phase 1:** Software reference renderer
 - [ ] **Phase 2:** Video output (HDMI test pattern)
 - [ ] **Phase 3:** DDR3 framebuffer controller
-- [x] **Phase 4:** Rasterization pipeline (Gouraud shading + perspective correction working!)
+- [x] **Phase 4:** Rasterization pipeline (Gouraud shading, perspective correction, texture mapping, depth buffer)
 - [ ] **Phase 5:** PCIe integration
 - [ ] **Phase 6:** Linux driver
 - [ ] **Phase 7:** Graphics API library
@@ -239,6 +239,24 @@ The texture unit supports both nearest-neighbor and bilinear filtering modes, se
 |:----------------:|:------------------:|
 | ![Nearest](docs/texture_nearest.png) | ![Bilinear](docs/texture_bilinear.png) |
 | Sharp texel boundaries, blocky when magnified | Smooth interpolation between texels |
+
+### Depth Buffer
+
+The depth buffer provides hardware Z-buffering with Glide-compatible comparison functions. The implementation uses a 3-stage pipeline and BRAM-based storage (parameterized resolution, 128x128 for simulation).
+
+**Features:**
+- 16-bit depth precision
+- 8 comparison functions (GR_CMP_NEVER, LESS, EQUAL, LEQUAL, GREATER, NOTEQUAL, GEQUAL, ALWAYS)
+- Independent depth test enable and depth write enable
+- Hardware clear support
+
+**Depth Test Comparison:**
+
+| GR_CMP_LESS (Standard) | Depth Test Disabled |
+|:----------------------:|:-------------------:|
+| Closer fragments occlude farther | Painter's algorithm (draw order) |
+
+With GR_CMP_LESS, the red triangle (z=0.3) correctly occludes the blue triangle (z=0.7) where they overlap.
 
 ### Synthesis Results (Kintex-7 XC7K325T)
 

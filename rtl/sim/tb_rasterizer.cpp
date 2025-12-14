@@ -1,7 +1,8 @@
 // Celery3D GPU - Verilator Testbench for Rasterizer
 // Outputs a PPM image file for visual verification
-// Renders multiple triangles to demonstrate perspective correction and texture mapping
-// Supports bilinear texture filtering (set tex_filter_bilinear = 1)
+// Renders multiple triangles to demonstrate perspective correction, texture mapping,
+// and depth buffering
+// Supports bilinear texture filtering and Glide-compatible depth comparison functions
 
 #include <verilated.h>
 #include <verilated_vcd_c.h>
@@ -18,6 +19,19 @@
 #define SCREEN_HEIGHT 480
 #define FP_FRAC_BITS 16
 #define TEX_SIZE 64
+#define DB_SIZE 128  // Depth buffer dimension (128x128)
+
+// Depth comparison functions (matches Glide GR_CMP_*)
+enum DepthFunc {
+    GR_CMP_NEVER    = 0,
+    GR_CMP_LESS     = 1,
+    GR_CMP_EQUAL    = 2,
+    GR_CMP_LEQUAL   = 3,
+    GR_CMP_GREATER  = 4,
+    GR_CMP_NOTEQUAL = 5,
+    GR_CMP_GEQUAL   = 6,
+    GR_CMP_ALWAYS   = 7
+};
 
 // Triangle vertex structure
 struct Vertex {
@@ -281,6 +295,40 @@ void load_checkerboard_texture(Vrasterizer_top* dut, int check_size, uint64_t& s
     printf("Texture loaded (%d texels)\n\n", TEX_SIZE * TEX_SIZE);
 }
 
+// Clear the depth buffer by pulsing depth_clear
+void clear_depth_buffer(Vrasterizer_top* dut, uint16_t clear_value, uint64_t& sim_time) {
+    dut->depth_clear_value = clear_value;
+
+    // Hold depth_clear high for the entire duration (don't rely on clearing signal)
+    // The depth buffer is 128x128 = 16384 entries
+    int clear_cycles = DB_SIZE * DB_SIZE + 10;
+
+    dut->depth_clear = 1;
+
+    for (int i = 0; i < clear_cycles; i++) {
+        dut->clk = 1;
+        dut->eval();
+        sim_time++;
+        dut->clk = 0;
+        dut->eval();
+        sim_time++;
+    }
+
+    dut->depth_clear = 0;
+
+    // A few extra cycles to settle
+    for (int i = 0; i < 5; i++) {
+        dut->clk = 1;
+        dut->eval();
+        sim_time++;
+        dut->clk = 0;
+        dut->eval();
+        sim_time++;
+    }
+
+    printf("  Debug: Depth clear to 0x%04X, ran %d cycles\n", clear_value, clear_cycles);
+}
+
 // Render a scene with current filter settings
 void render_scene(Vrasterizer_top* dut, Triangle* triangles, int num_triangles,
                   uint64_t& sim_time, int& total_fragments) {
@@ -366,6 +414,13 @@ int main(int argc, char** argv) {
     dut->tex_wr_addr = 0;
     dut->tex_wr_data = 0;
 
+    // Depth buffer control
+    dut->depth_test_enable = 0;   // Start with depth test disabled
+    dut->depth_write_enable = 0;
+    dut->depth_func = GR_CMP_LESS;
+    dut->depth_clear = 0;
+    dut->depth_clear_value = 0xFFFF;  // Far plane
+
     // Reset sequence
     uint64_t sim_time = 0;
     for (int i = 0; i < 10; i++) {
@@ -441,15 +496,102 @@ int main(int argc, char** argv) {
     printf("  Fragments: %d\n", bilinear_fragments);
     printf("  Saved: output_bilinear.ppm\n\n");
 
+    // ==================== DEPTH BUFFER TEST ====================
+    // Test with overlapping triangles at different depths
+    // Triangles are positioned within the 128x128 depth buffer area
+    printf("----------------------------------------------\n");
+    printf("Pass 3: DEPTH BUFFER test (GR_CMP_LESS)\n");
+    printf("----------------------------------------------\n");
+
+    // Define overlapping triangles at different depths
+    Triangle depth_triangles[2];
+
+    // Front triangle (closer, z=0.3) - RED
+    // Position within depth buffer bounds (0-127)
+    depth_triangles[0].v[0] = {20.0f, 20.0f, 0.3f, 0.0f, 0.0f, 1.0f, 0.2f, 0.2f};
+    depth_triangles[0].v[1] = {20.0f, 100.0f, 0.3f, 0.0f, 1.0f, 1.0f, 0.2f, 0.2f};
+    depth_triangles[0].v[2] = {100.0f, 60.0f, 0.3f, 1.0f, 0.5f, 1.0f, 0.2f, 0.2f};
+    depth_triangles[0].name = "Front triangle (RED, z=0.3)";
+
+    // Back triangle (farther, z=0.7) - BLUE (rendered second)
+    depth_triangles[1].v[0] = {40.0f, 10.0f, 0.7f, 0.0f, 0.0f, 0.2f, 0.2f, 1.0f};
+    depth_triangles[1].v[1] = {40.0f, 110.0f, 0.7f, 0.0f, 1.0f, 0.2f, 0.2f, 1.0f};
+    depth_triangles[1].v[2] = {120.0f, 60.0f, 0.7f, 1.0f, 0.5f, 0.2f, 0.2f, 1.0f};
+    depth_triangles[1].name = "Back triangle (BLUE, z=0.7)";
+
+    printf("  Debug: z=0.3 -> fp=0x%08X, z=0.7 -> fp=0x%08X\n",
+           float_to_fp(0.3f), float_to_fp(0.7f));
+    printf("  Debug: depth16 from 0.3 = 0x%04X, from 0.7 = 0x%04X\n",
+           float_to_fp(0.3f) & 0xFFFF, float_to_fp(0.7f) & 0xFFFF);
+
+    // Enable depth testing with GR_CMP_LESS
+    dut->tex_enable = 0;  // Disable texture for clarity
+    dut->depth_test_enable = 1;
+    dut->depth_write_enable = 1;
+    dut->depth_func = GR_CMP_LESS;
+
+    // Clear framebuffer and depth buffer
+    clear_framebuffer(pack_rgb565(0.1f, 0.1f, 0.1f));
+    clear_depth_buffer(dut, 0xFFFF, sim_time);  // Clear to far plane
+
+    int depth_less_fragments = 0;
+    render_scene(dut, depth_triangles, 2, sim_time, depth_less_fragments);
+
+    save_ppm("output_depth_less.ppm");
+    printf("  Fragments: %d\n", depth_less_fragments);
+    printf("  Expected: Blue occluded by red where they overlap\n");
+    printf("  Saved: output_depth_less.ppm\n\n");
+
+    // ==================== DEPTH DISABLED TEST ====================
+    printf("----------------------------------------------\n");
+    printf("Pass 4: DEPTH TEST DISABLED (painter's order)\n");
+    printf("----------------------------------------------\n");
+
+    dut->depth_test_enable = 0;
+    dut->depth_write_enable = 0;
+
+    clear_framebuffer(pack_rgb565(0.1f, 0.1f, 0.1f));
+
+    int no_depth_fragments = 0;
+    render_scene(dut, depth_triangles, 2, sim_time, no_depth_fragments);
+
+    save_ppm("output_depth_disabled.ppm");
+    printf("  Fragments: %d\n", no_depth_fragments);
+    printf("  Expected: Blue drawn on top (painter's algorithm)\n");
+    printf("  Saved: output_depth_disabled.ppm\n\n");
+
+    // ==================== DEPTH GR_CMP_GREATER TEST ====================
+    printf("----------------------------------------------\n");
+    printf("Pass 5: DEPTH BUFFER test (GR_CMP_GREATER)\n");
+    printf("----------------------------------------------\n");
+
+    dut->depth_test_enable = 1;
+    dut->depth_write_enable = 1;
+    dut->depth_func = GR_CMP_GREATER;
+
+    clear_framebuffer(pack_rgb565(0.1f, 0.1f, 0.1f));
+    clear_depth_buffer(dut, 0x0000, sim_time);  // Clear to near plane
+
+    int depth_greater_fragments = 0;
+    render_scene(dut, depth_triangles, 2, sim_time, depth_greater_fragments);
+
+    save_ppm("output_depth_greater.ppm");
+    printf("  Fragments: %d\n", depth_greater_fragments);
+    printf("  Expected: All fragments pass (reverse depth: farther overwrites closer)\n");
+    printf("  Saved: output_depth_greater.ppm\n\n");
+
     // ==================== SUMMARY ====================
     printf("==============================================\n");
-    printf("Comparison complete!\n");
+    printf("All tests complete!\n");
     printf("==============================================\n");
-    printf("Nearest neighbor: output_nearest.ppm\n");
-    printf("Bilinear filter:  output_bilinear.ppm\n");
-    printf("\nUse an image viewer to compare the two outputs.\n");
-    printf("Bilinear should appear smoother, especially on\n");
-    printf("texture edges and where magnification occurs.\n");
+    printf("Texture filtering:\n");
+    printf("  Nearest neighbor: output_nearest.ppm\n");
+    printf("  Bilinear filter:  output_bilinear.ppm\n");
+    printf("\nDepth buffer:\n");
+    printf("  GR_CMP_LESS:     output_depth_less.ppm\n");
+    printf("  Depth disabled:  output_depth_disabled.ppm\n");
+    printf("  GR_CMP_GREATER:  output_depth_greater.ppm\n");
+    printf("\nCompare the depth outputs to verify occlusion works.\n");
 
     delete dut;
     return 0;

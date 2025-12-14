@@ -23,6 +23,7 @@ read_verilog -sv {
     core/rasterizer.sv
     core/perspective_correct.sv
     core/texture_unit.sv
+    core/depth_buffer.sv
     core/rasterizer_top.sv
 }
 

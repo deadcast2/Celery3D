@@ -31,6 +31,18 @@ package celery_pkg;
     typedef logic [4:0]  blue_t;   // 5 bits
     typedef logic [15:0] rgb565_t; // Packed RGB565
 
+    // Depth comparison functions (Glide GR_CMP_* compatible)
+    typedef enum logic [2:0] {
+        GR_CMP_NEVER    = 3'b000,  // Never pass
+        GR_CMP_LESS     = 3'b001,  // Pass if z_new < z_buffer
+        GR_CMP_EQUAL    = 3'b010,  // Pass if z_new == z_buffer
+        GR_CMP_LEQUAL   = 3'b011,  // Pass if z_new <= z_buffer
+        GR_CMP_GREATER  = 3'b100,  // Pass if z_new > z_buffer
+        GR_CMP_NOTEQUAL = 3'b101,  // Pass if z_new != z_buffer
+        GR_CMP_GEQUAL   = 3'b110,  // Pass if z_new >= z_buffer
+        GR_CMP_ALWAYS   = 3'b111   // Always pass
+    } depth_func_t;
+
     // Vertex structure (screen space, after CPU transformation)
     typedef struct packed {
         fp32_t x;           // Screen X (fixed-point for sub-pixel precision)

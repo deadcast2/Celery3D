@@ -7,7 +7,9 @@ module rasterizer_top
 #(
     parameter TEX_WIDTH_LOG2  = 6,  // 64 texels
     parameter TEX_HEIGHT_LOG2 = 6,
-    parameter TEX_ADDR_BITS   = TEX_WIDTH_LOG2 + TEX_HEIGHT_LOG2
+    parameter TEX_ADDR_BITS   = TEX_WIDTH_LOG2 + TEX_HEIGHT_LOG2,
+    parameter DB_WIDTH_LOG2   = 7,  // 128 pixels (depth buffer)
+    parameter DB_HEIGHT_LOG2  = 7
 )(
     input  logic        clk,
     input  logic        rst_n,
@@ -33,6 +35,14 @@ module rasterizer_top
     input  rgb565_t                  tex_wr_data,
     input  logic                     tex_wr_en,
 
+    // Depth buffer configuration
+    input  logic        depth_test_enable,
+    input  logic        depth_write_enable,
+    input  depth_func_t depth_func,
+    input  logic        depth_clear,
+    input  logic [15:0] depth_clear_value,
+    output logic        depth_clearing,
+
     // Status
     output logic        busy
 );
@@ -56,10 +66,16 @@ module rasterizer_top
     logic pc_frag_valid;
     logic pc_frag_ready;
 
-    // Texture unit to output interface
+    // Texture unit to depth buffer interface
     fragment_t tex_frag;
     rgb565_t tex_color;
     logic tex_frag_valid;
+    logic tex_frag_ready;
+
+    // Depth buffer to output interface
+    fragment_t db_frag;
+    rgb565_t db_color;
+    logic db_frag_valid;
 
     // State for coordinating setup and rasterizer
     typedef enum logic [1:0] {
@@ -127,16 +143,39 @@ module rasterizer_top
         .frag_out       (tex_frag),
         .color_out      (tex_color),
         .frag_out_valid (tex_frag_valid),
-        .frag_out_ready (frag_ready),
+        .frag_out_ready (tex_frag_ready),
         .tex_wr_addr    (tex_wr_addr),
         .tex_wr_data    (tex_wr_data),
         .tex_wr_en      (tex_wr_en)
     );
 
-    // Output from texture unit
-    assign frag_out = tex_frag;
-    assign color_out = tex_color;
-    assign frag_valid = tex_frag_valid;
+    // Depth buffer unit (3-stage pipeline)
+    depth_buffer #(
+        .DB_WIDTH_LOG2 (DB_WIDTH_LOG2),
+        .DB_HEIGHT_LOG2(DB_HEIGHT_LOG2)
+    ) u_depth_buffer (
+        .clk               (clk),
+        .rst_n             (rst_n),
+        .depth_test_enable (depth_test_enable),
+        .depth_write_enable(depth_write_enable),
+        .depth_func        (depth_func),
+        .depth_clear       (depth_clear),
+        .depth_clear_value (depth_clear_value),
+        .depth_clearing    (depth_clearing),
+        .frag_in           (tex_frag),
+        .color_in          (tex_color),
+        .frag_in_valid     (tex_frag_valid),
+        .frag_in_ready     (tex_frag_ready),
+        .frag_out          (db_frag),
+        .color_out         (db_color),
+        .frag_out_valid    (db_frag_valid),
+        .frag_out_ready    (frag_ready)
+    );
+
+    // Output from depth buffer
+    assign frag_out = db_frag;
+    assign color_out = db_color;
+    assign frag_valid = db_frag_valid;
 
     // State machine
     always_ff @(posedge clk or negedge rst_n) begin
