@@ -231,6 +231,29 @@ RTL rasterizer with Gouraud shading and perspective-correct interpolation, rende
 
 ![Rasterizer Output](docs/rasterizer_output.png)
 
+### Texture Filtering Comparison
+
+The texture unit supports both nearest-neighbor and bilinear filtering modes, selectable at runtime. Bilinear filtering samples 4 texels and interpolates between them for smoother results when textures are magnified. The implementation uses dual-port BRAMs with even/odd column interleaving to fetch all 4 texels in a single cycle.
+
+| Nearest Neighbor | Bilinear Filtering |
+|:----------------:|:------------------:|
+| ![Nearest](docs/texture_nearest.png) | ![Bilinear](docs/texture_bilinear.png) |
+| Sharp texel boundaries, blocky when magnified | Smooth interpolation between texels |
+
+### Synthesis Results (Kintex-7 XC7K325T)
+
+Post-synthesis timing at 50 MHz target clock:
+
+| Metric | Value | Status |
+|--------|-------|--------|
+| Setup Slack (WNS) | +5.236ns | Pass |
+| Setup Margin | 26% headroom | |
+| Critical Path | Triangle setup DSP chain | |
+| BRAM Usage | 2x dual-port (texture) | |
+| DSP Usage | Multipliers for interpolation | |
+
+The bilinear texture unit meets timing with comfortable margin. Dual-port BRAMs are inferred correctly for the even/odd column interleaved texture memory, enabling 4-texel parallel fetch for bilinear sampling.
+
 ## Resources
 
 - [3dfx Glide SDK Documentation](https://3dfx.retropc.se/reference.html)

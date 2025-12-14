@@ -1,6 +1,7 @@
 // Celery3D GPU - Verilator Testbench for Rasterizer
 // Outputs a PPM image file for visual verification
 // Renders multiple triangles to demonstrate perspective correction and texture mapping
+// Supports bilinear texture filtering (set tex_filter_bilinear = 1)
 
 #include <verilated.h>
 #include <verilated_vcd_c.h>
@@ -280,124 +281,40 @@ void load_checkerboard_texture(Vrasterizer_top* dut, int check_size, uint64_t& s
     printf("Texture loaded (%d texels)\n\n", TEX_SIZE * TEX_SIZE);
 }
 
-int main(int argc, char** argv) {
-    Verilated::commandArgs(argc, argv);
-
-    // Create DUT instance
-    Vrasterizer_top* dut = new Vrasterizer_top;
-
-    // Enable VCD tracing
-    Verilated::traceEverOn(true);
-    VerilatedVcdC* tfp = new VerilatedVcdC;
-    dut->trace(tfp, 99);
-    tfp->open("rasterizer.vcd");
-
-    // Initialize
-    dut->clk = 0;
-    dut->rst_n = 0;
-    dut->tri_valid = 0;
-    dut->frag_ready = 1;
-
-    // Texture control - start with texturing enabled
-    dut->tex_enable = 1;
-    dut->modulate_enable = 1;
-    dut->tex_wr_en = 0;
-    dut->tex_wr_addr = 0;
-    dut->tex_wr_data = 0;
-
-    // Clear framebuffer to dark blue
-    clear_framebuffer(pack_rgb565(0.05f, 0.05f, 0.15f));
-
-    // Reset sequence
-    for (int i = 0; i < 10; i++) {
-        dut->clk = !dut->clk;
-        dut->eval();
-        tfp->dump(i);
-    }
-    dut->rst_n = 1;
-
-    printf("==============================================\n");
-    printf("Celery3D Rasterizer - Texture Mapping Demo\n");
-    printf("==============================================\n");
-    printf("Screen: %dx%d, Texture: %dx%d\n\n", SCREEN_WIDTH, SCREEN_HEIGHT, TEX_SIZE, TEX_SIZE);
-
-    // Load texture (try PNG first, fall back to checkerboard)
-    uint64_t sim_time = 10;
-    if (!load_png_texture(dut, "sim/textures/leaves.png", sim_time)) {
-        printf("Falling back to checkerboard texture...\n");
-        load_checkerboard_texture(dut, 8, sim_time);
-    }
-
-    // Define test triangles - first two form a textured quad with white vertices
-    // All triangles use CCW winding
-    Triangle triangles[4];
-
-    // Triangles 0-1: Large textured quad with WHITE vertices to show checkerboard clearly
-    // UV range [0,2] to show texture repeat/wrap
-    triangles[0].v[0] = {100.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};   // top-left, UV(0,0), white
-    triangles[0].v[1] = {100.0f, 300.0f, 0.5f, 0.0f, 2.0f, 1.0f, 1.0f, 1.0f};  // bottom-left, UV(0,2), white
-    triangles[0].v[2] = {400.0f, 300.0f, 0.5f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f};  // bottom-right, UV(2,2), white
-    triangles[0].name = "Textured quad (lower-left tri)";
-
-    triangles[1].v[0] = {100.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};   // top-left, UV(0,0), white
-    triangles[1].v[1] = {400.0f, 300.0f, 0.5f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f};  // bottom-right, UV(2,2), white
-    triangles[1].v[2] = {400.0f, 50.0f, 0.5f, 2.0f, 0.0f, 1.0f, 1.0f, 1.0f};   // top-right, UV(2,0), white
-    triangles[1].name = "Textured quad (upper-right tri)";
-
-    // Triangle 2: RGB triangle to test modulation (texture tinted by vertex color)
-    triangles[2].v[0] = {480.0f, 80.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.3f, 0.3f};   // top (red)
-    triangles[2].v[1] = {420.0f, 280.0f, 0.5f, 0.0f, 1.0f, 0.3f, 1.0f, 0.3f};  // bottom-left (green)
-    triangles[2].v[2] = {580.0f, 280.0f, 0.5f, 1.0f, 1.0f, 0.3f, 0.3f, 1.0f};  // bottom-right (blue)
-    triangles[2].name = "RGB triangle (texture modulated)";
-
-    // Triangle 3: Yellow triangle to show texture+color modulation
-    triangles[3].v[0] = {450.0f, 320.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.2f};  // yellow
-    triangles[3].v[1] = {420.0f, 450.0f, 0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 0.1f};  // darker yellow
-    triangles[3].v[2] = {580.0f, 400.0f, 0.5f, 1.0f, 0.5f, 1.0f, 0.9f, 0.0f};  // orange-yellow
-    triangles[3].name = "Yellow triangle (texture modulated)";
-
-    const int num_triangles = 4;
-
-    // Simulation state
-    int total_fragments = 0;
+// Render a scene with current filter settings
+void render_scene(Vrasterizer_top* dut, Triangle* triangles, int num_triangles,
+                  uint64_t& sim_time, int& total_fragments) {
     int current_triangle = 0;
     bool triangle_submitted = false;
     bool waiting_for_done = false;
     int drain_cycles = 0;
     int submit_delay = 0;
 
-    printf("Rendering %d triangles...\n\n", num_triangles);
-
-    // Main simulation loop
-    int max_cycles = 2000000;  // Enough for all triangles
+    int max_cycles = 2000000;
     for (int cycle = 0; cycle < max_cycles; cycle++) {
         // Rising edge
         dut->clk = 1;
         dut->eval();
-        tfp->dump(sim_time++);
+        sim_time++;
 
         // Collect fragments
         if (dut->frag_valid && dut->frag_ready) {
             total_fragments++;
 
-            // Extract x, y from fragment (color comes from color_out now)
             int frag_x, frag_y;
             float unused_r, unused_g, unused_b;
             get_fragment(dut, &frag_x, &frag_y, &unused_r, &unused_g, &unused_b);
 
-            // Use the RGB565 color directly from the texture unit
             uint16_t color = dut->color_out;
             write_pixel(frag_x, frag_y, color);
-
         }
 
         // Triangle submission state machine
         if (current_triangle < num_triangles) {
             if (!triangle_submitted && !waiting_for_done) {
-                // Load and submit next triangle
                 if (dut->tri_ready && submit_delay > 5) {
                     load_triangle(dut, triangles[current_triangle]);
-                    printf("[%d] %s\n", current_triangle, triangles[current_triangle].name);
+                    printf("  [%d] %s\n", current_triangle, triangles[current_triangle].name);
                     dut->tri_valid = 1;
                     triangle_submitted = true;
                 } else {
@@ -408,11 +325,9 @@ int main(int argc, char** argv) {
                 waiting_for_done = true;
                 triangle_submitted = false;
             } else if (waiting_for_done) {
-                // Wait for rasterizer to finish
                 if (!dut->busy) {
                     drain_cycles++;
-                    // Drain perspective correction + texture pipeline (8 + 3 stages + margin)
-                    if (drain_cycles > 20) {
+                    if (drain_cycles > 25) {
                         current_triangle++;
                         waiting_for_done = false;
                         drain_cycles = 0;
@@ -421,30 +336,121 @@ int main(int argc, char** argv) {
                 }
             }
         } else {
-            // All triangles done
             break;
         }
 
         // Falling edge
         dut->clk = 0;
         dut->eval();
-        tfp->dump(sim_time++);
+        sim_time++;
+    }
+}
+
+int main(int argc, char** argv) {
+    Verilated::commandArgs(argc, argv);
+
+    // Create DUT instance
+    Vrasterizer_top* dut = new Vrasterizer_top;
+
+    // Initialize
+    dut->clk = 0;
+    dut->rst_n = 0;
+    dut->tri_valid = 0;
+    dut->frag_ready = 1;
+
+    // Texture control
+    dut->tex_enable = 1;
+    dut->modulate_enable = 1;
+    dut->tex_filter_bilinear = 0;
+    dut->tex_wr_en = 0;
+    dut->tex_wr_addr = 0;
+    dut->tex_wr_data = 0;
+
+    // Reset sequence
+    uint64_t sim_time = 0;
+    for (int i = 0; i < 10; i++) {
+        dut->clk = !dut->clk;
+        dut->eval();
+        sim_time++;
+    }
+    dut->rst_n = 1;
+
+    printf("==============================================\n");
+    printf("Celery3D Rasterizer - Filter Comparison\n");
+    printf("==============================================\n");
+    printf("Screen: %dx%d, Texture: %dx%d\n\n", SCREEN_WIDTH, SCREEN_HEIGHT, TEX_SIZE, TEX_SIZE);
+
+    // Load texture
+    if (!load_png_texture(dut, "sim/textures/leaves.png", sim_time)) {
+        printf("Falling back to checkerboard texture...\n");
+        load_checkerboard_texture(dut, 8, sim_time);
     }
 
-    printf("\n==============================================\n");
-    printf("Rendering complete!\n");
-    printf("Total fragments: %d\n", total_fragments);
+    // Define test triangles
+    Triangle triangles[4];
+
+    triangles[0].v[0] = {100.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};
+    triangles[0].v[1] = {100.0f, 300.0f, 0.5f, 0.0f, 2.0f, 1.0f, 1.0f, 1.0f};
+    triangles[0].v[2] = {400.0f, 300.0f, 0.5f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f};
+    triangles[0].name = "Textured quad (lower-left tri)";
+
+    triangles[1].v[0] = {100.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};
+    triangles[1].v[1] = {400.0f, 300.0f, 0.5f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f};
+    triangles[1].v[2] = {400.0f, 50.0f, 0.5f, 2.0f, 0.0f, 1.0f, 1.0f, 1.0f};
+    triangles[1].name = "Textured quad (upper-right tri)";
+
+    triangles[2].v[0] = {480.0f, 80.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.3f, 0.3f};
+    triangles[2].v[1] = {420.0f, 280.0f, 0.5f, 0.0f, 1.0f, 0.3f, 1.0f, 0.3f};
+    triangles[2].v[2] = {580.0f, 280.0f, 0.5f, 1.0f, 1.0f, 0.3f, 0.3f, 1.0f};
+    triangles[2].name = "RGB triangle (texture modulated)";
+
+    triangles[3].v[0] = {450.0f, 320.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.2f};
+    triangles[3].v[1] = {420.0f, 450.0f, 0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 0.1f};
+    triangles[3].v[2] = {580.0f, 400.0f, 0.5f, 1.0f, 0.5f, 1.0f, 0.9f, 0.0f};
+    triangles[3].name = "Yellow triangle (texture modulated)";
+
+    const int num_triangles = 4;
+
+    // ==================== NEAREST NEIGHBOR ====================
+    printf("----------------------------------------------\n");
+    printf("Pass 1: NEAREST NEIGHBOR filtering\n");
+    printf("----------------------------------------------\n");
+
+    clear_framebuffer(pack_rgb565(0.05f, 0.05f, 0.15f));
+    dut->tex_filter_bilinear = 0;  // Nearest neighbor
+
+    int nearest_fragments = 0;
+    render_scene(dut, triangles, num_triangles, sim_time, nearest_fragments);
+
+    save_ppm("output_nearest.ppm");
+    printf("  Fragments: %d\n", nearest_fragments);
+    printf("  Saved: output_nearest.ppm\n\n");
+
+    // ==================== BILINEAR ====================
+    printf("----------------------------------------------\n");
+    printf("Pass 2: BILINEAR filtering\n");
+    printf("----------------------------------------------\n");
+
+    clear_framebuffer(pack_rgb565(0.05f, 0.05f, 0.15f));
+    dut->tex_filter_bilinear = 1;  // Bilinear
+
+    int bilinear_fragments = 0;
+    render_scene(dut, triangles, num_triangles, sim_time, bilinear_fragments);
+
+    save_ppm("output_bilinear.ppm");
+    printf("  Fragments: %d\n", bilinear_fragments);
+    printf("  Saved: output_bilinear.ppm\n\n");
+
+    // ==================== SUMMARY ====================
     printf("==============================================\n");
+    printf("Comparison complete!\n");
+    printf("==============================================\n");
+    printf("Nearest neighbor: output_nearest.ppm\n");
+    printf("Bilinear filter:  output_bilinear.ppm\n");
+    printf("\nUse an image viewer to compare the two outputs.\n");
+    printf("Bilinear should appear smoother, especially on\n");
+    printf("texture edges and where magnification occurs.\n");
 
-    // Save output
-    save_ppm("rasterizer_output.ppm");
-
-    // Cleanup
-    tfp->close();
-    delete tfp;
     delete dut;
-
-    printf("\nOutput: rasterizer_output.ppm\n");
-    printf("Waveform: rasterizer.vcd\n");
     return 0;
 }

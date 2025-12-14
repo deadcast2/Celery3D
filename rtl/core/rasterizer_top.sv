@@ -26,6 +26,7 @@ module rasterizer_top
     // Texture configuration
     input  logic        tex_enable,
     input  logic        modulate_enable,
+    input  logic        tex_filter_bilinear,  // 0=nearest, 1=bilinear
 
     // Texture memory write interface
     input  logic [TEX_ADDR_BITS-1:0] tex_wr_addr,
@@ -110,7 +111,7 @@ module rasterizer_top
         .frag_out_ready (pc_frag_ready)
     );
 
-    // Texture mapping unit (3-stage pipeline)
+    // Texture mapping unit (5-stage pipeline with bilinear filtering)
     texture_unit #(
         .TEX_WIDTH_LOG2 (TEX_WIDTH_LOG2),
         .TEX_HEIGHT_LOG2(TEX_HEIGHT_LOG2)
@@ -119,6 +120,7 @@ module rasterizer_top
         .rst_n          (rst_n),
         .tex_enable     (tex_enable),
         .modulate_enable(modulate_enable),
+        .filter_bilinear(tex_filter_bilinear),
         .frag_in        (pc_frag),
         .frag_in_valid  (pc_frag_valid),
         .frag_in_ready  (pc_frag_ready),
