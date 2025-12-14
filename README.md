@@ -240,7 +240,16 @@ RTL rasterizer with Gouraud shading and perspective-correct interpolation, rende
 
 ## License
 
-MIT License - See LICENSE file for details.
+This project uses dual licensing to appropriately cover hardware and software:
+
+| Component | License | File |
+|-----------|---------|------|
+| Hardware (RTL, FPGA) | CERN-OHL-P-2.0 | [LICENSE-HARDWARE](LICENSE-HARDWARE) |
+| Software (driver, API) | Apache-2.0 | [LICENSE-SOFTWARE](LICENSE-SOFTWARE) |
+
+Both licenses are permissive and require attribution. You are free to use,
+study, modify, and distribute this project, provided you retain copyright
+notices. See [LICENSE](LICENSE) for details.
 
 ## Acknowledgments
 
