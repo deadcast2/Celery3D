@@ -19,7 +19,8 @@
 #define SCREEN_HEIGHT 480
 #define FP_FRAC_BITS 16
 #define TEX_SIZE 64
-#define DB_SIZE 128  // Depth buffer dimension (128x128)
+#define DB_WIDTH 640   // Depth buffer matches framebuffer
+#define DB_HEIGHT 480
 #define FB_WIDTH 640
 #define FB_HEIGHT 480
 
@@ -361,8 +362,8 @@ void clear_depth_buffer(Vrasterizer_top* dut, uint16_t clear_value, uint64_t& si
     dut->depth_clear_value = clear_value;
 
     // Hold depth_clear high for the entire duration (don't rely on clearing signal)
-    // The depth buffer is 128x128 = 16384 entries
-    int clear_cycles = DB_SIZE * DB_SIZE + 10;
+    // The depth buffer is 640x480 = 307200 entries
+    int clear_cycles = DB_WIDTH * DB_HEIGHT + 10;
 
     dut->depth_clear = 1;
 
@@ -387,7 +388,7 @@ void clear_depth_buffer(Vrasterizer_top* dut, uint16_t clear_value, uint64_t& si
         sim_time++;
     }
 
-    printf("  Debug: Depth clear to 0x%04X, ran %d cycles\n", clear_value, clear_cycles);
+    printf("  Depth buffer cleared to 0x%04X (%dx%d)\n", clear_value, DB_WIDTH, DB_HEIGHT);
 }
 
 // Render a scene with current filter settings
@@ -561,7 +562,7 @@ int main(int argc, char** argv) {
 
     // ==================== DEPTH BUFFER TEST ====================
     // Test with overlapping triangles at different depths
-    // Triangles are positioned within the 128x128 depth buffer area
+    // Depth buffer now matches framebuffer (640x480)
     printf("----------------------------------------------\n");
     printf("Pass 3: DEPTH BUFFER test (GR_CMP_LESS)\n");
     printf("----------------------------------------------\n");
@@ -570,16 +571,16 @@ int main(int argc, char** argv) {
     Triangle depth_triangles[2];
 
     // Front triangle (closer, z=0.3) - RED
-    // Position within depth buffer bounds (0-127)
-    depth_triangles[0].v[0] = {20.0f, 20.0f, 0.3f, 0.0f, 0.0f, 1.0f, 0.2f, 0.2f};
-    depth_triangles[0].v[1] = {20.0f, 100.0f, 0.3f, 0.0f, 1.0f, 1.0f, 0.2f, 0.2f};
-    depth_triangles[0].v[2] = {100.0f, 60.0f, 0.3f, 1.0f, 0.5f, 1.0f, 0.2f, 0.2f};
+    // Positioned to overlap with back triangle
+    depth_triangles[0].v[0] = {150.0f, 100.0f, 0.3f, 0.0f, 0.0f, 1.0f, 0.2f, 0.2f};
+    depth_triangles[0].v[1] = {150.0f, 380.0f, 0.3f, 0.0f, 1.0f, 1.0f, 0.2f, 0.2f};
+    depth_triangles[0].v[2] = {450.0f, 240.0f, 0.3f, 1.0f, 0.5f, 1.0f, 0.2f, 0.2f};
     depth_triangles[0].name = "Front triangle (RED, z=0.3)";
 
     // Back triangle (farther, z=0.7) - BLUE (rendered second)
-    depth_triangles[1].v[0] = {40.0f, 10.0f, 0.7f, 0.0f, 0.0f, 0.2f, 0.2f, 1.0f};
-    depth_triangles[1].v[1] = {40.0f, 110.0f, 0.7f, 0.0f, 1.0f, 0.2f, 0.2f, 1.0f};
-    depth_triangles[1].v[2] = {120.0f, 60.0f, 0.7f, 1.0f, 0.5f, 0.2f, 0.2f, 1.0f};
+    depth_triangles[1].v[0] = {200.0f, 50.0f, 0.7f, 0.0f, 0.0f, 0.2f, 0.2f, 1.0f};
+    depth_triangles[1].v[1] = {200.0f, 430.0f, 0.7f, 0.0f, 1.0f, 0.2f, 0.2f, 1.0f};
+    depth_triangles[1].v[2] = {550.0f, 240.0f, 0.7f, 1.0f, 0.5f, 0.2f, 0.2f, 1.0f};
     depth_triangles[1].name = "Back triangle (BLUE, z=0.7)";
 
     printf("  Debug: z=0.3 -> fp=0x%08X, z=0.7 -> fp=0x%08X\n",

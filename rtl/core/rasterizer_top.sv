@@ -8,8 +8,8 @@ module rasterizer_top
     parameter TEX_WIDTH_LOG2  = 6,  // 64 texels
     parameter TEX_HEIGHT_LOG2 = 6,
     parameter TEX_ADDR_BITS   = TEX_WIDTH_LOG2 + TEX_HEIGHT_LOG2,
-    parameter DB_WIDTH_LOG2   = 7,  // 128 pixels (depth buffer)
-    parameter DB_HEIGHT_LOG2  = 7,
+    parameter DB_WIDTH        = 640,  // Depth buffer (matches framebuffer)
+    parameter DB_HEIGHT       = 480,
     parameter FB_WIDTH        = 640,
     parameter FB_HEIGHT       = 480
 )(
@@ -166,8 +166,8 @@ module rasterizer_top
 
     // Depth buffer unit (3-stage pipeline)
     depth_buffer #(
-        .DB_WIDTH_LOG2 (DB_WIDTH_LOG2),
-        .DB_HEIGHT_LOG2(DB_HEIGHT_LOG2)
+        .DB_WIDTH (DB_WIDTH),
+        .DB_HEIGHT(DB_HEIGHT)
     ) u_depth_buffer (
         .clk               (clk),
         .rst_n             (rst_n),

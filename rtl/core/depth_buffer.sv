@@ -7,13 +7,9 @@
 module depth_buffer
     import celery_pkg::*;
 #(
-    // Depth buffer dimensions (must be power of 2)
-    parameter DB_WIDTH_LOG2  = 7,   // 128 pixels wide (default for sim)
-    parameter DB_HEIGHT_LOG2 = 7,   // 128 pixels tall
-    parameter DB_WIDTH  = 1 << DB_WIDTH_LOG2,
-    parameter DB_HEIGHT = 1 << DB_HEIGHT_LOG2,
-    parameter DB_SIZE   = DB_WIDTH * DB_HEIGHT,
-    parameter ADDR_BITS = DB_WIDTH_LOG2 + DB_HEIGHT_LOG2
+    // Depth buffer dimensions (matches framebuffer)
+    parameter DB_WIDTH  = 640,
+    parameter DB_HEIGHT = 480
 )(
     input  logic        clk,
     input  logic        rst_n,
@@ -40,6 +36,13 @@ module depth_buffer
     output logic        frag_out_valid,
     input  logic        frag_out_ready
 );
+
+    // =========================================================================
+    // Derived Parameters
+    // =========================================================================
+
+    localparam DB_SIZE   = DB_WIDTH * DB_HEIGHT;
+    localparam ADDR_BITS = $clog2(DB_SIZE);
 
     // =========================================================================
     // Depth Buffer Memory (Simple Dual-Port BRAM)
@@ -171,13 +174,26 @@ module depth_buffer
     logic [ADDR_BITS-1:0] frag_addr;
     logic frag_in_bounds;
 
+    // Address calculation function (matches framebuffer.sv)
+    function automatic logic [ADDR_BITS-1:0] calc_addr(
+        input logic [$clog2(DB_WIDTH)-1:0] x,
+        input logic [$clog2(DB_HEIGHT)-1:0] y
+    );
+        return y * DB_WIDTH + x;
+    endfunction
+
+    // Extract coordinates from fragment
+    logic [$clog2(DB_WIDTH)-1:0] frag_x;
+    logic [$clog2(DB_HEIGHT)-1:0] frag_y;
+    assign frag_x = frag_in.x[$clog2(DB_WIDTH)-1:0];
+    assign frag_y = frag_in.y[$clog2(DB_HEIGHT)-1:0];
+
     always_comb begin
-        // Address = y * width + x = {y[LOG2-1:0], x[LOG2-1:0]}
-        frag_addr = {frag_in.y[DB_HEIGHT_LOG2-1:0], frag_in.x[DB_WIDTH_LOG2-1:0]};
+        // Address = y * width + x
+        frag_addr = calc_addr(frag_x, frag_y);
 
         // Bounds check: fragment coordinates must be within depth buffer dimensions
-        // Compare against the computed width/height values
-        frag_in_bounds = (frag_in.x[11:0] < 12'(DB_WIDTH)) && (frag_in.y[11:0] < 12'(DB_HEIGHT));
+        frag_in_bounds = (frag_in.x < DB_WIDTH) && (frag_in.y < DB_HEIGHT);
     end
 
     // Issue BRAM read with fragment address (or clear address during clear)
