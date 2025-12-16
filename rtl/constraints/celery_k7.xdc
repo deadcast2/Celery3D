@@ -1,5 +1,5 @@
-# Celery3D GPU - Timing Constraints for Open Source SDR Lab Kintex-7 Board
-# Target: Xilinx Kintex-7 XC7K325T-2FFG676I
+# Celery3D GPU - Timing Constraints for KC705 Evaluation Board
+# Target: Xilinx Kintex-7 XC7K325T-2FFG900C
 
 # ==============================================================================
 # Input Clock - 50 MHz single-ended oscillator

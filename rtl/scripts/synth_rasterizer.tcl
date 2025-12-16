@@ -1,5 +1,5 @@
 # Celery3D GPU - Vivado Synthesis Script (Non-Project Mode)
-# Target: Xilinx Kintex-7 XC7K325T-2FFG676I
+# Target: Xilinx Kintex-7 XC7K325T-2FFG900C (KC705 Evaluation Board)
 # Usage: vivado -mode batch -source scripts/synth_rasterizer.tcl
 
 puts "=============================================="
@@ -7,7 +7,7 @@ puts "Celery3D GPU - Rasterizer Synthesis"
 puts "=============================================="
 
 # Set part and output directory
-set part xc7k325tffg676-2
+set part xc7k325tffg900-2
 set output_dir ./build
 set top_module rasterizer_top
 
