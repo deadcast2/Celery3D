@@ -242,21 +242,22 @@ The texture unit supports both nearest-neighbor and bilinear filtering modes, se
 
 ### Depth Buffer
 
-The depth buffer provides hardware Z-buffering with Glide-compatible comparison functions. The implementation uses a 3-stage pipeline and BRAM-based storage (parameterized resolution, 128x128 for simulation).
+The depth buffer provides hardware Z-buffering with Glide-compatible comparison functions. The 640x480 depth buffer matches the framebuffer resolution and uses a 3-stage pipeline with BRAM-based storage.
 
 **Features:**
-- 16-bit depth precision
+- 16-bit depth precision (640x480 resolution)
 - 8 comparison functions (GR_CMP_NEVER, LESS, EQUAL, LEQUAL, GREATER, NOTEQUAL, GEQUAL, ALWAYS)
 - Independent depth test enable and depth write enable
 - Hardware clear support
 
 **Depth Test Comparison:**
 
-| GR_CMP_LESS (Standard) | Depth Test Disabled |
-|:----------------------:|:-------------------:|
-| Closer fragments occlude farther | Painter's algorithm (draw order) |
+The demo renders 6 overlapping colored triangles front-to-back (closest first). With depth testing enabled, closer triangles correctly occlude farther ones. With depth testing disabled, the last-rendered triangles overwrite everything regardless of depth.
 
-With GR_CMP_LESS, the red triangle (z=0.3) correctly occludes the blue triangle (z=0.7) where they overlap.
+| GR_CMP_LESS (Correct) | Depth Disabled (Wrong) | GR_CMP_GREATER |
+|:---------------------:|:----------------------:|:--------------:|
+| ![Depth Less](docs/depth_less.png) | ![Depth Disabled](docs/depth_disabled.png) | ![Depth Greater](docs/depth_greater.png) |
+| Closer triangles in front | Draw order overwrites depth | Farther triangles in front |
 
 ### Synthesis Results (Kintex-7 XC7K325T)
 

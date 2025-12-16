@@ -561,32 +561,53 @@ int main(int argc, char** argv) {
     printf("  Saved: output_bilinear.ppm\n\n");
 
     // ==================== DEPTH BUFFER TEST ====================
-    // Test with overlapping triangles at different depths
+    // Test with multiple overlapping triangles at different depths
     // Depth buffer now matches framebuffer (640x480)
     printf("----------------------------------------------\n");
     printf("Pass 3: DEPTH BUFFER test (GR_CMP_LESS)\n");
     printf("----------------------------------------------\n");
 
-    // Define overlapping triangles at different depths
-    Triangle depth_triangles[2];
+    // Define overlapping triangles at various depths and colors
+    // Ordered front-to-back (closest first) so depth-disabled looks obviously wrong
+    Triangle depth_triangles[6];
 
-    // Front triangle (closer, z=0.3) - RED
-    // Positioned to overlap with back triangle
-    depth_triangles[0].v[0] = {150.0f, 100.0f, 0.3f, 0.0f, 0.0f, 1.0f, 0.2f, 0.2f};
-    depth_triangles[0].v[1] = {150.0f, 380.0f, 0.3f, 0.0f, 1.0f, 1.0f, 0.2f, 0.2f};
-    depth_triangles[0].v[2] = {450.0f, 240.0f, 0.3f, 1.0f, 0.5f, 1.0f, 0.2f, 0.2f};
-    depth_triangles[0].name = "Front triangle (RED, z=0.3)";
+    // Cyan triangle (z=0.1) - closest, rendered FIRST
+    depth_triangles[0].v[0] = {480.0f, 80.0f,  0.1f, 0.0f, 0.0f, 0.1f, 1.0f, 1.0f};
+    depth_triangles[0].v[1] = {420.0f, 280.0f, 0.1f, 0.0f, 1.0f, 0.1f, 1.0f, 1.0f};
+    depth_triangles[0].v[2] = {600.0f, 200.0f, 0.1f, 1.0f, 0.5f, 0.1f, 1.0f, 1.0f};
+    depth_triangles[0].name = "Closest triangle (CYAN, z=0.1)";
 
-    // Back triangle (farther, z=0.7) - BLUE (rendered second)
-    depth_triangles[1].v[0] = {200.0f, 50.0f, 0.7f, 0.0f, 0.0f, 0.2f, 0.2f, 1.0f};
-    depth_triangles[1].v[1] = {200.0f, 430.0f, 0.7f, 0.0f, 1.0f, 0.2f, 0.2f, 1.0f};
-    depth_triangles[1].v[2] = {550.0f, 240.0f, 0.7f, 1.0f, 0.5f, 0.2f, 0.2f, 1.0f};
-    depth_triangles[1].name = "Back triangle (BLUE, z=0.7)";
+    // Yellow triangle (z=0.2)
+    depth_triangles[1].v[0] = {400.0f, 150.0f, 0.2f, 0.0f, 0.0f, 1.0f, 1.0f, 0.1f};
+    depth_triangles[1].v[1] = {320.0f, 380.0f, 0.2f, 0.0f, 1.0f, 1.0f, 1.0f, 0.1f};
+    depth_triangles[1].v[2] = {550.0f, 300.0f, 0.2f, 1.0f, 0.5f, 1.0f, 1.0f, 0.1f};
+    depth_triangles[1].name = "Close triangle (YELLOW, z=0.2)";
 
-    printf("  Debug: z=0.3 -> fp=0x%08X, z=0.7 -> fp=0x%08X\n",
-           float_to_fp(0.3f), float_to_fp(0.7f));
-    printf("  Debug: depth16 from 0.3 = 0x%04X, from 0.7 = 0x%04X\n",
-           float_to_fp(0.3f) & 0xFFFF, float_to_fp(0.7f) & 0xFFFF);
+    // Green triangle (z=0.5) - middle depth
+    depth_triangles[2].v[0] = {200.0f, 60.0f,  0.5f, 0.0f, 0.0f, 0.2f, 1.0f, 0.2f};
+    depth_triangles[2].v[1] = {120.0f, 300.0f, 0.5f, 0.0f, 1.0f, 0.2f, 1.0f, 0.2f};
+    depth_triangles[2].v[2] = {350.0f, 200.0f, 0.5f, 1.0f, 0.5f, 0.2f, 1.0f, 0.2f};
+    depth_triangles[2].name = "Mid triangle (GREEN, z=0.5)";
+
+    // Blue triangle (z=0.7)
+    depth_triangles[3].v[0] = {100.0f, 80.0f,  0.7f, 0.0f, 0.0f, 0.2f, 0.2f, 1.0f};
+    depth_triangles[3].v[1] = {100.0f, 400.0f, 0.7f, 0.0f, 1.0f, 0.2f, 0.2f, 1.0f};
+    depth_triangles[3].v[2] = {450.0f, 240.0f, 0.7f, 1.0f, 0.5f, 0.2f, 0.2f, 1.0f};
+    depth_triangles[3].name = "Back triangle (BLUE, z=0.7)";
+
+    // Gray triangle (z=0.9) - farthest, rendered LAST
+    depth_triangles[4].v[0] = {50.0f,  50.0f,  0.9f, 0.0f, 0.0f, 0.3f, 0.3f, 0.3f};
+    depth_triangles[4].v[1] = {50.0f,  430.0f, 0.9f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f};
+    depth_triangles[4].v[2] = {590.0f, 240.0f, 0.9f, 1.0f, 0.5f, 0.3f, 0.3f, 0.3f};
+    depth_triangles[4].name = "Background (GRAY, z=0.9)";
+
+    // Red triangle (z=0.3)
+    depth_triangles[5].v[0] = {280.0f, 100.0f, 0.3f, 0.0f, 0.0f, 1.0f, 0.2f, 0.2f};
+    depth_triangles[5].v[1] = {180.0f, 350.0f, 0.3f, 0.0f, 1.0f, 1.0f, 0.2f, 0.2f};
+    depth_triangles[5].v[2] = {420.0f, 280.0f, 0.3f, 1.0f, 0.5f, 1.0f, 0.2f, 0.2f};
+    depth_triangles[5].name = "Front triangle (RED, z=0.3)";
+
+    const int num_depth_triangles = 6;
 
     // Enable depth testing with GR_CMP_LESS
     dut->tex_enable = 0;  // Disable texture for clarity
@@ -599,12 +620,12 @@ int main(int argc, char** argv) {
     clear_depth_buffer(dut, 0xFFFF, sim_time);  // Clear to far plane
 
     int depth_less_fragments = 0;
-    render_scene(dut, depth_triangles, 2, sim_time, depth_less_fragments);
+    render_scene(dut, depth_triangles, num_depth_triangles, sim_time, depth_less_fragments);
 
     read_hw_framebuffer(dut, sim_time);
     save_ppm("output_depth_less.ppm");
     printf("  Fragments: %d\n", depth_less_fragments);
-    printf("  Expected: Blue occluded by red where they overlap\n");
+    printf("  Expected: Correct depth - closer triangles visible in front\n");
     printf("  Saved: output_depth_less.ppm\n\n");
 
     // ==================== DEPTH DISABLED TEST ====================
@@ -618,12 +639,12 @@ int main(int argc, char** argv) {
     clear_hw_framebuffer(dut, pack_rgb565(0.1f, 0.1f, 0.1f), sim_time);
 
     int no_depth_fragments = 0;
-    render_scene(dut, depth_triangles, 2, sim_time, no_depth_fragments);
+    render_scene(dut, depth_triangles, num_depth_triangles, sim_time, no_depth_fragments);
 
     read_hw_framebuffer(dut, sim_time);
     save_ppm("output_depth_disabled.ppm");
     printf("  Fragments: %d\n", no_depth_fragments);
-    printf("  Expected: Blue drawn on top (painter's algorithm)\n");
+    printf("  Expected: WRONG - gray background overwrites everything (painter's algorithm)\n");
     printf("  Saved: output_depth_disabled.ppm\n\n");
 
     // ==================== DEPTH GR_CMP_GREATER TEST ====================
@@ -639,12 +660,12 @@ int main(int argc, char** argv) {
     clear_depth_buffer(dut, 0x0000, sim_time);  // Clear to near plane
 
     int depth_greater_fragments = 0;
-    render_scene(dut, depth_triangles, 2, sim_time, depth_greater_fragments);
+    render_scene(dut, depth_triangles, num_depth_triangles, sim_time, depth_greater_fragments);
 
     read_hw_framebuffer(dut, sim_time);
     save_ppm("output_depth_greater.ppm");
     printf("  Fragments: %d\n", depth_greater_fragments);
-    printf("  Expected: All fragments pass (reverse depth: farther overwrites closer)\n");
+    printf("  Expected: Reverse depth - farther triangles pass, same as depth-disabled\n");
     printf("  Saved: output_depth_greater.ppm\n\n");
 
     // ==================== SUMMARY ====================
