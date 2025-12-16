@@ -9,7 +9,9 @@ module rasterizer_top
     parameter TEX_HEIGHT_LOG2 = 6,
     parameter TEX_ADDR_BITS   = TEX_WIDTH_LOG2 + TEX_HEIGHT_LOG2,
     parameter DB_WIDTH_LOG2   = 7,  // 128 pixels (depth buffer)
-    parameter DB_HEIGHT_LOG2  = 7
+    parameter DB_HEIGHT_LOG2  = 7,
+    parameter FB_WIDTH        = 640,
+    parameter FB_HEIGHT       = 480
 )(
     input  logic        clk,
     input  logic        rst_n,
@@ -43,6 +45,18 @@ module rasterizer_top
     input  logic [15:0] depth_clear_value,
     output logic        depth_clearing,
 
+    // Framebuffer configuration
+    input  logic        fb_clear,
+    input  rgb565_t     fb_clear_color,
+    output logic        fb_clearing,
+
+    // Framebuffer read interface (for video output)
+    input  logic [$clog2(FB_WIDTH)-1:0]  fb_read_x,
+    input  logic [$clog2(FB_HEIGHT)-1:0] fb_read_y,
+    input  logic                          fb_read_en,
+    output rgb565_t                       fb_read_data,
+    output logic                          fb_read_valid,
+
     // Status
     output logic        busy
 );
@@ -72,10 +86,11 @@ module rasterizer_top
     logic tex_frag_valid;
     logic tex_frag_ready;
 
-    // Depth buffer to output interface
+    // Depth buffer to framebuffer interface
     fragment_t db_frag;
     rgb565_t db_color;
     logic db_frag_valid;
+    logic db_frag_ready;
 
     // State for coordinating setup and rasterizer
     typedef enum logic [1:0] {
@@ -169,10 +184,33 @@ module rasterizer_top
         .frag_out          (db_frag),
         .color_out         (db_color),
         .frag_out_valid    (db_frag_valid),
-        .frag_out_ready    (frag_ready)
+        .frag_out_ready    (db_frag_ready)
     );
 
-    // Output from depth buffer
+    // Framebuffer (stores rendered pixels)
+    logic fb_busy;
+    framebuffer #(
+        .FB_WIDTH (FB_WIDTH),
+        .FB_HEIGHT(FB_HEIGHT)
+    ) u_framebuffer (
+        .clk           (clk),
+        .rst_n         (rst_n),
+        .frag_in       (db_frag),
+        .color_in      (db_color),
+        .frag_in_valid (db_frag_valid),
+        .frag_in_ready (db_frag_ready),
+        .read_x        (fb_read_x),
+        .read_y        (fb_read_y),
+        .read_en       (fb_read_en),
+        .read_data     (fb_read_data),
+        .read_valid    (fb_read_valid),
+        .clear         (fb_clear),
+        .clear_color   (fb_clear_color),
+        .clearing      (fb_clearing),
+        .busy          (fb_busy)
+    );
+
+    // Output fragment info (for testbench visibility)
     assign frag_out = db_frag;
     assign color_out = db_color;
     assign frag_valid = db_frag_valid;

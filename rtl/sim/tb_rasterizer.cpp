@@ -20,6 +20,8 @@
 #define FP_FRAC_BITS 16
 #define TEX_SIZE 64
 #define DB_SIZE 128  // Depth buffer dimension (128x128)
+#define FB_WIDTH 640
+#define FB_HEIGHT 480
 
 // Depth comparison functions (matches Glide GR_CMP_*)
 enum DepthFunc {
@@ -94,14 +96,73 @@ void save_ppm(const char* filename) {
     printf("Saved framebuffer to %s\n", filename);
 }
 
-// Clear framebuffer
+// Clear software framebuffer (for initialization)
 void clear_framebuffer(uint16_t color) {
     for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++) {
         framebuffer[i] = color;
     }
 }
 
-// Write pixel to framebuffer
+// Clear hardware framebuffer
+void clear_hw_framebuffer(Vrasterizer_top* dut, uint16_t color, uint64_t& sim_time) {
+    dut->fb_clear_color = color;
+    dut->fb_clear = 1;
+
+    // Wait for clear to start
+    for (int i = 0; i < 5; i++) {
+        dut->clk = 1; dut->eval(); sim_time++;
+        dut->clk = 0; dut->eval(); sim_time++;
+    }
+
+    // Wait for clear to complete (FB_WIDTH * FB_HEIGHT cycles)
+    int clear_cycles = FB_WIDTH * FB_HEIGHT + 100;
+    for (int i = 0; i < clear_cycles; i++) {
+        dut->clk = 1; dut->eval(); sim_time++;
+        dut->clk = 0; dut->eval(); sim_time++;
+        if (!dut->fb_clearing && i > 10) break;
+    }
+
+    dut->fb_clear = 0;
+
+    // A few extra cycles to settle
+    for (int i = 0; i < 5; i++) {
+        dut->clk = 1; dut->eval(); sim_time++;
+        dut->clk = 0; dut->eval(); sim_time++;
+    }
+
+    printf("  Framebuffer cleared to 0x%04X\n", color);
+}
+
+// Read hardware framebuffer into software buffer
+void read_hw_framebuffer(Vrasterizer_top* dut, uint64_t& sim_time) {
+    for (int y = 0; y < FB_HEIGHT; y++) {
+        for (int x = 0; x < FB_WIDTH; x++) {
+            // Issue read request
+            dut->fb_read_x = x;
+            dut->fb_read_y = y;
+            dut->fb_read_en = 1;
+
+            // Clock cycle 1: request registered
+            dut->clk = 1; dut->eval(); sim_time++;
+            dut->clk = 0; dut->eval(); sim_time++;
+
+            dut->fb_read_en = 0;
+
+            // Clock cycle 2: address latched, read issued
+            dut->clk = 1; dut->eval(); sim_time++;
+            dut->clk = 0; dut->eval(); sim_time++;
+
+            // Clock cycle 3: data valid
+            dut->clk = 1; dut->eval(); sim_time++;
+            dut->clk = 0; dut->eval(); sim_time++;
+
+            // Read the data
+            framebuffer[y * FB_WIDTH + x] = dut->fb_read_data;
+        }
+    }
+}
+
+// Write pixel to framebuffer (kept for compatibility, but not used with hw fb)
 void write_pixel(int x, int y, uint16_t color) {
     if (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT) {
         framebuffer[y * SCREEN_WIDTH + x] = color;
@@ -345,16 +406,9 @@ void render_scene(Vrasterizer_top* dut, Triangle* triangles, int num_triangles,
         dut->eval();
         sim_time++;
 
-        // Collect fragments
-        if (dut->frag_valid && dut->frag_ready) {
+        // Count fragments (pixels are written to hardware framebuffer automatically)
+        if (dut->frag_valid) {
             total_fragments++;
-
-            int frag_x, frag_y;
-            float unused_r, unused_g, unused_b;
-            get_fragment(dut, &frag_x, &frag_y, &unused_r, &unused_g, &unused_b);
-
-            uint16_t color = dut->color_out;
-            write_pixel(frag_x, frag_y, color);
         }
 
         // Triangle submission state machine
@@ -421,6 +475,13 @@ int main(int argc, char** argv) {
     dut->depth_clear = 0;
     dut->depth_clear_value = 0xFFFF;  // Far plane
 
+    // Framebuffer control
+    dut->fb_clear = 0;
+    dut->fb_clear_color = 0x0000;
+    dut->fb_read_x = 0;
+    dut->fb_read_y = 0;
+    dut->fb_read_en = 0;
+
     // Reset sequence
     uint64_t sim_time = 0;
     for (int i = 0; i < 10; i++) {
@@ -471,12 +532,13 @@ int main(int argc, char** argv) {
     printf("Pass 1: NEAREST NEIGHBOR filtering\n");
     printf("----------------------------------------------\n");
 
-    clear_framebuffer(pack_rgb565(0.05f, 0.05f, 0.15f));
+    clear_hw_framebuffer(dut, pack_rgb565(0.05f, 0.05f, 0.15f), sim_time);
     dut->tex_filter_bilinear = 0;  // Nearest neighbor
 
     int nearest_fragments = 0;
     render_scene(dut, triangles, num_triangles, sim_time, nearest_fragments);
 
+    read_hw_framebuffer(dut, sim_time);
     save_ppm("output_nearest.ppm");
     printf("  Fragments: %d\n", nearest_fragments);
     printf("  Saved: output_nearest.ppm\n\n");
@@ -486,12 +548,13 @@ int main(int argc, char** argv) {
     printf("Pass 2: BILINEAR filtering\n");
     printf("----------------------------------------------\n");
 
-    clear_framebuffer(pack_rgb565(0.05f, 0.05f, 0.15f));
+    clear_hw_framebuffer(dut, pack_rgb565(0.05f, 0.05f, 0.15f), sim_time);
     dut->tex_filter_bilinear = 1;  // Bilinear
 
     int bilinear_fragments = 0;
     render_scene(dut, triangles, num_triangles, sim_time, bilinear_fragments);
 
+    read_hw_framebuffer(dut, sim_time);
     save_ppm("output_bilinear.ppm");
     printf("  Fragments: %d\n", bilinear_fragments);
     printf("  Saved: output_bilinear.ppm\n\n");
@@ -531,12 +594,13 @@ int main(int argc, char** argv) {
     dut->depth_func = GR_CMP_LESS;
 
     // Clear framebuffer and depth buffer
-    clear_framebuffer(pack_rgb565(0.1f, 0.1f, 0.1f));
+    clear_hw_framebuffer(dut, pack_rgb565(0.1f, 0.1f, 0.1f), sim_time);
     clear_depth_buffer(dut, 0xFFFF, sim_time);  // Clear to far plane
 
     int depth_less_fragments = 0;
     render_scene(dut, depth_triangles, 2, sim_time, depth_less_fragments);
 
+    read_hw_framebuffer(dut, sim_time);
     save_ppm("output_depth_less.ppm");
     printf("  Fragments: %d\n", depth_less_fragments);
     printf("  Expected: Blue occluded by red where they overlap\n");
@@ -550,11 +614,12 @@ int main(int argc, char** argv) {
     dut->depth_test_enable = 0;
     dut->depth_write_enable = 0;
 
-    clear_framebuffer(pack_rgb565(0.1f, 0.1f, 0.1f));
+    clear_hw_framebuffer(dut, pack_rgb565(0.1f, 0.1f, 0.1f), sim_time);
 
     int no_depth_fragments = 0;
     render_scene(dut, depth_triangles, 2, sim_time, no_depth_fragments);
 
+    read_hw_framebuffer(dut, sim_time);
     save_ppm("output_depth_disabled.ppm");
     printf("  Fragments: %d\n", no_depth_fragments);
     printf("  Expected: Blue drawn on top (painter's algorithm)\n");
@@ -569,12 +634,13 @@ int main(int argc, char** argv) {
     dut->depth_write_enable = 1;
     dut->depth_func = GR_CMP_GREATER;
 
-    clear_framebuffer(pack_rgb565(0.1f, 0.1f, 0.1f));
+    clear_hw_framebuffer(dut, pack_rgb565(0.1f, 0.1f, 0.1f), sim_time);
     clear_depth_buffer(dut, 0x0000, sim_time);  // Clear to near plane
 
     int depth_greater_fragments = 0;
     render_scene(dut, depth_triangles, 2, sim_time, depth_greater_fragments);
 
+    read_hw_framebuffer(dut, sim_time);
     save_ppm("output_depth_greater.ppm");
     printf("  Fragments: %d\n", depth_greater_fragments);
     printf("  Expected: All fragments pass (reverse depth: farther overwrites closer)\n");

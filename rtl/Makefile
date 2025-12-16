@@ -13,6 +13,7 @@ RTL_SRCS = \
     core/perspective_correct.sv \
     core/texture_unit.sv \
     core/depth_buffer.sv \
+    core/framebuffer.sv \
     core/rasterizer_top.sv
 
 # Testbench
