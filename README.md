@@ -19,17 +19,17 @@ Build a functional retro-style GPU that can render textured, Gouraud-shaded 3D g
 
 ## Hardware Platform
 
-**Target Board:** [Open Source SDR Lab Kintex-7 XC7K325T](https://opensourcesdrlab.com/products/fpga-xilinx-kintex-7-xc7k325t-pcie-development-board-with-dual-gigabit-ethernet-ports-dual-10-gigabit-sfp-optical-communication)
+**Target Board:** [AMD/Xilinx Kintex-7 KC705 Evaluation Kit](https://www.xilinx.com/products/boards-and-kits/ek-k7-kc705-g.html)
 
 | Feature | Specification |
 |---------|---------------|
-| FPGA | Xilinx Kintex-7 XC7K325T-2FFG676I |
+| FPGA | Xilinx Kintex-7 XC7K325T-2FFG900C |
 | Logic | 326K cells, 840 DSPs, 16Mb BRAM |
-| Memory | 1GB DDR3, 32MB Flash |
-| PCIe | x4 Gen2 (x8 physical slot) |
-| Video Output | 2x HDMI out (1080p@60Hz), 1x HDMI in |
-| Network | 2x 10G SFP+, 2x Gigabit Ethernet |
-| Price | ~$341 USD |
+| Memory | 1GB DDR3 SODIMM, 128MB BPI Flash |
+| PCIe | x4 Gen2 (5 Gb/s per lane) |
+| Video Output | HDMI |
+| Network | 1x SFP+, Gigabit Ethernet |
+| Expansion | FMC HPC + FMC LPC connectors |
 
 This board plugs directly into a PC's PCIe slot, enabling the GPU to communicate with the host via DMA while outputting video over HDMI. Just like a real graphics card!
 
@@ -212,7 +212,7 @@ make timing
 make clean-vivado
 ```
 
-**Target Device:** Xilinx Kintex-7 XC7K325T-2FFG676 (Open Source SDR Lab board)
+**Target Device:** Xilinx Kintex-7 XC7K325T-2FFG900C (KC705 Evaluation Kit)
 
 ## Implementation Phases
 
