@@ -27,12 +27,14 @@ module depth_buffer
     // Input from texture_unit
     input  fragment_t   frag_in,
     input  rgb565_t     color_in,
+    input  alpha_t      tex_alpha_in,     // Texture alpha input
     input  logic        frag_in_valid,
     output logic        frag_in_ready,
 
     // Output (passed fragments)
     output fragment_t   frag_out,
     output rgb565_t     color_out,
+    output alpha_t      tex_alpha_out,    // Texture alpha output
     output logic        frag_out_valid,
     input  logic        frag_out_ready
 );
@@ -162,6 +164,7 @@ module depth_buffer
 
     fragment_t p1_frag;
     rgb565_t p1_color;
+    alpha_t p1_alpha;
     logic p1_valid;
     logic [15:0] p1_depth16;
     logic [ADDR_BITS-1:0] p1_addr;
@@ -203,6 +206,7 @@ module depth_buffer
         if (!rst_n) begin
             p1_frag <= '0;
             p1_color <= 16'h0000;
+            p1_alpha <= 8'h00;
             p1_valid <= 1'b0;
             p1_depth16 <= 16'h0000;
             p1_addr <= '0;
@@ -214,6 +218,7 @@ module depth_buffer
             p1_valid <= frag_in_valid && frag_in.valid;
             p1_frag <= frag_in;
             p1_color <= color_in;
+            p1_alpha <= tex_alpha_in;
             p1_depth16 <= z_to_depth16(frag_in.z);
             p1_addr <= frag_addr;
             p1_in_bounds <= frag_in_bounds;
@@ -232,6 +237,7 @@ module depth_buffer
 
     fragment_t p2_frag;
     rgb565_t p2_color;
+    alpha_t p2_alpha;
     logic p2_valid;
     logic [15:0] p2_depth16;
     logic [ADDR_BITS-1:0] p2_addr;
@@ -261,6 +267,7 @@ module depth_buffer
         if (!rst_n) begin
             p2_frag <= '0;
             p2_color <= 16'h0000;
+            p2_alpha <= 8'h00;
             p2_valid <= 1'b0;
             p2_depth16 <= 16'h0000;
             p2_addr <= '0;
@@ -273,6 +280,7 @@ module depth_buffer
             p2_valid <= p1_valid;
             p2_frag <= p1_frag;
             p2_color <= p1_color;
+            p2_alpha <= p1_alpha;
             p2_depth16 <= p1_depth16;
             p2_addr <= p1_addr;
             p2_in_bounds <= p1_in_bounds;
@@ -289,18 +297,21 @@ module depth_buffer
 
     fragment_t p3_frag;
     rgb565_t p3_color;
+    alpha_t p3_alpha;
     logic p3_valid;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             p3_frag <= '0;
             p3_color <= 16'h0000;
+            p3_alpha <= 8'h00;
             p3_valid <= 1'b0;
         end else if (!stall) begin
             // Only output valid fragments that passed depth test
             p3_valid <= p2_valid && p2_depth_pass;
             p3_frag <= p2_frag;
             p3_color <= p2_color;
+            p3_alpha <= p2_alpha;
         end
     end
 
@@ -336,6 +347,7 @@ module depth_buffer
 
     assign frag_out = p3_frag;
     assign color_out = p3_color;
+    assign tex_alpha_out = p3_alpha;
     assign frag_out_valid = p3_valid;
 
 endmodule

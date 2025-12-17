@@ -24,6 +24,7 @@ module texture_unit
     input  logic        tex_enable,        // Enable texture sampling
     input  logic        modulate_enable,   // Enable Gouraud modulation
     input  logic        filter_bilinear,   // 0=nearest, 1=bilinear
+    input  logic        tex_format_rgba4444, // 0=RGB565, 1=RGBA4444
 
     // Input fragment (from perspective_correct)
     input  fragment_t   frag_in,
@@ -33,6 +34,7 @@ module texture_unit
     // Output fragment (textured/modulated)
     output fragment_t   frag_out,
     output rgb565_t     color_out,         // Final RGB565 color
+    output alpha_t      tex_alpha_out,     // Texture alpha (8-bit)
     output logic        frag_out_valid,
     input  logic        frag_out_ready,
 
@@ -138,6 +140,7 @@ module texture_unit
     logic p1_tex_enable;
     logic p1_modulate_enable;
     logic p1_filter_bilinear;
+    logic p1_tex_format_rgba4444;
     logic p1_x0_is_odd;
     logic [7:0] p1_weight_u, p1_weight_v;
 
@@ -206,6 +209,7 @@ module texture_unit
             p1_tex_enable <= 1'b0;
             p1_modulate_enable <= 1'b0;
             p1_filter_bilinear <= 1'b0;
+            p1_tex_format_rgba4444 <= 1'b0;
             p1_x0_is_odd <= 1'b0;
             p1_weight_u <= 8'd0;
             p1_weight_v <= 8'd0;
@@ -215,6 +219,7 @@ module texture_unit
             p1_tex_enable <= tex_enable;
             p1_modulate_enable <= modulate_enable;
             p1_filter_bilinear <= filter_bilinear;
+            p1_tex_format_rgba4444 <= tex_format_rgba4444;
             p1_x0_is_odd <= x0[0];
             p1_weight_u <= frac_u_full[15:8];  // Top 8 bits of sub-texel fraction
             p1_weight_v <= frac_v_full[15:8];
@@ -231,6 +236,7 @@ module texture_unit
     logic p2_tex_enable;
     logic p2_modulate_enable;
     logic p2_filter_bilinear;
+    logic p2_tex_format_rgba4444;
     logic p2_x0_is_odd;
     logic [7:0] p2_weight_u, p2_weight_v;
 
@@ -245,6 +251,7 @@ module texture_unit
             p2_tex_enable <= 1'b0;
             p2_modulate_enable <= 1'b0;
             p2_filter_bilinear <= 1'b0;
+            p2_tex_format_rgba4444 <= 1'b0;
             p2_x0_is_odd <= 1'b0;
             p2_weight_u <= 8'd0;
             p2_weight_v <= 8'd0;
@@ -258,6 +265,7 @@ module texture_unit
             p2_tex_enable <= p1_tex_enable;
             p2_modulate_enable <= p1_modulate_enable;
             p2_filter_bilinear <= p1_filter_bilinear;
+            p2_tex_format_rgba4444 <= p1_tex_format_rgba4444;
             p2_x0_is_odd <= p1_x0_is_odd;
             p2_weight_u <= p1_weight_u;
             p2_weight_v <= p1_weight_v;
@@ -278,13 +286,14 @@ module texture_unit
     logic p3_tex_enable;
     logic p3_modulate_enable;
     logic p3_filter_bilinear;
+    logic p3_tex_format_rgba4444;
     logic [7:0] p3_weight_u, p3_weight_v;
 
     // Unpacked 8-bit colors for all 4 texels
-    logic [7:0] p3_r00, p3_g00, p3_b00;  // (x0, y0)
-    logic [7:0] p3_r10, p3_g10, p3_b10;  // (x1, y0)
-    logic [7:0] p3_r01, p3_g01, p3_b01;  // (x0, y1)
-    logic [7:0] p3_r11, p3_g11, p3_b11;  // (x1, y1)
+    logic [7:0] p3_r00, p3_g00, p3_b00, p3_a00;  // (x0, y0)
+    logic [7:0] p3_r10, p3_g10, p3_b10, p3_a10;  // (x1, y0)
+    logic [7:0] p3_r01, p3_g01, p3_b01, p3_a01;  // (x0, y1)
+    logic [7:0] p3_r11, p3_g11, p3_b11, p3_a11;  // (x1, y1)
 
     // Arrange texels based on x0_is_odd flag (use captured p2_bram_* data)
     rgb565_t c00, c10, c01, c11;
@@ -330,6 +339,39 @@ module texture_unit
         end
     endfunction
 
+    // RGBA4444 unpack functions: expand 4-bit to 8-bit
+    function automatic logic [7:0] expand_r4(input logic [15:0] color);
+        logic [3:0] r4;
+        begin
+            r4 = color[15:12];
+            return {r4, r4};  // Replicate 4 bits to fill 8 bits
+        end
+    endfunction
+
+    function automatic logic [7:0] expand_g4(input logic [15:0] color);
+        logic [3:0] g4;
+        begin
+            g4 = color[11:8];
+            return {g4, g4};
+        end
+    endfunction
+
+    function automatic logic [7:0] expand_b4(input logic [15:0] color);
+        logic [3:0] b4;
+        begin
+            b4 = color[7:4];
+            return {b4, b4};
+        end
+    endfunction
+
+    function automatic logic [7:0] expand_a4(input logic [15:0] color);
+        logic [3:0] a4;
+        begin
+            a4 = color[3:0];
+            return {a4, a4};
+        end
+    endfunction
+
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             p3_frag <= '0;
@@ -337,26 +379,37 @@ module texture_unit
             p3_tex_enable <= 1'b0;
             p3_modulate_enable <= 1'b0;
             p3_filter_bilinear <= 1'b0;
+            p3_tex_format_rgba4444 <= 1'b0;
             p3_weight_u <= 8'd0;
             p3_weight_v <= 8'd0;
-            p3_r00 <= 8'd0; p3_g00 <= 8'd0; p3_b00 <= 8'd0;
-            p3_r10 <= 8'd0; p3_g10 <= 8'd0; p3_b10 <= 8'd0;
-            p3_r01 <= 8'd0; p3_g01 <= 8'd0; p3_b01 <= 8'd0;
-            p3_r11 <= 8'd0; p3_g11 <= 8'd0; p3_b11 <= 8'd0;
+            p3_r00 <= 8'd0; p3_g00 <= 8'd0; p3_b00 <= 8'd0; p3_a00 <= 8'd0;
+            p3_r10 <= 8'd0; p3_g10 <= 8'd0; p3_b10 <= 8'd0; p3_a10 <= 8'd0;
+            p3_r01 <= 8'd0; p3_g01 <= 8'd0; p3_b01 <= 8'd0; p3_a01 <= 8'd0;
+            p3_r11 <= 8'd0; p3_g11 <= 8'd0; p3_b11 <= 8'd0; p3_a11 <= 8'd0;
         end else if (!stall) begin
             p3_valid <= p2_valid;
             p3_frag <= p2_frag;
             p3_tex_enable <= p2_tex_enable;
             p3_modulate_enable <= p2_modulate_enable;
             p3_filter_bilinear <= p2_filter_bilinear;
+            p3_tex_format_rgba4444 <= p2_tex_format_rgba4444;
             p3_weight_u <= p2_weight_u;
             p3_weight_v <= p2_weight_v;
 
-            // Unpack all 4 texels to 8-bit RGB
-            p3_r00 <= expand_red(c00);   p3_g00 <= expand_green(c00);   p3_b00 <= expand_blue(c00);
-            p3_r10 <= expand_red(c10);   p3_g10 <= expand_green(c10);   p3_b10 <= expand_blue(c10);
-            p3_r01 <= expand_red(c01);   p3_g01 <= expand_green(c01);   p3_b01 <= expand_blue(c01);
-            p3_r11 <= expand_red(c11);   p3_g11 <= expand_green(c11);   p3_b11 <= expand_blue(c11);
+            // Unpack all 4 texels based on format
+            if (p2_tex_format_rgba4444) begin
+                // RGBA4444 format
+                p3_r00 <= expand_r4(c00); p3_g00 <= expand_g4(c00); p3_b00 <= expand_b4(c00); p3_a00 <= expand_a4(c00);
+                p3_r10 <= expand_r4(c10); p3_g10 <= expand_g4(c10); p3_b10 <= expand_b4(c10); p3_a10 <= expand_a4(c10);
+                p3_r01 <= expand_r4(c01); p3_g01 <= expand_g4(c01); p3_b01 <= expand_b4(c01); p3_a01 <= expand_a4(c01);
+                p3_r11 <= expand_r4(c11); p3_g11 <= expand_g4(c11); p3_b11 <= expand_b4(c11); p3_a11 <= expand_a4(c11);
+            end else begin
+                // RGB565 format (no alpha)
+                p3_r00 <= expand_red(c00);   p3_g00 <= expand_green(c00);   p3_b00 <= expand_blue(c00);   p3_a00 <= 8'hFF;
+                p3_r10 <= expand_red(c10);   p3_g10 <= expand_green(c10);   p3_b10 <= expand_blue(c10);   p3_a10 <= 8'hFF;
+                p3_r01 <= expand_red(c01);   p3_g01 <= expand_green(c01);   p3_b01 <= expand_blue(c01);   p3_a01 <= 8'hFF;
+                p3_r11 <= expand_red(c11);   p3_g11 <= expand_green(c11);   p3_b11 <= expand_blue(c11);   p3_a11 <= 8'hFF;
+            end
         end
     end
 
@@ -368,14 +421,14 @@ module texture_unit
     logic p4_valid;
     logic p4_tex_enable;
     logic p4_modulate_enable;
-    logic [7:0] p4_tex_r8, p4_tex_g8, p4_tex_b8;
+    logic [7:0] p4_tex_r8, p4_tex_g8, p4_tex_b8, p4_tex_a8;
 
     // Bilinear weights
     logic [7:0] inv_fx, inv_fy;
     logic [15:0] w00, w10, w01, w11;
 
     // Weighted sums (8-bit color * 16-bit weight * 4 terms = up to 26 bits)
-    logic [25:0] sum_r, sum_g, sum_b;
+    logic [25:0] sum_r, sum_g, sum_b, sum_a;
 
     always_comb begin
         // Inverse weights: 255 - weight (approximates 1.0 - fraction)
@@ -394,6 +447,7 @@ module texture_unit
         sum_r = (p3_r00 * w00) + (p3_r10 * w10) + (p3_r01 * w01) + (p3_r11 * w11);
         sum_g = (p3_g00 * w00) + (p3_g10 * w10) + (p3_g01 * w01) + (p3_g11 * w11);
         sum_b = (p3_b00 * w00) + (p3_b10 * w10) + (p3_b01 * w01) + (p3_b11 * w11);
+        sum_a = (p3_a00 * w00) + (p3_a10 * w10) + (p3_a01 * w01) + (p3_a11 * w11);
     end
 
     always_ff @(posedge clk or negedge rst_n) begin
@@ -405,6 +459,7 @@ module texture_unit
             p4_tex_r8 <= 8'd0;
             p4_tex_g8 <= 8'd0;
             p4_tex_b8 <= 8'd0;
+            p4_tex_a8 <= 8'd0;
         end else if (!stall) begin
             p4_valid <= p3_valid;
             p4_frag <= p3_frag;
@@ -417,11 +472,13 @@ module texture_unit
                 p4_tex_r8 <= sum_r[23:16];
                 p4_tex_g8 <= sum_g[23:16];
                 p4_tex_b8 <= sum_b[23:16];
+                p4_tex_a8 <= sum_a[23:16];
             end else begin
                 // Nearest: use c00 directly
                 p4_tex_r8 <= p3_r00;
                 p4_tex_g8 <= p3_g00;
                 p4_tex_b8 <= p3_b00;
+                p4_tex_a8 <= p3_a00;
             end
         end
     end
@@ -433,6 +490,7 @@ module texture_unit
     fragment_t p5_frag;
     logic p5_valid;
     rgb565_t p5_color;
+    alpha_t p5_alpha;
 
     // Clamp vertex color to [0, 1] and extract 16-bit fractional part
     logic [15:0] vert_r16, vert_g16, vert_b16;
@@ -543,10 +601,12 @@ module texture_unit
             p5_frag <= '0;
             p5_valid <= 1'b0;
             p5_color <= 16'h0000;
+            p5_alpha <= 8'h00;
         end else if (!stall) begin
             p5_valid <= p4_valid;
             p5_frag <= p4_frag;
             p5_color <= final_color;
+            p5_alpha <= p4_tex_a8;  // Pass texture alpha through
         end
     end
 
@@ -556,6 +616,7 @@ module texture_unit
 
     assign frag_out = p5_frag;
     assign color_out = p5_color;
+    assign tex_alpha_out = p5_alpha;
     assign frag_out_valid = p5_valid;
 
 endmodule

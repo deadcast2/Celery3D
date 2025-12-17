@@ -18,12 +18,19 @@ module framebuffer
     input  logic        frag_in_valid,
     output logic        frag_in_ready,
 
-    // Read interface (for video output or alpha blending)
+    // Read interface (for video output)
     input  logic [$clog2(FB_WIDTH)-1:0]  read_x,
     input  logic [$clog2(FB_HEIGHT)-1:0] read_y,
     input  logic                          read_en,
     output rgb565_t                       read_data,
     output logic                          read_valid,
+
+    // Blend read interface (for alpha blending - second read port)
+    input  logic [$clog2(FB_WIDTH)-1:0]  blend_read_x,
+    input  logic [$clog2(FB_HEIGHT)-1:0] blend_read_y,
+    input  logic                          blend_read_en,
+    output rgb565_t                       blend_read_data,
+    output logic                          blend_read_valid,
 
     // Clear interface
     input  logic        clear,
@@ -87,7 +94,7 @@ module framebuffer
         end
     end
 
-    // Read logic - synchronous read with one cycle latency
+    // Read logic - synchronous read with one cycle latency (video output)
     logic [ADDR_BITS-1:0] read_addr;
     logic read_en_r;
 
@@ -104,6 +111,27 @@ module framebuffer
             end
             if (read_en_r) begin
                 read_data <= mem[read_addr];
+            end
+        end
+    end
+
+    // Blend read logic - second read port for alpha blending (one cycle latency)
+    logic [ADDR_BITS-1:0] blend_read_addr;
+    logic blend_read_en_r;
+
+    always_ff @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            blend_read_data <= 16'h0;
+            blend_read_valid <= 1'b0;
+            blend_read_en_r <= 1'b0;
+        end else begin
+            blend_read_en_r <= blend_read_en;
+            blend_read_valid <= blend_read_en_r;
+            if (blend_read_en) begin
+                blend_read_addr <= calc_addr(blend_read_x, blend_read_y);
+            end
+            if (blend_read_en_r) begin
+                blend_read_data <= mem[blend_read_addr];
             end
         end
     end

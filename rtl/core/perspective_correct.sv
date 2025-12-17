@@ -74,7 +74,7 @@ module perspective_correct
     typedef struct packed {
         screen_coord_t x, y;
         fp32_t z;
-        fp32_t uw, vw, rw, gw, bw;
+        fp32_t uw, vw, rw, gw, bw, aw;
         logic valid;
     } pipe_data_t;
 
@@ -159,6 +159,7 @@ module perspective_correct
             p1.rw <= frag_in.r;
             p1.gw <= frag_in.g;
             p1.bw <= frag_in.b;
+            p1.aw <= frag_in.a;
             p1.valid <= frag_in.valid;
 
             p1_w <= w_in;
@@ -331,10 +332,10 @@ module perspective_correct
     end
 
     // =========================================================================
-    // Stage 8: Multiply attributes by 1/w (5 parallel multipliers)
+    // Stage 8: Multiply attributes by 1/w (6 parallel multipliers)
     // =========================================================================
 
-    logic signed [63:0] p8_u, p8_v, p8_r, p8_g, p8_b;
+    logic signed [63:0] p8_u, p8_v, p8_r, p8_g, p8_b, p8_a;
 
     always_comb begin
         p8_u = (64'(signed'(p7.uw)) * 64'(signed'(p7_recip))) >>> FP_FRAC_BITS;
@@ -342,6 +343,7 @@ module perspective_correct
         p8_r = (64'(signed'(p7.rw)) * 64'(signed'(p7_recip))) >>> FP_FRAC_BITS;
         p8_g = (64'(signed'(p7.gw)) * 64'(signed'(p7_recip))) >>> FP_FRAC_BITS;
         p8_b = (64'(signed'(p7.bw)) * 64'(signed'(p7_recip))) >>> FP_FRAC_BITS;
+        p8_a = (64'(signed'(p7.aw)) * 64'(signed'(p7_recip))) >>> FP_FRAC_BITS;
     end
 
     always_ff @(posedge clk or negedge rst_n) begin
@@ -359,6 +361,7 @@ module perspective_correct
             p8_frag.r <= fp32_t'(p8_r);
             p8_frag.g <= fp32_t'(p8_g);
             p8_frag.b <= fp32_t'(p8_b);
+            p8_frag.a <= fp32_t'(p8_a);
             p8_frag.valid <= p7.valid;
         end
     end

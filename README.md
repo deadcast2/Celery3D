@@ -259,6 +259,25 @@ The demo renders 6 overlapping colored triangles front-to-back (closest first). 
 | ![Depth Less](docs/depth_less.png) | ![Depth Disabled](docs/depth_disabled.png) | ![Depth Greater](docs/depth_greater.png) |
 | Closer triangles in front | Draw order overwrites depth | Farther triangles in front |
 
+### Alpha Blending
+
+The alpha blend unit provides hardware-accelerated transparency with Glide-compatible blend factors. The 5-stage pipeline reads the destination color from the framebuffer, blends with the source fragment, and writes back the result.
+
+**Features:**
+- 12 Glide blend factors (ZERO, ONE, SRC_ALPHA, ONE_MINUS_SRC_ALPHA, DST_ALPHA, etc.)
+- Multiple alpha sources (texture, vertex, constant, one)
+- Standard blend equation: `result = src * src_factor + dst * dst_factor`
+- Proper pipeline timing to handle 2-cycle framebuffer read latency
+
+**Blend Mode Examples:**
+
+| SRC_ALPHA Blend | Additive Blend (ONE, ONE) |
+|:---------------:|:-------------------------:|
+| ![Alpha Blend](docs/alpha_blend.png) | ![Additive Blend](docs/additive_blend.png) |
+| Semi-transparent triangles over white | RGB glows mixing to yellow/cyan/magenta |
+
+The left image shows classic alpha blending: 50% transparent red and blue triangles over a white background, producing pink and light blue with purple in the overlap. The right image shows additive blending for light/glow effects: red, green, and blue triangles that add together to create yellow, cyan, magenta, and white where they overlap.
+
 ### Synthesis Results (Kintex-7 XC7K325T)
 
 Post-synthesis timing at 50 MHz target clock:

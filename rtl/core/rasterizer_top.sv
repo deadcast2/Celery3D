@@ -31,6 +31,7 @@ module rasterizer_top
     input  logic        tex_enable,
     input  logic        modulate_enable,
     input  logic        tex_filter_bilinear,  // 0=nearest, 1=bilinear
+    input  logic        tex_format_rgba4444,  // 0=RGB565, 1=RGBA4444
 
     // Texture memory write interface
     input  logic [TEX_ADDR_BITS-1:0] tex_wr_addr,
@@ -44,6 +45,13 @@ module rasterizer_top
     input  logic        depth_clear,
     input  logic [15:0] depth_clear_value,
     output logic        depth_clearing,
+
+    // Alpha blend configuration
+    input  logic          blend_enable,
+    input  blend_factor_t blend_src_factor,
+    input  blend_factor_t blend_dst_factor,
+    input  alpha_source_t blend_alpha_source,
+    input  alpha_t        blend_constant_alpha,
 
     // Framebuffer configuration
     input  logic        fb_clear,
@@ -83,14 +91,29 @@ module rasterizer_top
     // Texture unit to depth buffer interface
     fragment_t tex_frag;
     rgb565_t tex_color;
+    alpha_t tex_alpha;
     logic tex_frag_valid;
     logic tex_frag_ready;
 
-    // Depth buffer to framebuffer interface
+    // Depth buffer to alpha blend interface
     fragment_t db_frag;
     rgb565_t db_color;
+    alpha_t db_alpha;
     logic db_frag_valid;
     logic db_frag_ready;
+
+    // Alpha blend to framebuffer interface
+    fragment_t ab_frag;
+    rgb565_t ab_color;
+    logic ab_frag_valid;
+    logic ab_frag_ready;
+
+    // Framebuffer blend read interface
+    logic [$clog2(FB_WIDTH)-1:0]  fb_blend_read_x;
+    logic [$clog2(FB_HEIGHT)-1:0] fb_blend_read_y;
+    logic                          fb_blend_read_en;
+    rgb565_t                       fb_blend_read_data;
+    logic                          fb_blend_read_valid;
 
     // State for coordinating setup and rasterizer
     typedef enum logic [1:0] {
@@ -147,21 +170,23 @@ module rasterizer_top
         .TEX_WIDTH_LOG2 (TEX_WIDTH_LOG2),
         .TEX_HEIGHT_LOG2(TEX_HEIGHT_LOG2)
     ) u_texture (
-        .clk            (clk),
-        .rst_n          (rst_n),
-        .tex_enable     (tex_enable),
-        .modulate_enable(modulate_enable),
-        .filter_bilinear(tex_filter_bilinear),
-        .frag_in        (pc_frag),
-        .frag_in_valid  (pc_frag_valid),
-        .frag_in_ready  (pc_frag_ready),
-        .frag_out       (tex_frag),
-        .color_out      (tex_color),
-        .frag_out_valid (tex_frag_valid),
-        .frag_out_ready (tex_frag_ready),
-        .tex_wr_addr    (tex_wr_addr),
-        .tex_wr_data    (tex_wr_data),
-        .tex_wr_en      (tex_wr_en)
+        .clk               (clk),
+        .rst_n             (rst_n),
+        .tex_enable        (tex_enable),
+        .modulate_enable   (modulate_enable),
+        .filter_bilinear   (tex_filter_bilinear),
+        .tex_format_rgba4444(tex_format_rgba4444),
+        .frag_in           (pc_frag),
+        .frag_in_valid     (pc_frag_valid),
+        .frag_in_ready     (pc_frag_ready),
+        .frag_out          (tex_frag),
+        .color_out         (tex_color),
+        .tex_alpha_out     (tex_alpha),
+        .frag_out_valid    (tex_frag_valid),
+        .frag_out_ready    (tex_frag_ready),
+        .tex_wr_addr       (tex_wr_addr),
+        .tex_wr_data       (tex_wr_data),
+        .tex_wr_en         (tex_wr_en)
     );
 
     // Depth buffer unit (3-stage pipeline)
@@ -179,12 +204,42 @@ module rasterizer_top
         .depth_clearing    (depth_clearing),
         .frag_in           (tex_frag),
         .color_in          (tex_color),
+        .tex_alpha_in      (tex_alpha),
         .frag_in_valid     (tex_frag_valid),
         .frag_in_ready     (tex_frag_ready),
         .frag_out          (db_frag),
         .color_out         (db_color),
+        .tex_alpha_out     (db_alpha),
         .frag_out_valid    (db_frag_valid),
         .frag_out_ready    (db_frag_ready)
+    );
+
+    // Alpha blending unit (4-stage pipeline)
+    alpha_blend #(
+        .FB_WIDTH (FB_WIDTH),
+        .FB_HEIGHT(FB_HEIGHT)
+    ) u_alpha_blend (
+        .clk               (clk),
+        .rst_n             (rst_n),
+        .blend_enable      (blend_enable),
+        .src_factor        (blend_src_factor),
+        .dst_factor        (blend_dst_factor),
+        .alpha_source      (blend_alpha_source),
+        .constant_alpha    (blend_constant_alpha),
+        .frag_in           (db_frag),
+        .color_in          (db_color),
+        .tex_alpha_in      (db_alpha),
+        .frag_in_valid     (db_frag_valid),
+        .frag_in_ready     (db_frag_ready),
+        .frag_out          (ab_frag),
+        .color_out         (ab_color),
+        .frag_out_valid    (ab_frag_valid),
+        .frag_out_ready    (ab_frag_ready),
+        .blend_read_x      (fb_blend_read_x),
+        .blend_read_y      (fb_blend_read_y),
+        .blend_read_en     (fb_blend_read_en),
+        .blend_read_data   (fb_blend_read_data),
+        .blend_read_valid  (fb_blend_read_valid)
     );
 
     // Framebuffer (stores rendered pixels)
@@ -193,27 +248,32 @@ module rasterizer_top
         .FB_WIDTH (FB_WIDTH),
         .FB_HEIGHT(FB_HEIGHT)
     ) u_framebuffer (
-        .clk           (clk),
-        .rst_n         (rst_n),
-        .frag_in       (db_frag),
-        .color_in      (db_color),
-        .frag_in_valid (db_frag_valid),
-        .frag_in_ready (db_frag_ready),
-        .read_x        (fb_read_x),
-        .read_y        (fb_read_y),
-        .read_en       (fb_read_en),
-        .read_data     (fb_read_data),
-        .read_valid    (fb_read_valid),
-        .clear         (fb_clear),
-        .clear_color   (fb_clear_color),
-        .clearing      (fb_clearing),
-        .busy          (fb_busy)
+        .clk             (clk),
+        .rst_n           (rst_n),
+        .frag_in         (ab_frag),
+        .color_in        (ab_color),
+        .frag_in_valid   (ab_frag_valid),
+        .frag_in_ready   (ab_frag_ready),
+        .read_x          (fb_read_x),
+        .read_y          (fb_read_y),
+        .read_en         (fb_read_en),
+        .read_data       (fb_read_data),
+        .read_valid      (fb_read_valid),
+        .blend_read_x    (fb_blend_read_x),
+        .blend_read_y    (fb_blend_read_y),
+        .blend_read_en   (fb_blend_read_en),
+        .blend_read_data (fb_blend_read_data),
+        .blend_read_valid(fb_blend_read_valid),
+        .clear           (fb_clear),
+        .clear_color     (fb_clear_color),
+        .clearing        (fb_clearing),
+        .busy            (fb_busy)
     );
 
-    // Output fragment info (for testbench visibility)
-    assign frag_out = db_frag;
-    assign color_out = db_color;
-    assign frag_valid = db_frag_valid;
+    // Output fragment info (for testbench visibility - shows post-blending)
+    assign frag_out = ab_frag;
+    assign color_out = ab_color;
+    assign frag_valid = ab_frag_valid;
 
     // State machine
     always_ff @(posedge clk or negedge rst_n) begin

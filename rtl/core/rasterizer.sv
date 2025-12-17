@@ -53,11 +53,13 @@ module rasterizer
     fp32_t cur_z, cur_w;
     fp32_t cur_uw, cur_vw;
     fp32_t cur_rw, cur_gw, cur_bw;
+    fp32_t cur_aw;
 
     // Attribute row start values
     fp32_t z_row, w_row;
     fp32_t uw_row, vw_row;
     fp32_t rw_row, gw_row, bw_row;
+    fp32_t aw_row;
 
     // Triangle winding (determines inside test polarity)
     logic ccw;
@@ -167,6 +169,7 @@ module rasterizer
             cur_rw <= FP_ZERO;
             cur_gw <= FP_ZERO;
             cur_bw <= FP_ZERO;
+            cur_aw <= FP_ZERO;
             z_row <= FP_ZERO;
             w_row <= FP_ZERO;
             uw_row <= FP_ZERO;
@@ -174,6 +177,7 @@ module rasterizer
             rw_row <= FP_ZERO;
             gw_row <= FP_ZERO;
             bw_row <= FP_ZERO;
+            aw_row <= FP_ZERO;
             init_px_r <= FP_ZERO;
             init_py_r <= FP_ZERO;
             init_dx_r <= FP_ZERO;
@@ -233,6 +237,7 @@ module rasterizer
                     cur_rw <= tri_in.rw0 + fp_mul(tri_in.drdx, init_dx_r) + fp_mul(tri_in.drdy, init_dy_r);
                     cur_gw <= tri_in.gw0 + fp_mul(tri_in.dgdx, init_dx_r) + fp_mul(tri_in.dgdy, init_dy_r);
                     cur_bw <= tri_in.bw0 + fp_mul(tri_in.dbdx, init_dx_r) + fp_mul(tri_in.dbdy, init_dy_r);
+                    cur_aw <= tri_in.aw0 + fp_mul(tri_in.dadx, init_dx_r) + fp_mul(tri_in.dady, init_dy_r);
 
                     z_row <= tri_in.z0 + fp_mul(tri_in.dzdx, init_dx_r) + fp_mul(tri_in.dzdy, init_dy_r);
                     w_row <= tri_in.w0 + fp_mul(tri_in.dwdx, init_dx_r) + fp_mul(tri_in.dwdy, init_dy_r);
@@ -241,6 +246,7 @@ module rasterizer
                     rw_row <= tri_in.rw0 + fp_mul(tri_in.drdx, init_dx_r) + fp_mul(tri_in.drdy, init_dy_r);
                     gw_row <= tri_in.gw0 + fp_mul(tri_in.dgdx, init_dx_r) + fp_mul(tri_in.dgdy, init_dy_r);
                     bw_row <= tri_in.bw0 + fp_mul(tri_in.dbdx, init_dx_r) + fp_mul(tri_in.dbdy, init_dy_r);
+                    aw_row <= tri_in.aw0 + fp_mul(tri_in.dadx, init_dx_r) + fp_mul(tri_in.dady, init_dy_r);
                 end
 
                 RASTERIZE: begin
@@ -263,6 +269,7 @@ module rasterizer
                             cur_rw <= cur_rw + tri_in.drdx;
                             cur_gw <= cur_gw + tri_in.dgdx;
                             cur_bw <= cur_bw + tri_in.dbdx;
+                            cur_aw <= cur_aw + tri_in.dadx;
                         end
                     end
                 end
@@ -288,6 +295,7 @@ module rasterizer
                     rw_row <= rw_row + tri_in.drdy;
                     gw_row <= gw_row + tri_in.dgdy;
                     bw_row <= bw_row + tri_in.dbdy;
+                    aw_row <= aw_row + tri_in.dady;
 
                     cur_z <= z_row + tri_in.dzdy;
                     cur_w <= w_row + tri_in.dwdy;
@@ -296,6 +304,7 @@ module rasterizer
                     cur_rw <= rw_row + tri_in.drdy;
                     cur_gw <= gw_row + tri_in.dgdy;
                     cur_bw <= bw_row + tri_in.dbdy;
+                    cur_aw <= aw_row + tri_in.dady;
                 end
 
                 DONE_STATE: begin
@@ -318,6 +327,7 @@ module rasterizer
         frag_out.r = cur_rw;
         frag_out.g = cur_gw;
         frag_out.b = cur_bw;
+        frag_out.a = cur_aw;
 
         frag_out.valid = (state == RASTERIZE) && inside_all;
     end

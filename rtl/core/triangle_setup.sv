@@ -19,7 +19,7 @@ module triangle_setup
 );
 
     // State machine - expanded for pipelined computation
-    typedef enum logic [3:0] {
+    typedef enum logic [4:0] {
         IDLE,
         CALC_EDGES,
         CALC_AREA,
@@ -33,6 +33,7 @@ module triangle_setup
         CALC_GRAD_R,        // Compute r gradients
         CALC_GRAD_G,        // Compute g gradients
         CALC_GRAD_B,        // Compute b gradients
+        CALC_GRAD_A,        // Compute alpha gradients
         CALC_BBOX,
         DONE_STATE
     } state_t;
@@ -54,6 +55,7 @@ module triangle_setup
     fp32_t drw01, drw02;    // r*w differences
     fp32_t dgw01, dgw02;    // g*w differences
     fp32_t dbw01, dbw02;    // b*w differences
+    fp32_t daw01, daw02;    // a*w differences
 
     // Newton-Raphson iteration state (pipelined: 2 cycles per iteration)
     logic [4:0] recip_iter;              // Iteration counter (16 iterations)
@@ -105,7 +107,8 @@ module triangle_setup
             CALC_GRAD_V:     next_state = CALC_GRAD_R;
             CALC_GRAD_R:     next_state = CALC_GRAD_G;
             CALC_GRAD_G:     next_state = CALC_GRAD_B;
-            CALC_GRAD_B:     next_state = CALC_BBOX;
+            CALC_GRAD_B:     next_state = CALC_GRAD_A;
+            CALC_GRAD_A:     next_state = CALC_BBOX;
             CALC_BBOX:       next_state = DONE_STATE;
             DONE_STATE:      next_state = IDLE;
             default:         next_state = IDLE;
@@ -175,6 +178,8 @@ module triangle_setup
             dgw02 <= FP_ZERO;
             dbw01 <= FP_ZERO;
             dbw02 <= FP_ZERO;
+            daw01 <= FP_ZERO;
+            daw02 <= FP_ZERO;
         end else begin
             case (state)
                 IDLE: begin
@@ -232,6 +237,7 @@ module triangle_setup
                     setup_reg.rw0 <= fp_mul(v0.r, v0.w);
                     setup_reg.gw0 <= fp_mul(v0.g, v0.w);
                     setup_reg.bw0 <= fp_mul(v0.b, v0.w);
+                    setup_reg.aw0 <= fp_mul(v0.a, v0.w);
 
                     // Pre-compute attribute differences for gradient calculation
                     dz01 <= v1.z - v0.z;
@@ -248,6 +254,8 @@ module triangle_setup
                     dgw02 <= fp_mul(v2.g, v2.w) - fp_mul(v0.g, v0.w);
                     dbw01 <= fp_mul(v1.b, v1.w) - fp_mul(v0.b, v0.w);
                     dbw02 <= fp_mul(v2.b, v2.w) - fp_mul(v0.b, v0.w);
+                    daw01 <= fp_mul(v1.a, v1.w) - fp_mul(v0.a, v0.w);
+                    daw02 <= fp_mul(v2.a, v2.w) - fp_mul(v0.a, v0.w);
                 end
 
                 CALC_RECIP_INIT: begin
@@ -332,6 +340,12 @@ module triangle_setup
                     // Blue gradients
                     setup_reg.dbdx <= compute_gradient_x(dbw01, dbw02, dy02_r, dy01_r, inv_area2);
                     setup_reg.dbdy <= compute_gradient_y(dbw01, dbw02, dx01_r, dx02_r, inv_area2);
+                end
+
+                CALC_GRAD_A: begin
+                    // Alpha gradients
+                    setup_reg.dadx <= compute_gradient_x(daw01, daw02, dy02_r, dy01_r, inv_area2);
+                    setup_reg.dady <= compute_gradient_y(daw01, daw02, dx01_r, dx02_r, inv_area2);
                 end
 
                 CALC_BBOX: begin

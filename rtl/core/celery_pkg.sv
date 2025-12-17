@@ -43,6 +43,33 @@ package celery_pkg;
         GR_CMP_ALWAYS   = 3'b111   // Always pass
     } depth_func_t;
 
+    // Alpha channel type (8-bit)
+    typedef logic [7:0] alpha_t;
+
+    // Blend factors (Glide GR_BLEND_* compatible - 12 factors)
+    typedef enum logic [3:0] {
+        GR_BLEND_ZERO                = 4'h0,
+        GR_BLEND_SRC_ALPHA           = 4'h1,
+        GR_BLEND_SRC_COLOR           = 4'h2,
+        GR_BLEND_DST_ALPHA           = 4'h3,
+        GR_BLEND_DST_COLOR           = 4'h4,
+        GR_BLEND_ONE                 = 4'h5,
+        GR_BLEND_ONE_MINUS_SRC_ALPHA = 4'h6,
+        GR_BLEND_ONE_MINUS_SRC_COLOR = 4'h7,
+        GR_BLEND_ONE_MINUS_DST_ALPHA = 4'h8,
+        GR_BLEND_ONE_MINUS_DST_COLOR = 4'h9,
+        GR_BLEND_ALPHA_SATURATE      = 4'hA,
+        GR_BLEND_PREFOG_COLOR        = 4'hB   // Reserved for fog
+    } blend_factor_t;
+
+    // Alpha source selection
+    typedef enum logic [1:0] {
+        ALPHA_SRC_TEXTURE  = 2'b00,  // From RGBA4444 texture
+        ALPHA_SRC_VERTEX   = 2'b01,  // From vertex interpolation
+        ALPHA_SRC_CONSTANT = 2'b10,  // From constant register
+        ALPHA_SRC_ONE      = 2'b11   // Always 1.0 (fully opaque)
+    } alpha_source_t;
+
     // Vertex structure (screen space, after CPU transformation)
     typedef struct packed {
         fp32_t x;           // Screen X (fixed-point for sub-pixel precision)
@@ -54,6 +81,7 @@ package celery_pkg;
         fp32_t r;           // Red (0.0 - 1.0)
         fp32_t g;           // Green
         fp32_t b;           // Blue
+        fp32_t a;           // Alpha (0.0 - 1.0)
     } vertex_t;
 
     // Edge equation coefficients
@@ -84,11 +112,13 @@ package celery_pkg;
         fp32_t drdx, drdy;  // Red
         fp32_t dgdx, dgdy;  // Green
         fp32_t dbdx, dbdy;  // Blue
+        fp32_t dadx, dady;  // Alpha
 
         // Starting values at v0
         fp32_t z0, w0;
         fp32_t uw0, vw0;    // u*w, v*w at v0
         fp32_t rw0, gw0, bw0;
+        fp32_t aw0;         // a*w at v0
         fp32_t x0, y0;      // Reference point for interpolation
 
         logic valid;        // Triangle is valid (non-degenerate)
@@ -101,6 +131,7 @@ package celery_pkg;
         fp32_t z;           // Depth for z-buffer test
         fp32_t u, v;        // Texture coordinates (perspective-corrected)
         fp32_t r, g, b;     // Interpolated color
+        fp32_t a;           // Interpolated alpha
         logic  valid;       // Fragment is valid
     } fragment_t;
 
