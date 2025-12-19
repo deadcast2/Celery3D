@@ -278,6 +278,29 @@ The alpha blend unit provides hardware-accelerated transparency with Glide-compa
 
 The left image shows classic alpha blending: 50% transparent red and blue triangles over a white background, producing pink and light blue with purple in the overlap. The right image shows additive blending for light/glow effects: red, green, and blue triangles that add together to create yellow, cyan, magenta, and white where they overlap.
 
+### 3D Cube Animation (RTL Simulation)
+
+The full rasterization pipeline running in Verilator simulation, rendering a rotating 3D cube with Gouraud-shaded faces:
+
+![Cube Animation](docs/cube_animation.gif)
+
+This animation demonstrates the complete GPU pipeline working together:
+- **Triangle Setup** computes edge equations and gradients for each of the 12 triangles (6 faces × 2)
+- **Rasterizer** scan-converts triangles to fragments
+- **Perspective Correction** ensures proper attribute interpolation
+- **Texture Unit** applies checkerboard texture with bilinear filtering
+- **Depth Buffer** handles occlusion between faces (GR_CMP_LESS)
+- **Framebuffer** accumulates the final image
+
+The cube rotates around both Y and X axes, with each face having a distinct color (light red, green, blue, yellow, magenta, cyan) modulated by the checkerboard texture. 60 frames rendered at 64×64 resolution via RTL simulation.
+
+```bash
+# Generate the animation yourself:
+cd rtl
+make cube
+convert -delay 3 -loop 0 frame_*.ppm cube_animation.gif
+```
+
 ### Synthesis Results (Kintex-7 XC7K325T)
 
 Post-synthesis timing at 50 MHz target clock:

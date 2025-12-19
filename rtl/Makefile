@@ -17,8 +17,9 @@ RTL_SRCS = \
     core/framebuffer.sv \
     core/rasterizer_top.sv
 
-# Testbench
+# Testbenches
 TB_SRC = sim/tb_rasterizer.cpp
+TB_CUBE_SRC = sim/tb_cube_animation.cpp
 
 # Output directory
 OBJ_DIR = obj_dir
@@ -26,7 +27,7 @@ OBJ_DIR = obj_dir
 # Top module
 TOP = rasterizer_top
 
-.PHONY: all sim clean lint wave help synth impl timing
+.PHONY: all sim cube clean lint wave help synth impl timing
 
 all: sim
 
@@ -45,6 +46,24 @@ $(OBJ_DIR)/V$(TOP): $(RTL_SRCS) $(TB_SRC)
 		$(TB_SRC) \
 		-o V$(TOP)
 
+# Build and run 3D cube animation
+cube: $(OBJ_DIR)/V$(TOP)_cube
+	@echo "Running 3D cube animation..."
+	./$(OBJ_DIR)/V$(TOP)_cube
+	@echo ""
+	@echo "To create animated GIF:"
+	@echo "  convert -delay 3 -loop 0 frame_*.ppm cube_animation.gif"
+
+# Build cube animation executable
+$(OBJ_DIR)/V$(TOP)_cube: $(RTL_SRCS) $(TB_CUBE_SRC)
+	@echo "Building cube animation testbench..."
+	$(VERILATOR) $(VERILATOR_FLAGS) \
+		--top-module $(TOP) \
+		-I./core \
+		$(RTL_SRCS) \
+		$(TB_CUBE_SRC) \
+		-o V$(TOP)_cube
+
 # Lint check (no simulation, just syntax/style check)
 lint:
 	@echo "Linting RTL..."
@@ -62,6 +81,9 @@ clean:
 	rm -rf $(OBJ_DIR)
 	rm -f rasterizer.vcd
 	rm -f rasterizer_output.ppm
+	rm -f frame_*.ppm
+	rm -f cube_animation.gif
+	rm -f output_*.ppm
 
 # ==============================================================================
 # Vivado Synthesis & Implementation
@@ -106,6 +128,7 @@ help:
 	@echo "Simulation (Verilator):"
 	@echo "  all   - Build and run simulation (default)"
 	@echo "  sim   - Build and run simulation"
+	@echo "  cube  - Render 3D cube animation (60 frames)"
 	@echo "  lint  - Run Verilator linting"
 	@echo "  wave  - Open waveform viewer"
 	@echo ""
