@@ -3,9 +3,11 @@
 
 package celery_pkg;
 
-    // Screen parameters (matching Voodoo 1)
-    parameter SCREEN_WIDTH  = 640;
-    parameter SCREEN_HEIGHT = 480;
+    // Screen parameters
+    // Reduced for synthesis testing (fits in BRAM)
+    // Full 640x480 requires DDR3 framebuffer implementation
+    parameter SCREEN_WIDTH  = 64;
+    parameter SCREEN_HEIGHT = 64;
 
     // Fixed-point configuration
     // S15.16 format: 1 sign + 15 integer + 16 fractional = 32 bits

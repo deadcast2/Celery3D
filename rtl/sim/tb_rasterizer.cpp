@@ -15,14 +15,16 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+// Resolution reduced to 64x64 for synthesis testing (fits in BRAM)
+// Full 640x480 requires DDR3 framebuffer implementation
+#define SCREEN_WIDTH 64
+#define SCREEN_HEIGHT 64
 #define FP_FRAC_BITS 16
 #define TEX_SIZE 64
-#define DB_WIDTH 640   // Depth buffer matches framebuffer
-#define DB_HEIGHT 480
-#define FB_WIDTH 640
-#define FB_HEIGHT 480
+#define DB_WIDTH 64    // Depth buffer matches framebuffer
+#define DB_HEIGHT 64
+#define FB_WIDTH 64
+#define FB_HEIGHT 64
 
 // Depth comparison functions (matches Glide GR_CMP_*)
 enum DepthFunc {
@@ -540,27 +542,27 @@ int main(int argc, char** argv) {
         load_checkerboard_texture(dut, 8, sim_time);
     }
 
-    // Define test triangles
+    // Define test triangles (scaled for 64x64 resolution)
     Triangle triangles[4];
 
-    triangles[0].v[0] = {100.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    triangles[0].v[1] = {100.0f, 300.0f, 0.5f, 0.0f, 2.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    triangles[0].v[2] = {400.0f, 300.0f, 0.5f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    triangles[0].v[0] = {10.0f, 5.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    triangles[0].v[1] = {10.0f, 30.0f, 0.5f, 0.0f, 2.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    triangles[0].v[2] = {40.0f, 30.0f, 0.5f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f, 1.0f};
     triangles[0].name = "Textured quad (lower-left tri)";
 
-    triangles[1].v[0] = {100.0f, 50.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    triangles[1].v[1] = {400.0f, 300.0f, 0.5f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    triangles[1].v[2] = {400.0f, 50.0f, 0.5f, 2.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    triangles[1].v[0] = {10.0f, 5.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    triangles[1].v[1] = {40.0f, 30.0f, 0.5f, 2.0f, 2.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    triangles[1].v[2] = {40.0f, 5.0f, 0.5f, 2.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f};
     triangles[1].name = "Textured quad (upper-right tri)";
 
-    triangles[2].v[0] = {480.0f, 80.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.3f, 0.3f, 1.0f};
-    triangles[2].v[1] = {420.0f, 280.0f, 0.5f, 0.0f, 1.0f, 0.3f, 1.0f, 0.3f, 1.0f};
-    triangles[2].v[2] = {580.0f, 280.0f, 0.5f, 1.0f, 1.0f, 0.3f, 0.3f, 1.0f, 1.0f};
+    triangles[2].v[0] = {48.0f, 8.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.3f, 0.3f, 1.0f};
+    triangles[2].v[1] = {42.0f, 28.0f, 0.5f, 0.0f, 1.0f, 0.3f, 1.0f, 0.3f, 1.0f};
+    triangles[2].v[2] = {58.0f, 28.0f, 0.5f, 1.0f, 1.0f, 0.3f, 0.3f, 1.0f, 1.0f};
     triangles[2].name = "RGB triangle (texture modulated)";
 
-    triangles[3].v[0] = {450.0f, 320.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.2f, 1.0f};
-    triangles[3].v[1] = {420.0f, 450.0f, 0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 0.1f, 1.0f};
-    triangles[3].v[2] = {580.0f, 400.0f, 0.5f, 1.0f, 0.5f, 1.0f, 0.9f, 0.0f, 1.0f};
+    triangles[3].v[0] = {45.0f, 32.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.2f, 1.0f};
+    triangles[3].v[1] = {42.0f, 45.0f, 0.5f, 0.0f, 1.0f, 0.8f, 0.8f, 0.1f, 1.0f};
+    triangles[3].v[2] = {58.0f, 40.0f, 0.5f, 1.0f, 0.5f, 1.0f, 0.9f, 0.0f, 1.0f};
     triangles[3].name = "Yellow triangle (texture modulated)";
 
     const int num_triangles = 4;
@@ -604,44 +606,44 @@ int main(int argc, char** argv) {
     printf("Pass 3: DEPTH BUFFER test (GR_CMP_LESS)\n");
     printf("----------------------------------------------\n");
 
-    // Define overlapping triangles at various depths and colors
+    // Define overlapping triangles at various depths and colors (scaled for 64x64)
     // Ordered front-to-back (closest first) so depth-disabled looks obviously wrong
     Triangle depth_triangles[6];
 
     // Cyan triangle (z=0.1) - closest, rendered FIRST
-    depth_triangles[0].v[0] = {480.0f, 80.0f,  0.1f, 0.0f, 0.0f, 0.1f, 1.0f, 1.0f, 1.0f};
-    depth_triangles[0].v[1] = {420.0f, 280.0f, 0.1f, 0.0f, 1.0f, 0.1f, 1.0f, 1.0f, 1.0f};
-    depth_triangles[0].v[2] = {600.0f, 200.0f, 0.1f, 1.0f, 0.5f, 0.1f, 1.0f, 1.0f, 1.0f};
+    depth_triangles[0].v[0] = {48.0f, 8.0f,  0.1f, 0.0f, 0.0f, 0.1f, 1.0f, 1.0f, 1.0f};
+    depth_triangles[0].v[1] = {42.0f, 28.0f, 0.1f, 0.0f, 1.0f, 0.1f, 1.0f, 1.0f, 1.0f};
+    depth_triangles[0].v[2] = {60.0f, 20.0f, 0.1f, 1.0f, 0.5f, 0.1f, 1.0f, 1.0f, 1.0f};
     depth_triangles[0].name = "Closest triangle (CYAN, z=0.1)";
 
     // Yellow triangle (z=0.2)
-    depth_triangles[1].v[0] = {400.0f, 150.0f, 0.2f, 0.0f, 0.0f, 1.0f, 1.0f, 0.1f, 1.0f};
-    depth_triangles[1].v[1] = {320.0f, 380.0f, 0.2f, 0.0f, 1.0f, 1.0f, 1.0f, 0.1f, 1.0f};
-    depth_triangles[1].v[2] = {550.0f, 300.0f, 0.2f, 1.0f, 0.5f, 1.0f, 1.0f, 0.1f, 1.0f};
+    depth_triangles[1].v[0] = {40.0f, 15.0f, 0.2f, 0.0f, 0.0f, 1.0f, 1.0f, 0.1f, 1.0f};
+    depth_triangles[1].v[1] = {32.0f, 38.0f, 0.2f, 0.0f, 1.0f, 1.0f, 1.0f, 0.1f, 1.0f};
+    depth_triangles[1].v[2] = {55.0f, 30.0f, 0.2f, 1.0f, 0.5f, 1.0f, 1.0f, 0.1f, 1.0f};
     depth_triangles[1].name = "Close triangle (YELLOW, z=0.2)";
 
     // Green triangle (z=0.5) - middle depth
-    depth_triangles[2].v[0] = {200.0f, 60.0f,  0.5f, 0.0f, 0.0f, 0.2f, 1.0f, 0.2f, 1.0f};
-    depth_triangles[2].v[1] = {120.0f, 300.0f, 0.5f, 0.0f, 1.0f, 0.2f, 1.0f, 0.2f, 1.0f};
-    depth_triangles[2].v[2] = {350.0f, 200.0f, 0.5f, 1.0f, 0.5f, 0.2f, 1.0f, 0.2f, 1.0f};
+    depth_triangles[2].v[0] = {20.0f, 6.0f,  0.5f, 0.0f, 0.0f, 0.2f, 1.0f, 0.2f, 1.0f};
+    depth_triangles[2].v[1] = {12.0f, 30.0f, 0.5f, 0.0f, 1.0f, 0.2f, 1.0f, 0.2f, 1.0f};
+    depth_triangles[2].v[2] = {35.0f, 20.0f, 0.5f, 1.0f, 0.5f, 0.2f, 1.0f, 0.2f, 1.0f};
     depth_triangles[2].name = "Mid triangle (GREEN, z=0.5)";
 
     // Blue triangle (z=0.7)
-    depth_triangles[3].v[0] = {100.0f, 80.0f,  0.7f, 0.0f, 0.0f, 0.2f, 0.2f, 1.0f, 1.0f};
-    depth_triangles[3].v[1] = {100.0f, 400.0f, 0.7f, 0.0f, 1.0f, 0.2f, 0.2f, 1.0f, 1.0f};
-    depth_triangles[3].v[2] = {450.0f, 240.0f, 0.7f, 1.0f, 0.5f, 0.2f, 0.2f, 1.0f, 1.0f};
+    depth_triangles[3].v[0] = {10.0f, 8.0f,  0.7f, 0.0f, 0.0f, 0.2f, 0.2f, 1.0f, 1.0f};
+    depth_triangles[3].v[1] = {10.0f, 40.0f, 0.7f, 0.0f, 1.0f, 0.2f, 0.2f, 1.0f, 1.0f};
+    depth_triangles[3].v[2] = {45.0f, 24.0f, 0.7f, 1.0f, 0.5f, 0.2f, 0.2f, 1.0f, 1.0f};
     depth_triangles[3].name = "Back triangle (BLUE, z=0.7)";
 
     // Gray triangle (z=0.9) - farthest, rendered LAST
-    depth_triangles[4].v[0] = {50.0f,  50.0f,  0.9f, 0.0f, 0.0f, 0.3f, 0.3f, 0.3f, 1.0f};
-    depth_triangles[4].v[1] = {50.0f,  430.0f, 0.9f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f, 1.0f};
-    depth_triangles[4].v[2] = {590.0f, 240.0f, 0.9f, 1.0f, 0.5f, 0.3f, 0.3f, 0.3f, 1.0f};
+    depth_triangles[4].v[0] = {5.0f,  5.0f,  0.9f, 0.0f, 0.0f, 0.3f, 0.3f, 0.3f, 1.0f};
+    depth_triangles[4].v[1] = {5.0f,  43.0f, 0.9f, 0.0f, 1.0f, 0.3f, 0.3f, 0.3f, 1.0f};
+    depth_triangles[4].v[2] = {59.0f, 24.0f, 0.9f, 1.0f, 0.5f, 0.3f, 0.3f, 0.3f, 1.0f};
     depth_triangles[4].name = "Background (GRAY, z=0.9)";
 
     // Red triangle (z=0.3)
-    depth_triangles[5].v[0] = {280.0f, 100.0f, 0.3f, 0.0f, 0.0f, 1.0f, 0.2f, 0.2f, 1.0f};
-    depth_triangles[5].v[1] = {180.0f, 350.0f, 0.3f, 0.0f, 1.0f, 1.0f, 0.2f, 0.2f, 1.0f};
-    depth_triangles[5].v[2] = {420.0f, 280.0f, 0.3f, 1.0f, 0.5f, 1.0f, 0.2f, 0.2f, 1.0f};
+    depth_triangles[5].v[0] = {28.0f, 10.0f, 0.3f, 0.0f, 0.0f, 1.0f, 0.2f, 0.2f, 1.0f};
+    depth_triangles[5].v[1] = {18.0f, 35.0f, 0.3f, 0.0f, 1.0f, 1.0f, 0.2f, 0.2f, 1.0f};
+    depth_triangles[5].v[2] = {42.0f, 28.0f, 0.3f, 1.0f, 0.5f, 1.0f, 0.2f, 0.2f, 1.0f};
     depth_triangles[5].name = "Front triangle (RED, z=0.3)";
 
     const int num_depth_triangles = 6;
@@ -711,32 +713,32 @@ int main(int argc, char** argv) {
     printf("Pass 6: ALPHA BLENDING test (SRC_ALPHA, ONE_MINUS_SRC_ALPHA)\n");
     printf("----------------------------------------------\n");
 
-    // Define triangles for alpha blending test
+    // Define triangles for alpha blending test (scaled for 64x64)
     // Background triangle (opaque, rendered first)
     // Foreground triangles (semi-transparent, rendered on top)
     Triangle blend_triangles[4];
 
     // Large opaque white background quad (rendered as 2 triangles)
-    blend_triangles[0].v[0] = {100.0f, 100.0f, 0.9f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    blend_triangles[0].v[1] = {100.0f, 380.0f, 0.9f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    blend_triangles[0].v[2] = {540.0f, 380.0f, 0.9f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    blend_triangles[0].v[0] = {10.0f, 10.0f, 0.9f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    blend_triangles[0].v[1] = {10.0f, 38.0f, 0.9f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    blend_triangles[0].v[2] = {54.0f, 38.0f, 0.9f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
     blend_triangles[0].name = "White background (lower-left, opaque)";
 
-    blend_triangles[1].v[0] = {100.0f, 100.0f, 0.9f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    blend_triangles[1].v[1] = {540.0f, 380.0f, 0.9f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
-    blend_triangles[1].v[2] = {540.0f, 100.0f, 0.9f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    blend_triangles[1].v[0] = {10.0f, 10.0f, 0.9f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    blend_triangles[1].v[1] = {54.0f, 38.0f, 0.9f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+    blend_triangles[1].v[2] = {54.0f, 10.0f, 0.9f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f};
     blend_triangles[1].name = "White background (upper-right, opaque)";
 
     // Semi-transparent RED triangle (50% alpha)
-    blend_triangles[2].v[0] = {150.0f, 120.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.5f};
-    blend_triangles[2].v[1] = {150.0f, 340.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f};
-    blend_triangles[2].v[2] = {350.0f, 230.0f, 0.5f, 1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.5f};
+    blend_triangles[2].v[0] = {15.0f, 12.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.5f};
+    blend_triangles[2].v[1] = {15.0f, 34.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f};
+    blend_triangles[2].v[2] = {35.0f, 23.0f, 0.5f, 1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.5f};
     blend_triangles[2].name = "Red triangle (50% transparent)";
 
     // Semi-transparent BLUE triangle (50% alpha, overlaps red)
-    blend_triangles[3].v[0] = {290.0f, 150.0f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f};
-    blend_triangles[3].v[1] = {290.0f, 360.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.5f};
-    blend_triangles[3].v[2] = {490.0f, 255.0f, 0.3f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f};
+    blend_triangles[3].v[0] = {29.0f, 15.0f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.5f};
+    blend_triangles[3].v[1] = {29.0f, 36.0f, 0.3f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.5f};
+    blend_triangles[3].v[2] = {49.0f, 25.0f, 0.3f, 1.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.5f};
     blend_triangles[3].name = "Blue triangle (50% transparent)";
 
     const int num_blend_triangles = 4;
@@ -774,25 +776,25 @@ int main(int argc, char** argv) {
     dut->blend_src_factor = GR_BLEND_ONE;
     dut->blend_dst_factor = GR_BLEND_ONE;
 
-    // Additive blending triangles on dark background
+    // Additive blending triangles on dark background (scaled for 64x64)
     Triangle additive_triangles[3];
 
     // Red glow
-    additive_triangles[0].v[0] = {200.0f, 100.0f, 0.5f, 0.0f, 0.0f, 0.8f, 0.0f, 0.0f, 1.0f};
-    additive_triangles[0].v[1] = {100.0f, 350.0f, 0.5f, 0.0f, 1.0f, 0.8f, 0.0f, 0.0f, 1.0f};
-    additive_triangles[0].v[2] = {350.0f, 300.0f, 0.5f, 1.0f, 0.5f, 0.8f, 0.0f, 0.0f, 1.0f};
+    additive_triangles[0].v[0] = {20.0f, 10.0f, 0.5f, 0.0f, 0.0f, 0.8f, 0.0f, 0.0f, 1.0f};
+    additive_triangles[0].v[1] = {10.0f, 35.0f, 0.5f, 0.0f, 1.0f, 0.8f, 0.0f, 0.0f, 1.0f};
+    additive_triangles[0].v[2] = {35.0f, 30.0f, 0.5f, 1.0f, 0.5f, 0.8f, 0.0f, 0.0f, 1.0f};
     additive_triangles[0].name = "Red glow (additive)";
 
     // Green glow (overlaps red)
-    additive_triangles[1].v[0] = {280.0f, 80.0f,  0.5f, 0.0f, 0.0f, 0.0f, 0.8f, 0.0f, 1.0f};
-    additive_triangles[1].v[1] = {200.0f, 380.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.8f, 0.0f, 1.0f};
-    additive_triangles[1].v[2] = {450.0f, 250.0f, 0.5f, 1.0f, 0.5f, 0.0f, 0.8f, 0.0f, 1.0f};
+    additive_triangles[1].v[0] = {28.0f, 8.0f,  0.5f, 0.0f, 0.0f, 0.0f, 0.8f, 0.0f, 1.0f};
+    additive_triangles[1].v[1] = {20.0f, 38.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.8f, 0.0f, 1.0f};
+    additive_triangles[1].v[2] = {45.0f, 25.0f, 0.5f, 1.0f, 0.5f, 0.0f, 0.8f, 0.0f, 1.0f};
     additive_triangles[1].name = "Green glow (additive)";
 
     // Blue glow (overlaps both)
-    additive_triangles[2].v[0] = {380.0f, 120.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.8f, 1.0f};
-    additive_triangles[2].v[1] = {320.0f, 400.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.8f, 1.0f};
-    additive_triangles[2].v[2] = {550.0f, 280.0f, 0.5f, 1.0f, 0.5f, 0.0f, 0.0f, 0.8f, 1.0f};
+    additive_triangles[2].v[0] = {38.0f, 12.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.8f, 1.0f};
+    additive_triangles[2].v[1] = {32.0f, 40.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.8f, 1.0f};
+    additive_triangles[2].v[2] = {55.0f, 28.0f, 0.5f, 1.0f, 0.5f, 0.0f, 0.0f, 0.8f, 1.0f};
     additive_triangles[2].name = "Blue glow (additive)";
 
     const int num_additive_triangles = 3;

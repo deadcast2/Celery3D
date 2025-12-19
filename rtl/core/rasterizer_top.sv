@@ -8,10 +8,12 @@ module rasterizer_top
     parameter TEX_WIDTH_LOG2  = 6,  // 64 texels
     parameter TEX_HEIGHT_LOG2 = 6,
     parameter TEX_ADDR_BITS   = TEX_WIDTH_LOG2 + TEX_HEIGHT_LOG2,
-    parameter DB_WIDTH        = 640,  // Depth buffer (matches framebuffer)
-    parameter DB_HEIGHT       = 480,
-    parameter FB_WIDTH        = 640,
-    parameter FB_HEIGHT       = 480
+    // Reduced resolution for synthesis testing (fits in BRAM)
+    // Full 640x480 requires DDR3 framebuffer
+    parameter DB_WIDTH        = 64,
+    parameter DB_HEIGHT       = 64,
+    parameter FB_WIDTH        = 64,
+    parameter FB_HEIGHT       = 64
 )(
     input  logic        clk,
     input  logic        rst_n,
