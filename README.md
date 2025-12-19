@@ -225,12 +225,6 @@ make clean-vivado
 - [ ] **Phase 7:** Graphics API library
 - [ ] **Phase 8:** Demos and polish
 
-### Rasterizer Output
-
-RTL rasterizer with Gouraud shading and perspective-correct interpolation, rendering multiple triangles with varying depth. The perspective correction uses a pipelined Newton-Raphson reciprocal (8 stages, 50 MHz timing met):
-
-![Rasterizer Output](docs/rasterizer_output.png)
-
 ### Texture Filtering Comparison
 
 The texture unit supports both nearest-neighbor and bilinear filtering modes, selectable at runtime. Bilinear filtering samples 4 texels and interpolates between them for smoother results when textures are magnified. The implementation uses dual-port BRAMs with even/odd column interleaving to fetch all 4 texels in a single cycle.
