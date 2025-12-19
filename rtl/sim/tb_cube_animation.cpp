@@ -378,9 +378,9 @@ ScreenVertex transform_vertex(Vec3 pos, float u, float v, Vec3 color, Mat4 mvp) 
     vert.x = (ndc_x + 1.0f) * 0.5f * SCREEN_WIDTH;
     vert.y = (1.0f - ndc_y) * 0.5f * SCREEN_HEIGHT;  // Flip Y
     vert.z = (ndc_z + 1.0f) * 0.5f;  // Map to [0, 1]
-    // Compute w same way as original testbench: 1/(z+0.001)
-    // This ensures consistent fixed-point scaling
-    vert.w = 1.0f / (vert.z + 0.001f);
+    // Use 1/clip.w for perspective-correct interpolation
+    // Scale up to keep values in a range the fixed-point RTL handles well
+    vert.w = inv_w * 16.0f;
     vert.u = u;
     vert.v = v;
     vert.r = color.x;
