@@ -4,7 +4,7 @@
 VERILATOR = verilator
 VERILATOR_FLAGS = --cc --exe --build -Wall -Wno-fatal --trace
 
-# Source files
+# Source files - Rasterizer core
 RTL_SRCS = \
     core/celery_pkg.sv \
     core/edge_eval.sv \
@@ -17,9 +17,21 @@ RTL_SRCS = \
     core/framebuffer.sv \
     core/rasterizer_top.sv
 
+# Source files - HDMI video output
+HDMI_SRCS = \
+    core/celery_pkg.sv \
+    video/video_pkg.sv \
+    video/video_timing_gen.sv \
+    video/test_pattern_gen.sv \
+    video/rgb_to_ycbcr.sv \
+    video/i2c_master.sv \
+    video/adv7511_init.sv \
+    video/hdmi_top.sv
+
 # Testbenches
 TB_SRC = sim/tb_rasterizer.cpp
 TB_CUBE_SRC = sim/tb_cube_animation.cpp
+TB_HDMI_SRC = sim/tb_hdmi.cpp
 
 # Output directory
 OBJ_DIR = obj_dir
@@ -27,7 +39,7 @@ OBJ_DIR = obj_dir
 # Top module
 TOP = rasterizer_top
 
-.PHONY: all sim cube clean lint wave help synth impl timing
+.PHONY: all sim cube hdmi clean lint wave help synth synth-hdmi program-hdmi impl timing
 
 all: sim
 
@@ -64,6 +76,24 @@ $(OBJ_DIR)/V$(TOP)_cube: $(RTL_SRCS) $(TB_CUBE_SRC)
 		$(TB_CUBE_SRC) \
 		-o V$(TOP)_cube
 
+# Build and run HDMI test pattern simulation
+hdmi: $(OBJ_DIR)/Vhdmi_top
+	@echo "Running HDMI simulation..."
+	./$(OBJ_DIR)/Vhdmi_top
+	@echo ""
+	@echo "Output saved to hdmi_output.ppm"
+
+# Build HDMI testbench executable
+$(OBJ_DIR)/Vhdmi_top: $(HDMI_SRCS) $(TB_HDMI_SRC)
+	@echo "Building HDMI testbench..."
+	$(VERILATOR) $(VERILATOR_FLAGS) \
+		--top-module hdmi_top \
+		-I./core \
+		-I./video \
+		$(HDMI_SRCS) \
+		$(TB_HDMI_SRC) \
+		-o Vhdmi_top
+
 # Lint check (no simulation, just syntax/style check)
 lint:
 	@echo "Linting RTL..."
@@ -84,6 +114,8 @@ clean:
 	rm -f frame_*.ppm
 	rm -f cube_animation.gif
 	rm -f output_*.ppm
+	rm -f hdmi.vcd
+	rm -f hdmi_output.ppm
 
 # ==============================================================================
 # Vivado Synthesis & Implementation
@@ -96,10 +128,23 @@ BUILD_DIR = build
 
 # Synthesis only (fast, for checking resource usage)
 synth:
-	@echo "Running Vivado synthesis..."
+	@echo "Running Vivado synthesis (rasterizer)..."
 	@mkdir -p $(BUILD_DIR)
 	$(VIVADO) $(VIVADO_FLAGS) -source scripts/synth_rasterizer.tcl 2>&1 | tee $(BUILD_DIR)/vivado.log
 	@echo "Synthesis complete. Check $(BUILD_DIR)/post_synth_*.rpt"
+
+# HDMI synthesis and bitstream generation
+synth-hdmi:
+	@echo "Running Vivado synthesis (HDMI)..."
+	@mkdir -p build_hdmi
+	$(VIVADO) $(VIVADO_FLAGS) -source scripts/synth_hdmi.tcl 2>&1 | tee build_hdmi/vivado.log
+	@echo ""
+	@echo "Build complete. Check build_hdmi/hdmi_test.bit"
+
+# Program HDMI bitstream to KC705 via JTAG
+program-hdmi: build_hdmi/hdmi_test.bit
+	@echo "Programming KC705..."
+	$(VIVADO) $(VIVADO_FLAGS) -source scripts/program_hdmi.tcl
 
 # Full implementation (synthesis + place + route)
 impl: synth
@@ -117,6 +162,7 @@ timing:
 # Clean Vivado artifacts
 clean-vivado:
 	rm -rf $(BUILD_DIR)
+	rm -rf build_hdmi
 	rm -rf .Xil
 	rm -f vivado*.log vivado*.jou
 	rm -f *.dcp
@@ -129,12 +175,15 @@ help:
 	@echo "  all   - Build and run simulation (default)"
 	@echo "  sim   - Build and run simulation"
 	@echo "  cube  - Render 3D cube animation (60 frames)"
+	@echo "  hdmi  - Simulate HDMI output (test pattern)"
 	@echo "  lint  - Run Verilator linting"
 	@echo "  wave  - Open waveform viewer"
 	@echo ""
 	@echo "Synthesis (Vivado):"
-	@echo "  synth - Run synthesis and implementation"
-	@echo "  timing- Show timing summary"
+	@echo "  synth       - Run rasterizer synthesis"
+	@echo "  synth-hdmi  - Build HDMI bitstream (full flow)"
+	@echo "  program-hdmi- Program KC705 via JTAG"
+	@echo "  timing      - Show timing summary"
 	@echo ""
 	@echo "Cleanup:"
 	@echo "  clean       - Remove Verilator artifacts"

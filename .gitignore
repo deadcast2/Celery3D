@@ -34,5 +34,9 @@ celery_ref
 vivado*.log
 vivado*.jou
 vivado*.backup.log
+vivado*.zip
 *.dcp
 clockInfo.txt
+build_hdmi/
+*.bit
+*.rpt
