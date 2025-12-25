@@ -185,6 +185,7 @@ int main(int argc, char** argv) {
 
     // Initialize signals
     dut->clk_50mhz = 0;
+    dut->clk_25mhz = 0;
     dut->rst_n = 0;
     dut->pattern_sel = 0;  // Color bars
     dut->use_framebuffer = 0;
@@ -199,6 +200,7 @@ int main(int argc, char** argv) {
 
     for (int i = 0; i < 20; i++) {
         dut->clk_50mhz = !dut->clk_50mhz;
+        if (dut->clk_50mhz) dut->clk_25mhz = !dut->clk_25mhz;  // 25 MHz = 50 MHz / 2
         dut->eval();
         tfp->dump(i);
     }
@@ -222,6 +224,7 @@ int main(int argc, char** argv) {
 
     while (sim_time < max_time) {
         dut->clk_50mhz = !dut->clk_50mhz;
+        if (dut->clk_50mhz) dut->clk_25mhz = !dut->clk_25mhz;  // 25 MHz = 50 MHz / 2
         dut->eval();
 
         // Update I2C slave model (on 50 MHz clock edges)
@@ -344,7 +347,7 @@ int main(int argc, char** argv) {
 
     // Print summary
     printf("\nSimulation Summary:\n");
-    printf("  Pixel clock locked: %s\n", dut->pixel_clk_locked ? "YES" : "NO");
+    printf("  Pixel clock:        25 MHz (simulated)\n");
     printf("  ADV7511 init done:  %s\n", dut->hdmi_init_done ? "YES" : "NO");
     printf("  ADV7511 init error: %s\n", dut->hdmi_init_error ? "YES" : "NO");
     printf("  Frames captured:    %d\n", frame_count);
