@@ -1,0 +1,16038 @@
+KC705 Evaluation Board
+for the Kintex-7 FPGA
+
+User Guide
+
+UG810 (v1.9) February 4, 2019
+
+Revision History
+The following table shows the revision history for this document.
+Date
+
+Version
+
+Revision
+
+02/04/2019
+
+1.9
+
+Updated the Electrostatic Discharge Caution section. In the DDR3 Memory Module,
+added information about configuration. Updated Appendix C, Xilinx Design
+Constraints and Appendix F, Regulatory and Compliance Information.
+
+07/10/2018
+
+1.8.1
+
+Editorial updates only. No technical content updates.
+
+03/20/2018
+
+1.8
+
+In Table 1-1, Quad SPI Flash Memory, and [Ref 6], added Micron
+MT25QL128ABA8ESF-0SIT as a possible part for U7. In Table 1-24, the I2C addresses
+were updated for the FMC HPC and FMC LPC device rows.
+
+07/08/2016
+
+1.7
+
+Updated VRP/VRN resistor connection information in DDR3 Memory Module.
+Moved the Additional Resources and Legal Notices appendix to the end of the
+book.
+
+08/26/2015
+
+1.6.2
+
+In Table 1-9, the I/O standard for SYSCLK_N and SYSCLK_P were updated to LVDS.
+In Table 1-27, under Directional Pushbutton Switches, the I/O standard for
+GPIO_SW_C was updated to LVCMOS25. Updated the #USB UART section of
+Appendix C, Xilinx Design Constraints.
+
+04/13/2015
+
+1.6.1
+
+In HPC Connector J22, the GTX clock count changed from 1 to 2. Updated links.
+
+12/08/2014
+
+1.6
+
+Added a note about jumper header locations below Table 1-1. Changed Table 1-5
+heading J1 DDR3 Memory to U58 BPI Flash Memory. Parts PC28F00AP30TF and
+N25Q128A13BSF40F changed from Numonyx to Micron. Described J11 and J12
+connections in User SMA Clock Input. Made these updates in Programmable User
+Clock Source: XTP186 became XTP204, RDF0175 became RDF0194, XTP187 became
+XTP203, and RDF0176 became RDF0193. Corrected the device in the heading of
+Table 1-20 from CP2013 to CP2103. Updated I2C Bus Switch. Updated Table 1-24
+I2C devices. In Table 1-28, J22 pin G7 connects to FPGA U1 pin C27. Replaced
+Table A-3, KC705 Default Jumper Settings and added Figure A-3 to show jumper
+locations. Replaced the constraints file in Appendix C, Xilinx Design Constraints.
+Added information about ordering the custom ATX cable to Appendix F, Regulatory
+and Compliance Information, [Ref 21].
+
+07/11/2014
+
+1.5
+
+Corrected MGT Quad connection information in GTX Transceivers and a connection
+in Table 1-10. Added MGTREFCLK1 - PCIE_CLK from P1 to Quad 115 in GTX
+Transceivers. Updated Table 1-4, Table 1-5, Table 1-6, Table 1-7, Table 1-9,
+Table 1-18, Table 1-21, Table 1-23, Table 1-27, Table 1-28, and Table 1-29. Added
+table footnotes regarding I/O standard and pins prior to board revision 1.1 to
+Table 1-14. Clarified default jumper positions in Table 1-15. Corrected the J2 C19
+pin number in Table 1-29. In Figure 1-39, changed pin names VBATT to VCCBATT
+and POUC_B to PUDC_B. Removed three pins from See the Kintex-7 KC705
+Evaluation Kit product page Documentation tab for the latest versions of the FPGA
+pins constraints files (XDC files). (PACKAGE _PIN R8, R7, and W8). The Appendix C
+title changed to Master Constraints File Listing and the constraints file in
+Appendix C was replaced. The Declaration of Conformity link in Appendix F was
+updated.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+2
+
+Date
+
+Version
+
+Revision
+
+07/18/2013
+
+1.4
+
+Revised the format of Table 1-20 and added the I/O standard column. Revised the
+FPGA U1 pin for FMC_HPC_CLK0_M2C_N in Table 1-28 to C27 on page 59. Revised
+the descriptions of the functions for SW13 position 3 and position 5 in Table A-2.
+In Appendix C, Xilinx Design Constraints, changed appendix title from Master UCF
+Listing to Master Board Constraints, replaced references to the term UCF with the
+term XDC and replaced the KC705 Board UCF Listing with the See the Kintex-7
+KC705 Evaluation Kit product page Documentation tab for the latest versions of the
+FPGA pins constraints files (XDC files)..
+
+05/10/2013
+
+1.3
+
+Updated Figure 1-1 to show v 1.1 board. Updated Table 1-1: callout 1 to identify
+Fansink, callouts 25and 26 pointing to User I/O. Added Table 1-9 Clock Source to
+FPGA U1 Connections. Updated Programmable User Clock Source, page 30 to
+include I2C address. Updated Table 1-17 for naming pins 18 and 19. Added Note to
+Table 1-14. Updated I2C Bus Switch to show TI device instead of NXP
+Semiconductor, deleted; updated [Ref 20]. Added Figure 1-27 Rotary Switch, and
+Figure 1-28 GPIO SMAs J13 and J14. Added Note to Appendix C, Xilinx Design
+Constraints. Updated Appendix D, Board Setup, step 1 of installation procedure.
+Updated Appendix F, Additional Resources to include CE PC Test reference.
+
+12/10/2012
+
+1.2
+
+Replaced direct, inline links to external references in the body text with indirect
+references to the links in a numbered list in Appendix G, Additional Resources and
+Legal Notices. Revised the value for frequency jitter for the System Clock Source.
+Reset conditions are added to Jitter Attenuated Clock Revised jumper information
+for SFP_RS1 in Table 1-15. Revised contents and organization of Appendix F,
+Additional Resources.
+
+04/05/2012
+
+1.1
+
+Updated links from Table 1-1. Revised the JTAG configuration mode USB cable
+description under FPGA Configuration. Added Encryption Key Backup Circuit and
+Table 1-4. Added links to User SMA Clock Input in Table 1-8. Added link to Si570
+device vendor on page 31. Added Ethernet PHY Status LEDs and Figure 1-23.
+Updated Power On/Off Slide Switch SW15 and added Figure 1-31. Revised FPGA
+Mezzanine Card Interface and Table 1-28 and Table 1-29. Added description of
+power module cooling requirement to Power Management. Added Cooling Fan
+Control. Updated Table 1-35. Added references to Documents, page 85. Added
+Appendix E, Compliance with European Union Directives and Standards,
+Appendix D, Board Setup, and Appendix E, Board Specifications.
+
+01/23/2012
+
+1.0
+
+Initial Xilinx release.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+3
+
+Table of Contents
+Revision History . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2
+
+Chapter 1: KC705 Evaluation Board Features
+Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+Electrostatic Discharge Caution . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+Feature Descriptions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+Configuration Options . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 81
+
+Appendix A: Default Switch and Jumper Settings
+DIP Switch SW11 User GPIO . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 84
+DIP Switch SW13 Mode and Flash Memory Address Settings . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 85
+Default Jumper Settings . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 85
+
+Appendix B: VITA 57.1 FMC Connector Pinouts
+Appendix C: Xilinx Design Constraints
+Appendix D: Board Setup
+Installing KC705 Board in a PC Chassis . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 90
+
+Appendix E: Board Specifications
+Dimensions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
+Environmental . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 92
+
+Appendix F: Regulatory and Compliance Information
+Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 93
+Declaration of Conformity. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 93
+CE Directives. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 93
+CE Standards. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 93
+Markings . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 94
+
+Appendix G: Additional Resources and Legal Notices
+Xilinx Resources . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 95
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+4
+
+Solution Centers. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 95
+Documentation Navigator and Design Hubs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 95
+References . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 96
+Please Read: Important Legal Notices . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 98
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+5
+
+Chapter 1
+
+KC705 Evaluation Board Features
+Overview
+The KC705 evaluation board for the Kintex®-7 FPGA provides a hardware environment for
+developing and evaluating designs targeting the Kintex-7 XC7K325T-2FFG900C FPGA. The
+KC705 board provides features common to many embedded processing systems, including
+a DDR3 SODIMM memory, an 8-lane PCI Express® interface, a tri-mode Ethernet PHY,
+general purpose I/O, and a UART interface. Other features can be added by using FPGA
+Mezzanine Cards (FMCs) attached to either of two VITA-57 FPGA mezzanine connectors
+provided on the board. High pin count (HPC) and low pin count (LPC) FMCs are provided.
+See KC705 Board Features for a complete list of features. The details for each feature are
+described in Feature Descriptions.
+
+Additional Information
+See Appendix G, Additional Resources and Legal Notices for references to documents, files,
+and resources relevant to the KC705 board.
+
+KC705 Board Features
+•
+
+Kintex-7 XC7K325T-2FFG900C FPGA
+
+•
+
+1 GB DDR3 memory SODIMM
+
+•
+
+128 MB Linear Byte Peripheral Interface (BPI) flash memory
+
+•
+
+128 Mb Quad Serial Peripheral Interface (SPI) flash memory
+
+•
+
+Secure Digital (SD) connector
+
+•
+
+USB JTAG via Digilent module
+
+•
+
+Clock generation
+°
+
+Fixed 200 MHz LVDS oscillator (differential)
+
+°
+
+Inter-integrated circuit (I2C) programmable LVDS oscillator (differential)
+
+°
+
+SMA connectors (differential)
+
+°
+
+SMA connectors for GTX transceiver clocking
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+6
+
+Chapter 1: KC705 Evaluation Board Features
+•
+
+•
+
+GTX transceivers
+°
+
+FMC HPC connector (four GTX transceivers)
+
+°
+
+FMC LPC connector (one GTX transceiver)
+
+°
+
+SMA connectors (one pair each for TX, RX, and REFCLK)
+
+°
+
+PCI Express (eight lanes)
+
+°
+
+Small form-factor pluggable plus (SFP+) connector
+
+°
+
+Ethernet PHY SGMII interface (RJ-45 connector)
+
+PCI Express endpoint connectivity
+°
+
+Gen1 8-lane (x8)
+
+°
+
+Gen2 8-lane (x8)
+
+•
+
+SFP+ Connector
+
+•
+
+10/100/1000 tri-speed Ethernet PHY
+
+•
+
+USB-to-UART bridge
+
+•
+
+High-Definition Multimedia Interface ™ (HDMI) technology codec
+
+•
+
+I2C bus
+
+•
+
+•
+
+°
+
+I2C mux
+
+°
+
+I2C EEPROM (1 KB)
+
+°
+
+USER I2C programmable LVDS oscillator
+
+°
+
+DDR3 SODIMM socket
+
+°
+
+HDMI codec
+
+°
+
+FMC HPC connector
+
+°
+
+FMC LPC connector
+
+°
+
+SFP+ connector
+
+°
+
+I2C programmable jitter-attenuating precision clock multiplier
+
+Status LEDs
+°
+
+Ethernet status
+
+°
+
+Power good
+
+°
+
+FPGA INIT
+
+°
+
+FPGA DONE
+
+User I/O
+°
+
+USER LEDs (eight GPIO)
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+7
+
+Chapter 1: KC705 Evaluation Board Features
+
+•
+
+°
+
+User pushbuttons (five directional)
+
+°
+
+CPU reset pushbutton
+
+°
+
+User DIP switch (4-pole GPIO)
+
+°
+
+User edge drive rotary encoder switch
+
+°
+
+User SMA GPIO connectors (one pair)
+
+°
+
+LCD character display (16 characters x 2 lines)
+
+Switches
+°
+
+Power on/off slide switch
+
+°
+
+FPGA_PROG_B pushbutton switch
+
+•
+
+VITA 57.1 FMC HPC Connector
+
+•
+
+VITA 57.1 FMC LPC Connector
+
+•
+
+Power management
+°
+
+PMBus voltage and current monitoring via TI power controller
+
+•
+
+XADC header
+
+•
+
+Configuration options
+°
+
+Linear BPI flash memory
+
+°
+
+Quad SPI flash memory
+
+°
+
+USB JTAG configuration port
+
+°
+
+Platform cable header JTAG configuration port
+
+The KC705 board block diagram is shown in Figure 1-1. The KC705 board schematics are
+available for download from the Kintex-7 FPGA KC705 Evaluation Kit website.
+
+Electrostatic Discharge Caution
+CAUTION! ESD can damage electronic components when they are improperly handled, and can result
+
+in total or intermittent failures. Always follow ESD-prevention procedures when removing and
+replacing components.
+
+To prevent ESD damage:
+•
+
+Use an ESD wrist or ankle strap and ensure that it makes skin contact. Connect the
+equipment end of the strap to an unpainted metal surface on the chassis.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+8
+
+Chapter 1: KC705 Evaluation Board Features
+•
+
+Avoid touching the adapter against your clothing. The wrist strap protects components
+from ESD on the body only.
+
+•
+
+Handle the adapter by its bracket or edges only. Avoid touching the printed circuit
+board or the connectors.
+
+•
+
+Put the adapter down only on an anti-static surface such as the bag supplied in your
+kit.
+
+•
+
+If you are returning the adapter to Xilinx Product Support, place it back in its anti-static
+bag immediately.
+
+X-Ref Target - Figure 1-1
+
+1 GB DDR3 Memory
+(SODIMM)
+
+FMC Connectors
+(HPC/LPC)
+
+10/100/1000 Ethernet
+Interface
+
+Differential Clock
+GTX SMA Clock
+
+128 MB Linear BPI
+Flash memory
+
+XADC Header
+
+128 Mb Quad-SPI
+Flash Memory
+Kintex-7 FPGA
+XC7K325T-2FFG900C
+
+User Switches,
+Buttons, and LEDs
+
+8-lane PCI Express
+Edge Connector
+
+HDMI Video
+Interface
+
+1 KB EEPROM (I2C)
+I2C Bus Switch
+
+LCD Display
+(2 line x 16 characters)
+
+DIP Switch SW13
+Config and Flash Addr
+
+USB-to-UART Bridge
+
+JTAG Interface
+mini-B USB Connector
+
+SFP+ Single Cage
+UG810_c1_01_011812
+
+Figure 1-1:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+KC705 Board Block Diagram
+
+www.xilinx.com
+
+Send Feedback
+
+9
+
+Chapter 1: KC705 Evaluation Board Features
+
+Feature Descriptions
+The following figure shows the KC705 board. Each numbered feature that is referenced in
+Figure 1-2 is described in the sections that follow.
+Note: The image in Figure 1-2 is for reference only and might not reflect the current revision of the
+board.
+
+X-Ref Target - Figure 1-2
+
+00
+
+Round callout references a component
+on the front side of the board
+
+33
+
+00
+
+31
+
+30
+
+35
+
+Square callout references a component
+on the back side of the board
+
+22
+27
+
+9
+
+5
+
+14
+26
+36
+20
+
+17
+
+8
+
+24
+
+6
+
+7
+3
+
+37
+
+34
+
+28
+
+29
+
+4
+
+1
+2
+
+10
+
+15
+
+12
+
+21
+11
+
+23
+
+16
+
+19
+18
+
+13
+
+25
+
+User rotary switch
+located under LCD
+
+UG841_c1_02_042313
+
+Figure 1-2:
+
+KC705 Board Components
+
+Table 1-1:
+
+KC705 Board Component Descriptions
+
+Callout
+
+Reference
+Designator
+
+1
+
+U1
+
+Kintex-7 FPGA (Located under
+fansink)
+
+XC7K325T-2FFG900C, Radian
+INC3001-7_1.5BU_LI98
+
+2
+
+J1
+
+DDR3 Memory Module, under EMI
+shield
+
+Micron MT8JTF12864HZ-1G6G1
+
+15
+
+3
+
+U58
+
+Linear BPI Flash Memory
+
+Micron PC28F00AP30TF
+
+26
+
+4
+
+U7
+
+Quad SPI Flash Memory
+
+Micron N25Q128A13BSF40F or
+Micron MT25QL128ABA8ESF-0SIT
+
+26
+
+5
+
+U9
+
+SD Card Interface
+
+Molex 67840-8001
+
+28
+
+Component Description
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+Schematic
+0381397
+Page Number
+
+Notes
+
+www.xilinx.com
+
+Send Feedback
+
+10
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-1:
+
+KC705 Board Component Descriptions (Cont’d)
+
+Callout
+
+Reference
+Designator
+
+6
+
+Component Description
+
+Schematic
+0381397
+Page Number
+
+Notes
+
+USB JTAG Module
+
+Digilent USB JTAG Module (with
+micro-B receptacle)
+
+14
+
+7
+
+U6
+
+System Clock Source (back side of
+board)
+
+SiTime SIT9102-243N25E200.0000
+
+23
+
+8
+
+U45
+
+Programmable User Clock Source
+(back side of board)
+
+Silicon Labs SI570BAB0000544DG
+
+23
+
+9
+
+J11, J12
+
+User SMA Clock Input
+
+Rosenberger 32K10K-400L5
+
+23
+
+10
+
+J15, J16
+
+GTX SMA Clock Input
+
+Rosenberger 32K10K-400L5
+
+23
+
+11
+
+U70
+
+Jitter Attenuated Clock
+
+Silicon Labs SI5324C-C-GM
+
+24
+
+GTX Transceivers
+
+Embedded within FPGA U1
+
+9
+
+12
+13
+
+P1
+
+PCI Express Edge Connector
+
+8-lane card edge connector
+
+21
+
+14
+
+P5
+
+SFP/SFP+ Connector
+
+Molex 74441-0010
+
+22
+
+15
+
+U37
+
+10/100/1000 Tri-Speed Ethernet
+PHY
+
+Marvell M88E1111-BAB1C000
+
+25
+
+16
+
+U2
+
+SGMII GTX Transceiver Clock
+Generator
+
+ICS ICS84402IAGI-01LF
+
+23
+
+17
+
+J6, U12
+
+USB-to-UART Bridge
+
+Silicon Labs CP2103GM bridge
+(back side of board) and min-B
+receptacle (front side of board)
+
+27
+
+18
+
+P6, U65
+
+HDMI Video Output
+
+Molex 500254-1927, Analog
+Devices ADV7511KSTZ-P
+
+34, 33
+
+19
+
+J31
+
+LCD Character Display
+
+2 x 7 0.1 in male pin header
+
+30
+
+20
+
+U49
+
+I2C Bus Switch, page 53
+
+TI PCA9548ARGER
+
+32
+
+21
+
+DS11 - DS13
+
+Ethernet PHY Status LEDs
+
+EPHY status LED, dual green
+
+25
+
+34
+
+DS14, DS20 DS24
+
+Status LEDs
+
+Status LEDs, green
+
+29
+
+22
+
+DS1 - DS4,
+Ds10,
+DS25 - DS27
+
+User GPIO LEDs
+
+GPIO LEDs, green
+
+29
+
+23
+
+SW2 – SW6
+
+User Pushbuttons
+
+E-Switch TL3301EP100QG
+
+29
+
+24
+
+SW11
+
+GPIO DIP Switch
+
+C and K 4-pole, SDA05H1SBD
+
+29
+
+25
+
+SW8
+
+Rotary Switch
+
+Panasonic EVQ-WK4001
+
+29
+
+26
+
+J13, J14
+
+GPIO SMA Connectors
+
+Rosenberger 32K10K-400L5
+
+23
+
+27
+
+SW15
+
+Power On/Off Slide Switch SW15
+
+C and K 1201M2S3AQE2
+
+35
+
+28
+
+SW14
+
+FPGA_PROG_B Pushbutton SW14
+(Active-Low)
+
+E-Switch TL3301EP100QG
+
+29
+
+29
+
+SW13
+
+Configuration Mode and Upper
+Linear Flash Address Switch
+(SW13)
+
+5-pole C and K SDA05H1IBD
+
+27
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+11
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-1:
+
+KC705 Board Component Descriptions (Cont’d)
+
+Callout
+
+Reference
+Designator
+
+30
+
+J22
+
+HPC Connector J22
+
+Samtec ASP_134486_01
+
+16-19
+
+31
+
+J2
+
+LPC Connector J2
+
+Samtec ASP_134603_01
+
+20
+
+32
+
+U55, U21,
+U103, U17,
+U56, U104,
+U105, U89,
+U106, U99,
+U71, U62,
+U17, U18, U33
+
+Power Management (voltage
+regulators front side of board,
+controllers back side of board)
+
+TI UCD9248PFC controllers in
+conjunction with various
+regulators
+
+33
+
+J46
+
+XADC Header
+
+2X10 0.1" male header
+
+31
+
+34
+
+J60
+
+2 x 7 2 mm shrouded JTAG cable
+connector
+
+Molex 87832-1420
+
+16
+
+35
+
+J39
+
+2 x 5 shrouded PMBus connector
+
+Assman HW10G-0202
+
+35
+
+36
+
+J49
+
+12V power input 2 x 3 connector
+
+Molex 39-30-1060
+
+35
+
+37
+
+SW7
+
+CPU Reset Pushbutton
+
+E-Switch TL3301EP100QG
+
+35
+
+Component Description
+
+Schematic
+0381397
+Page Number
+
+Notes
+
+35-46
+
+Note: Jumper header locations are identified in Appendix A, Default Switch and Jumper Settings.
+
+Kintex-7 FPGA
+[Figure 1-2, callout 1]
+The KC705 board is populated with the Kintex-7 XC7K325T-2FFG900C FPGA.
+For further information on Kintex-7 FPGAs, see 7 Series FPGAs Overview (DS180) [Ref 1].
+
+FPGA Configuration
+The KC705 board supports three of the five 7 series FPGA configuration modes:
+•
+
+Master SPI flash memory using the onboard Quad SPI flash memory
+
+•
+
+Master BPI flash memory using the onboard Linear BPI flash memory
+
+•
+
+JTAG using a standard-A to micro-B USB cable for connecting the host PC to the KC705
+board configuration port
+
+Each configuration interface corresponds to one or more configuration modes and bus
+widths as listed in Table 1-2. The mode switches M2, M1, and M0 are on SW13 positions 3,
+4, and 5 respectively as shown in the figure below.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+12
+
+Chapter 1: KC705 Evaluation Board Features
+X-Ref Target - Figure 1-3
+
+1 2 3 4 5
+
+SW13
+
+A25
+A24
+M2
+M1
+M0
+
+ON Position = 1
+
+OFF Position = 0
+UG810_c1_03_011112
+
+Figure 1-3:
+
+SW13 Default Settings
+
+The default mode setting is M[2:0] = 010, which selects Master BPI at board power-on.
+Refer to the Configuration Options for detailed information about the mode switch SW13.
+Table 1-2:
+
+KC705 Board FPGA Configuration Modes
+SW13 DIP Switch
+Settings (M[2:0])
+
+Configuration Mode
+
+Bus Width
+
+CCLK Direction
+
+Master SPI
+
+001
+
+x1, x2, x4
+
+Output
+
+Master BPI
+
+010
+
+x8, x16
+
+Output
+
+JTAG
+
+101
+
+x1
+
+Not applicable
+
+For full details on configuring the FPGA, see 7 Series FPGAs Configuration User Guide
+(UG470) [Ref 3].
+
+Encryption Key Backup Circuit
+FPGA U1 implements bitstream encryption key technology. The KC705 board provides the
+encryption key backup battery circuit shown in Figure 1-4. The rechargeable 1.5V lithium
+button-type battery B1 is soldered to the board with the positive output connected to FPGA
+U1 VCCBATT pin C10. The battery supply current I BATT specification is 150 nA max when
+board power is off. B1 is charged from the VCCAUX_IO 2.0V rail through a series diode with
+a typical forward voltage drop of 0.38V and 4.7 kΩ current limit resistor. The nominal
+charging voltage is 1.62V.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+13
+
+Chapter 1: KC705 Evaluation Board Features
+
+X-Ref Target - Figure 1-4
+
+NC
+1
+VCCAUX_IO (2.0V)
+
+D11
+40V
+200 mW
+
+3
+BAS40-04
+2
+R406
+4.70K 1%
+1/16W
+
+To FPGA U1 Pin C10
+(VCCBATT)
+
+FPGA_VBATT
+1
+B1
+
++
+Lithium Battery
+Seiko
+TS518SE_FL35E
+2
+GND
+UG810_c1_04_031214
+
+Figure 1-4:
+
+Encryption Key Backup Circuit
+
+I/O Voltage Rails
+There are 10 I/O banks available on the Kintex-7 device. The voltages applied to the FPGA
+I/O banks used by the KC705 board are listed in the table below.
+Table 1-3:
+
+I/O Voltage Rails
+
+U1 FPGA Bank
+
+Power Supply Rail Net Name
+
+Voltage
+
+Bank 0
+
+VCC2V5_FPGA
+
+2.5V
+
+Bank 12 (1)
+
+VADJ_FPGA
+
+2.5V (default)
+
+Bank 13 (1)
+
+VADJ_FPGA
+
+2.5V (default)
+
+Bank 14
+
+VCC2V5_FPGA
+
+2.5V
+
+Bank 15
+
+VCC2V5_FPGA
+
+2.5V
+
+Bank 16 (1)
+
+VADJ_FPGA
+
+2.5V (default)
+
+Bank 17 (1)
+
+VADJ_FPGA
+
+2.5V (default)
+
+Bank 18 (1)
+
+VADJ_FPGA
+
+2.5V (default)
+
+Bank 32
+
+VCC1V5_FPGA
+
+1.5V
+
+Bank 33
+
+VCC1V5_FPGA
+
+1.5V
+
+Bank 34
+
+VCC1V5_FPGA
+
+1.5V
+
+Notes:
+1. The VADJ_FPGA rail can support 1.8V, 2.5V, or 3.3V. For more information on VADJ_FPGA, see Power Management.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+14
+
+Chapter 1: KC705 Evaluation Board Features
+
+DDR3 Memory Module
+[Figure 1-2, callout 2]
+The memory module at J1 is a 1 GB DDR3 small outline dual-inline memory module
+(SODIMM). It provides volatile synchronous dynamic random access memory (SDRAM) for
+storing user code and data.
+•
+
+Part number: MT8JTF12864HZ-1G6G1 (Micron Technology)
+
+•
+
+Configuration: 1GB (128 Mb x 64)
+
+•
+
+Supply voltage: 1.5V
+
+•
+
+Datapath width: 64 bits
+
+•
+
+Data rate: Up to 1,600 MT/s
+
+The KC705 XC7K325T FPGA memory interface performance is documented in the Kintex-7
+FPGAs Data Sheet: DC and AC Switching Characteristics (DS182) [Ref 2].
+The DDR3 interface is implemented across I/O banks 32, 33, and 34. Each bank is a 1.5V
+high-performance (HP) bank. The VRP/VRN DCI resistor connection to bank 33 is cascaded
+to the data interface banks 32 and 34 by adding the DCI cascade constraint to the XDC:
+# Set DCI_CASCADE
+set_property slave_banks {32 34} [get_iobanks 33]
+
+An external 0.75V reference VTTREF is provided for data interface banks 32 and 34. Any
+interface connected to these banks that requires a reference voltage must use this FPGA
+voltage reference. The connections between the DDR 3 memory and the FPGA are listed in
+the following table.
+Table 1-4:
+
+DDR3 Memory Connections to the FPGA
+J1 DDR3 Memory
+
+U1 FPGA
+Pin
+
+Net Name
+
+I/O Standard
+
+Pin
+Number
+
+Pin Name
+
+AH12
+
+DDR3_A0
+
+SSTL15
+
+98
+
+A0
+
+AG13
+
+DDR3_A1
+
+SSTL15
+
+97
+
+A1
+
+AG12
+
+DDR3_A2
+
+SSTL15
+
+96
+
+A2
+
+AF12
+
+DDR3_A3
+
+SSTL15
+
+95
+
+A3
+
+AJ12
+
+DDR3_A4
+
+SSTL15
+
+92
+
+A4
+
+AJ13
+
+DDR3_A5
+
+SSTL15
+
+91
+
+A5
+
+AJ14
+
+DDR3_A6
+
+SSTL15
+
+90
+
+A6
+
+AH14
+
+DDR3_A7
+
+SSTL15
+
+86
+
+A7
+
+AK13
+
+DDR3_A8
+
+SSTL15
+
+89
+
+A8
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+15
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-4:
+
+DDR3 Memory Connections to the FPGA (Cont’d)
+J1 DDR3 Memory
+
+U1 FPGA
+Pin
+
+Net Name
+
+I/O Standard
+
+Pin
+Number
+
+Pin Name
+
+AK14
+
+DDR3_A9
+
+SSTL15
+
+85
+
+A9
+
+AF13
+
+DDR3_A10
+
+SSTL15
+
+107
+
+A10/AP
+
+AE13
+
+DDR3_A11
+
+SSTL15
+
+84
+
+A11
+
+AJ11
+
+DDR3_A12
+
+SSTL15
+
+83
+
+A12_BC_N
+
+AH11
+
+DDR3_A13
+
+SSTL15
+
+119
+
+A13
+
+AK10
+
+DDR3_A14
+
+SSTL15
+
+80
+
+A14
+
+AK11
+
+DDR3_A15
+
+SSTL15
+
+78
+
+A15
+
+AH9
+
+DDR3_BA0
+
+SSTL15
+
+109
+
+BA0
+
+AG9
+
+DDR3_BA1
+
+SSTL15
+
+108
+
+BA1
+
+AK9
+
+DDR3_BA2
+
+SSTL15
+
+79
+
+BA2
+
+AA15
+
+DDR3_D0
+
+SSTL15
+
+5
+
+DQ0
+
+AA16
+
+DDR3_D1
+
+SSTL15
+
+7
+
+DQ1
+
+AC14
+
+DDR3_D2
+
+SSTL15
+
+15
+
+DQ2
+
+AD14
+
+DDR3_D3
+
+SSTL15
+
+17
+
+DQ3
+
+AA17
+
+DDR3_D4
+
+SSTL15
+
+4
+
+DQ4
+
+AB15
+
+DDR3_D5
+
+SSTL15
+
+6
+
+DQ5
+
+AE15
+
+DDR3_D6
+
+SSTL15
+
+16
+
+DQ6
+
+Y15
+
+DDR3_D7
+
+SSTL15
+
+18
+
+DQ7
+
+AB19
+
+DDR3_D8
+
+SSTL15
+
+21
+
+DQ8
+
+AD16
+
+DDR3_D9
+
+SSTL15
+
+23
+
+DQ9
+
+AC19
+
+DDR3_D10
+
+SSTL15
+
+33
+
+DQ10
+
+AD17
+
+DDR3_D11
+
+SSTL15
+
+35
+
+DQ11
+
+AA18
+
+DDR3_D12
+
+SSTL15
+
+22
+
+DQ12
+
+AB18
+
+DDR3_D13
+
+SSTL15
+
+24
+
+DQ13
+
+AE18
+
+DDR3_D14
+
+SSTL15
+
+34
+
+DQ14
+
+AD18
+
+DDR3_D15
+
+SSTL15
+
+36
+
+DQ15
+
+AG19
+
+DDR3_D16
+
+SSTL15
+
+39
+
+DQ16
+
+AK19
+
+DDR3_D17
+
+SSTL15
+
+41
+
+DQ17
+
+AG18
+
+DDR3_D18
+
+SSTL15
+
+51
+
+DQ18
+
+AF18
+
+DDR3_D19
+
+SSTL15
+
+53
+
+DQ19
+
+AH19
+
+DDR3_D20
+
+SSTL15
+
+40
+
+DQ20
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+16
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-4:
+
+DDR3 Memory Connections to the FPGA (Cont’d)
+J1 DDR3 Memory
+
+U1 FPGA
+Pin
+
+Net Name
+
+I/O Standard
+
+Pin
+Number
+
+Pin Name
+
+AJ19
+
+DDR3_D21
+
+SSTL15
+
+42
+
+DQ21
+
+AE19
+
+DDR3_D22
+
+SSTL15
+
+50
+
+DQ22
+
+AD19
+
+DDR3_D23
+
+SSTL15
+
+52
+
+DQ23
+
+AK16
+
+DDR3_D24
+
+SSTL15
+
+57
+
+DQ24
+
+AJ17
+
+DDR3_D25
+
+SSTL15
+
+59
+
+DQ25
+
+AG15
+
+DDR3_D26
+
+SSTL15
+
+67
+
+DQ26
+
+AF15
+
+DDR3_D27
+
+SSTL15
+
+69
+
+DQ27
+
+AH17
+
+DDR3_D28
+
+SSTL15
+
+56
+
+DQ28
+
+AG14
+
+DDR3_D29
+
+SSTL15
+
+58
+
+DQ29
+
+AH15
+
+DDR3_D30
+
+SSTL15
+
+68
+
+DQ30
+
+AK15
+
+DDR3_D31
+
+SSTL15
+
+70
+
+DQ31
+
+AK8
+
+DDR3_D32
+
+SSTL15
+
+129
+
+DQ32
+
+AK6
+
+DDR3_D33
+
+SSTL15
+
+131
+
+DQ33
+
+AG7
+
+DDR3_D34
+
+SSTL15
+
+141
+
+DQ34
+
+AF7
+
+DDR3_D35
+
+SSTL15
+
+143
+
+DQ35
+
+AF8
+
+DDR3_D36
+
+SSTL15
+
+130
+
+DQ36
+
+AK4
+
+DDR3_D37
+
+SSTL15
+
+132
+
+DQ37
+
+AJ8
+
+DDR3_D38
+
+SSTL15
+
+140
+
+DQ38
+
+AJ6
+
+DDR3_D39
+
+SSTL15
+
+142
+
+DQ39
+
+AH5
+
+DDR3_D40
+
+SSTL15
+
+147
+
+DQ40
+
+AH6
+
+DDR3_D41
+
+SSTL15
+
+149
+
+DQ41
+
+AJ2
+
+DDR3_D42
+
+SSTL15
+
+157
+
+DQ42
+
+AH2
+
+DDR3_D43
+
+SSTL15
+
+159
+
+DQ43
+
+AH4
+
+DDR3_D44
+
+SSTL15
+
+146
+
+DQ44
+
+AJ4
+
+DDR3_D45
+
+SSTL15
+
+148
+
+DQ45
+
+AK1
+
+DDR3_D46
+
+SSTL15
+
+158
+
+DQ46
+
+AJ1
+
+DDR3_D47
+
+SSTL15
+
+160
+
+DQ47
+
+AF1
+
+DDR3_D48
+
+SSTL15
+
+163
+
+DQ48
+
+AF2
+
+DDR3_D49
+
+SSTL15
+
+165
+
+DQ49
+
+AE4
+
+DDR3_D50
+
+SSTL15
+
+175
+
+DQ50
+
+AE3
+
+DDR3_D51
+
+SSTL15
+
+177
+
+DQ51
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+17
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-4:
+
+DDR3 Memory Connections to the FPGA (Cont’d)
+J1 DDR3 Memory
+
+U1 FPGA
+Pin
+
+Net Name
+
+I/O Standard
+
+Pin
+Number
+
+Pin Name
+
+AF3
+
+DDR3_D52
+
+SSTL15
+
+164
+
+DQ52
+
+AF5
+
+DDR3_D53
+
+SSTL15
+
+166
+
+DQ53
+
+AE1
+
+DDR3_D54
+
+SSTL15
+
+174
+
+DQ54
+
+AE5
+
+DDR3_D55
+
+SSTL15
+
+176
+
+DQ55
+
+AC1
+
+DDR3_D56
+
+SSTL15
+
+181
+
+DQ56
+
+AD3
+
+DDR3_D57
+
+SSTL15
+
+183
+
+DQ57
+
+AC4
+
+DDR3_D58
+
+SSTL15
+
+191
+
+DQ58
+
+AC5
+
+DDR3_D59
+
+SSTL15
+
+193
+
+DQ59
+
+AE6
+
+DDR3_D60
+
+SSTL15
+
+180
+
+DQ60
+
+AD6
+
+DDR3_D61
+
+SSTL15
+
+182
+
+DQ61
+
+AC2
+
+DDR3_D62
+
+SSTL15
+
+192
+
+DQ62
+
+AD4
+
+DDR3_D63
+
+SSTL15
+
+194
+
+DQ63
+
+Y16
+
+DDR3_DM0
+
+SSTL15
+
+11
+
+DM0
+
+AB17
+
+DDR3_DM1
+
+SSTL15
+
+28
+
+DM1
+
+AF17
+
+DDR3_DM2
+
+SSTL15
+
+46
+
+DM2
+
+AE16
+
+DDR3_DM3
+
+SSTL15
+
+63
+
+DM3
+
+AK5
+
+DDR3_DM4
+
+SSTL15
+
+136
+
+DM4
+
+AJ3
+
+DDR3_DM5
+
+SSTL15
+
+153
+
+DM5
+
+AF6
+
+DDR3_DM6
+
+SSTL15
+
+170
+
+DM6
+
+AC7
+
+DDR3_DM7
+
+SSTL15
+
+187
+
+DM7
+
+AC15
+
+DDR3_DQS0_N
+
+DIFF_SSTL15
+
+10
+
+DQS0_N
+
+AC16
+
+DDR3_DQS0_P
+
+DIFF_SSTL15
+
+12
+
+DQS0_P
+
+Y18
+
+DDR3_DQS1_N
+
+DIFF_SSTL15
+
+27
+
+DQS1_N
+
+Y19
+
+DDR3_DQS1_P
+
+DIFF_SSTL15
+
+29
+
+DQS1_P
+
+AK18
+
+DDR3_DQS2_N
+
+DIFF_SSTL15
+
+45
+
+DQS2_N
+
+AJ18
+
+DDR3_DQS2_P
+
+DIFF_SSTL15
+
+47
+
+DQS2_P
+
+AJ16
+
+DDR3_DQS3_N
+
+DIFF_SSTL15
+
+62
+
+DQS3_N
+
+AH16
+
+DDR3_DQS3_P
+
+DIFF_SSTL15
+
+64
+
+DQS3_P
+
+AJ7
+
+DDR3_DQS4_N
+
+DIFF_SSTL15
+
+135
+
+DQS4_N
+
+AH7
+
+DDR3_DQS4_P
+
+DIFF_SSTL15
+
+137
+
+DQS4_P
+
+AH1
+
+DDR3_DQS5_N
+
+DIFF_SSTL15
+
+152
+
+DQS5_N
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+18
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-4:
+
+DDR3 Memory Connections to the FPGA (Cont’d)
+J1 DDR3 Memory
+
+U1 FPGA
+Pin
+
+Net Name
+
+I/O Standard
+
+Pin
+Number
+
+Pin Name
+
+AG2
+
+DDR3_DQS5_P
+
+DIFF_SSTL15
+
+154
+
+DQS5_P
+
+AG3
+
+DDR3_DQS6_N
+
+DIFF_SSTL15
+
+169
+
+DQS6_N
+
+AG4
+
+DDR3_DQS6_P
+
+DIFF_SSTL15
+
+171
+
+DQS6_P
+
+AD1
+
+DDR3_DQS7_N
+
+DIFF_SSTL15
+
+186
+
+DQS7_N
+
+AD2
+
+DDR3_DQS7_P
+
+DIFF_SSTL15
+
+188
+
+DQS7_P
+
+AD8
+
+DDR3_ODT0
+
+SSTL15
+
+116
+
+ODT0
+
+AC10
+
+DDR3_ODT1
+
+SSTL15
+
+120
+
+ODT1
+
+AK3
+
+DDR3_RESET_B
+
+LVCMOS15
+
+30
+
+RESET_B
+
+AC12
+
+DDR3_S0_B
+
+SSTL15
+
+114
+
+S0_B
+
+AE8
+
+DDR3_S1_B
+
+SSTL15
+
+121
+
+S1_B
+
+AJ9
+
+DDR3_TEMP_EVENT
+
+SSTL15
+
+198
+
+EVENT_B
+
+AE9
+
+DDR3_WE_B
+
+SSTL15
+
+113
+
+WE_B
+
+AC11
+
+DDR3_CAS_B
+
+SSTL15
+
+115
+
+CAS_B
+
+AD9
+
+DDR3_RAS_B
+
+SSTL15
+
+110
+
+RAS_B
+
+AF10
+
+DDR3_CKE0
+
+SSTL15
+
+73
+
+CKE0
+
+AE10
+
+DDR3_CKE1
+
+SSTL15
+
+74
+
+CKE1
+
+AH10
+
+DDR3_CLK0_N
+
+DIFF_SSTL15
+
+103
+
+CK0_N
+
+AG10
+
+DDR3_CLK0_P
+
+DIFF_SSTL15
+
+101
+
+CK0_P
+
+AF11
+
+DDR3_CLK1_N
+
+DIFF_SSTL15
+
+104
+
+CK1_N
+
+AE11
+
+DDR3_CLK1_P
+
+DIFF_SSTL15
+
+102
+
+CK1_P
+
+The KC705 DDR3 SODIMM interface adheres to the constraints guidelines documented in
+the DDR3 Design Guidelines section of 7 Series FPGAs Memory Interface Solutions
+User Guide (UG586) [Ref 4]. The KC705 DDR3 SODIMM interface is a 40Ω impedance
+implementation. Other memory interface details are available in UG586 and 7 Series FPGAs
+Memory Resources User Guide (UG473) [Ref 5] . For more information about the Micron
+MT8JTF12864HZ-1G6G1 part, see [Ref 6].
+
+Linear BPI Flash Memory
+[Figure 1-2, callout 3]
+The Linear BPI flash memory located at U58 provides 128 MB of nonvolatile storage that
+can be used for configuration or software storage. The data, address, and control signals
+are connected to the FPGA. The BPI flash memory device is packaged in a 64-pin BGA.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+19
+
+Chapter 1: KC705 Evaluation Board Features
+•
+
+Part number: PC28F00AP30TF (Micron)
+
+•
+
+Supply voltage: 2.5V
+
+•
+
+Datapath width: 16 bits (26 address lines and 7 control signals)
+
+•
+
+Data rate: Up to 33 MHz
+
+The Linear BPI flash memory can synchronously configure the FPGA in Master BPI mode at
+the 33 MHz data rate supported by the PC28F00AP30TF flash memory by using a
+configuration bitstream generated with BitGen options for synchronous configuration and
+for configuration clock division. The fastest configuration method uses the external 66 MHz
+oscillator connected to the FPGA EMCCLK pin with a bitstream that has been built to divide
+the configuration clock by two. The division is necessary to remain within the synchronous
+read timing specifications of the flash memory.
+Multiple bitstreams can be stored in the Linear BPI flash memory. The two most significant
+address bits (A25, A24) of the flash memory are connected to DIP switch SW13 positions 1
+and 2 respectively, and to the RS1 and RS0 pins of the FPGA. By placing valid XC7K325T
+bitstreams at four different offset addresses in the flash memory, 1 of the 4 bitstreams can
+be selected to configure the FPGA by appropriately setting the DIP switch SW13. The
+connections between the BPI flash memory and the FPGA are listed in the table below.
+Table 1-5:
+
+BPI Flash Memory Connections to the FPGA
+
+U1 FPGA Pin
+
+Net Name
+
+I/O Standard
+
+W22
+
+FLASH_A0
+
+W21
+
+U58 BPI Flash Memory
+Pin Number
+
+Pin Name
+
+LVCMOS25
+
+A1
+
+A1
+
+FLASH_A1
+
+LVCMOS25
+
+B1
+
+A2
+
+V24
+
+FLASH_A2
+
+LVCMOS25
+
+C1
+
+A3
+
+U24
+
+FLASH_A3
+
+LVCMOS25
+
+D1
+
+A4
+
+V22
+
+FLASH_A4
+
+LVCMOS25
+
+D2
+
+A5
+
+V21
+
+FLASH_A5
+
+LVCMOS25
+
+A2
+
+A6
+
+U23
+
+FLASH_A6
+
+LVCMOS25
+
+C2
+
+A7
+
+W24
+
+FLASH_A7
+
+LVCMOS25
+
+A3
+
+A8
+
+W23
+
+FLASH_A8
+
+LVCMOS25
+
+B3
+
+A9
+
+V20
+
+FLASH_A9
+
+LVCMOS25
+
+C3
+
+A10
+
+V19
+
+FLASH_A10
+
+LVCMOS25
+
+D3
+
+A11
+
+W26
+
+FLASH_A11
+
+LVCMOS25
+
+C4
+
+A12
+
+V25
+
+FLASH_A12
+
+LVCMOS25
+
+A5
+
+A13
+
+V30
+
+FLASH_A13
+
+LVCMOS25
+
+B5
+
+A14
+
+V29
+
+FLASH_A14
+
+LVCMOS25
+
+C5
+
+A15
+
+V27
+
+FLASH_A15
+
+LVCMOS25
+
+D7
+
+A16
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+20
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-5:
+
+BPI Flash Memory Connections to the FPGA (Cont’d)
+
+U1 FPGA Pin
+
+Net Name
+
+I/O Standard
+
+P22
+
+FLASH_A16
+
+P21
+
+U58 BPI Flash Memory
+Pin Number
+
+Pin Name
+
+LVCMOS25
+
+D8
+
+A17
+
+FLASH_A17
+
+LVCMOS25
+
+A7
+
+A18
+
+N24
+
+FLASH_A18
+
+LVCMOS25
+
+B7
+
+A19
+
+N22
+
+FLASH_A19
+
+LVCMOS25
+
+C7
+
+A20
+
+N21
+
+FLASH_A20
+
+LVCMOS25
+
+C8
+
+A21
+
+N20
+
+FLASH_A21
+
+LVCMOS25
+
+A8
+
+A22
+
+N19
+
+FLASH_A22
+
+LVCMOS25
+
+G1
+
+A23
+
+N26
+
+FLASH_A23
+
+LVCMOS25
+
+H8
+
+A24
+
+M23
+
+FLASH_A24
+
+LVCMOS25
+
+B6
+
+A25
+
+M22
+
+FLASH_A25
+
+LVCMOS25
+
+B8
+
+A26
+
+P24
+
+FLASH_D0
+
+LVCMOS25
+
+F2
+
+DQ0
+
+R25
+
+FLASH_D1
+
+LVCMOS25
+
+E2
+
+DQ1
+
+R20
+
+FLASH_D2
+
+LVCMOS25
+
+G3
+
+DQ2
+
+R21
+
+FLASH_D3
+
+LVCMOS25
+
+E4
+
+DQ3
+
+T20
+
+FLASH_D4
+
+LVCMOS25
+
+E5
+
+DQ4
+
+T21
+
+FLASH_D5
+
+LVCMOS25
+
+G5
+
+DQ5
+
+T22
+
+FLASH_D6
+
+LVCMOS25
+
+G6
+
+DQ6
+
+T23
+
+FLASH_D7
+
+LVCMOS25
+
+H7
+
+DQ7
+
+U20
+
+FLASH_D8
+
+LVCMOS25
+
+E1
+
+DQ8
+
+P29
+
+FLASH_D9
+
+LVCMOS25
+
+E3
+
+DQ9
+
+R29
+
+FLASH_D10
+
+LVCMOS25
+
+F3
+
+DQ10
+
+P27
+
+FLASH_D11
+
+LVCMOS25
+
+F4
+
+DQ11
+
+P28
+
+FLASH_D12
+
+LVCMOS25
+
+F5
+
+DQ12
+
+T30
+
+FLASH_D13
+
+LVCMOS25
+
+H5
+
+DQ13
+
+P26
+
+FLASH_D14
+
+LVCMOS25
+
+G7
+
+DQ14
+
+R26
+
+FLASH_D15
+
+LVCMOS25
+
+E7
+
+DQ15
+
+U29
+
+FLASH_WAIT
+
+LVCMOS25
+
+F7
+
+WAIT
+
+M25
+
+FPGA_FWE_B
+
+LVCMOS25
+
+G8
+
+WE_B
+
+M24
+
+FLASH_OE_B
+
+LVCMOS25
+
+F8
+
+OE_B
+
+B10
+
+FPGA_CCLK
+
+LVCMOS25
+
+E6
+
+CLK
+
+U63.6
+
+FLASH_CE_B
+
+LVCMOS25
+
+B4
+
+CE_B
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+21
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-5:
+
+BPI Flash Memory Connections to the FPGA (Cont’d)
+
+U1 FPGA Pin
+
+Net Name
+
+I/O Standard
+
+M30
+
+FLASH_ADV_B
+
+A10
+
+FPGA_INIT_B
+
+U58 BPI Flash Memory
+Pin Number
+
+Pin Name
+
+LVCMOS25
+
+F6
+
+ADV_B
+
+LVCMOS25
+
+D4
+
+RST_B
+
+Additional FPGA bitstreams can be stored and used for configuration by setting the Warm
+Boot Start Address (WBSTAR) register contained in 7 series FPGAs. More information is
+available in the reconfiguration and multiboot section in 7 Series FPGAs Configuration
+User Guide (UG470) [Ref 3]. The configuration section in this document provides details on
+the Master BPI configuration mode.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+22
+
+Chapter 1: KC705 Evaluation Board Features
+The following figure shows the connections of the linear BPI flash memory on the KC705
+board.
+For more information about the Micron PC28F00AP30TF part, see [Ref 6].
+X-Ref Target - Figure 1-5
+
+U58
+PC28F00AP30TF
+64-Pin BGA (8 x 10 mm)
+DQ0
+A1
+DQ1
+A2
+A3
+DQ2
+A4
+DQ3
+A5
+DQ4
+DQ5
+A6
+A7
+DQ6
+A8
+DQ7
+A9
+DQ8
+A10
+DQ9
+A11
+DQ10
+A12
+DQ11
+A13
+DQ12
+A14
+DQ13
+A15
+DQ14
+A16
+DQ15
+A17
+WE_B
+A18
+A19
+WP_B
+ADV_B
+A20
+RST_B
+A21
+OE_B
+A22
+A23
+CE_B
+A24
+WAIT
+A25
+CLK
+A26
+A27
+
+FLASH_D0_R
+FLASH_D1_R
+FLASH_D2_R
+FLASH_D3_R
+FLASH_D4_R
+FLASH_D5_R
+FLASH_D6_R
+FLASH_D7_R
+FLASH_D8_R
+FLASH_D9_R
+FLASH_D10_R
+FLASH_D11_R
+FLASH_D12_R
+FLASH_D13_R
+FLASH_D14_R
+FLASH_D15_R
+
+F2
+E2
+G3
+E4
+E5
+G5
+G6
+H7
+E1
+E3
+F3
+F4
+F5
+H5
+G7
+E7
+
+FLASH_PWE_B
+FLASH_WP_B
+FLASH_ADV_B
+FPGA_INIT_B
+FLASH_OE_B
+FLASH_CE_B
+FLASH_WAIT_R
+FPGA_CCLK
+
+G8
+C6
+F6
+D4
+F8
+B4
+F7
+E6
+
+NC
+NC
+NC
+
+E8 RFU1
+F1 RFU2
+G2 RFU3
+
+GND
+
+B2
+H2
+H4
+H6
+
+VSS0
+VSS1
+VSS2
+VSS3
+
+A1
+B1
+C1
+D1
+D2
+A2
+C2
+A3
+B3
+C3
+D3
+C4
+A5
+B5
+C5
+D7
+D8
+A7
+B7
+C7
+C8
+A8
+G1
+H8
+B6
+B8
+H1
+
+FLASH_A0
+FLASH_A1
+FLASH_A2
+FLASH_A3
+FLASH_A4
+FLASH_A5
+FLASH_A6
+FLASH_A7
+FLASH_A8
+FLASH_A9
+FLASH_A10
+FLASH_A11
+FLASH_A12
+FLASH_A13
+FLASH_A14
+FLASH_A15
+FLASH_A16
+FLASH_A17
+FLASH_A18
+FLASH_A19
+FLASH_A20
+FLASH_A21
+FLASH_A22
+FLASH_A23
+FLASH_A24
+FLASH_A25
+NC
+
+D5
+VCCQ1
+D6
+VCCQ2
+G4
+VCCQ3
+VPP
+VCC1
+
+2.5V
+
+A4
+A6
+H3
+
+1.8V
+
+VCC2
+
+UG810_c1_05_031214
+
+Figure 1-5:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+128 MB Linear Flash Memory (U58)
+
+www.xilinx.com
+
+Send Feedback
+
+23
+
+Chapter 1: KC705 Evaluation Board Features
+
+Quad SPI Flash Memory
+[Figure 1-2, callout 4]
+The Quad SPI flash memory located at U7 on the back side of the board provides 128 Mb of
+nonvolatile storage that can be used for configuration and data storage.
+•
+
+Part number: Micron N25Q128A13BSF40F or MT25QL128ABA8ESF-0SIT
+
+•
+
+Supply voltage: 2.8V
+
+•
+
+Datapath width: 4 bits
+
+•
+
+Data rate: Various depending on Single/Dual/Quad mode and CCLK rate
+
+Four data lines and the FPGA CCLK pin are wired to the Quad SPI flash memory. A common
+chip select (FPGA_FCS) shared between the Linear BPI flash memory and the Quad SPI flash
+memory is controlled by the configuration mode settings on DIP switch SW13 position 5
+(M0) and a one-of-two demultiplexer device U64. If mode pin M0 = 1, the SPI flash memory
+device is selected. If mode pin M0 = 0, the Linear BPI flash memory device is selected. The
+connections between the SPI flash memory and the FPGA are listed in the following table.
+Table 1-6:
+
+Quad SPI Flash Memory Connections to the FPGA
+
+U1 FPGA Pin
+
+Net Name
+
+I/O Standard
+
+P24
+
+FLASH_D0
+
+R25
+
+J1 DDR3 Memory
+Pin Number
+
+Pin Name
+
+LVCMOS25
+
+15
+
+DQ0
+
+FLASH_D1
+
+LVCMOS25
+
+8
+
+DQ1
+
+R20
+
+FLASH_D2
+
+LVCMOS25
+
+9
+
+DQ2
+
+R21
+
+FLASH_D3
+
+LVCMOS25
+
+1
+
+DQ3
+
+B10
+
+FPGA_CCLK
+
+N/A
+
+16
+
+C
+
+U19
+
+QSPI_IC_CS_B(1)
+
+LVCMOS25
+
+7
+
+S_B
+
+Notes:
+1. FPGA_FCS connected to FPGA U1 pin U19 becomes QSPI_IC_CS_B through U64 and J3.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+24
+
+Chapter 1: KC705 Evaluation Board Features
+The configuration section of 7 Series FPGAs Configuration User Guide (UG470) [Ref 3]
+provides details on using the Quad SPI flash memory. Figure 1-6 shows the connections of
+the Quad SPI flash memory on the KC705 board.
+For more information about the Micron N25Q128A13BSF40F or MT25QL128ABA8ESF-0SIT
+parts, see [Ref 6].
+X-Ref Target - Figure 1-6
+
+VCC2V5
+
+R20
+DNP
+
+R19
+4.7kΩ 5%
+
+R21
+4.7kΩ 5%
+
+C18
+0.1μF 25V
+X5R
+
+U7
+N25Q128
+128 Mb Serial
+Flash Memory
+
+GND
+FLASH_D3_R
+
+FLASH_D3
+
+1
+2
+
+R429
+15Ω 1%
+
+3
+4
+
+QSPI_IC_CS_B
+
+FLASH_D1
+
+VCC2V5
+
+VCC_SPI
+
+R430
+15Ω 1%
+
+FLASH_D2_R
+
+HOLD_B/DQ3
+
+R17
+DNP
+C
+
+VCC
+
+DQ0
+
+NC0
+
+NC7
+
+NC1
+
+NC6
+
+5
+NC2
+6
+NC3
+7
+SB
+8
+
+DQ1
+
+R18
+4.7kΩ 5%
+
+16
+15
+
+FPGA_CCLK
+FLASH_D0_R
+
+14
+
+R432
+15Ω 1%
+
+13
+
+12
+11
+NC4
+10
+VSS
+9
+NC5
+
+WB/VPP/DQ2
+
+FLASH_D2_R
+
+GND
+
+Figure 1-6:
+
+FLASH_D0
+
+R431
+15Ω 1%
+
+FLASH_D2
+
+UG810_c1_06_031214
+
+128 Mb Quad SPI Flash Memory
+
+SD Card Interface
+[Figure 1-2, callout 5]
+The KC705 board includes a secure digital input/output (SDIO) interface to provide
+user-logic access to general purpose nonvolatile SDIO memory cards and peripherals. The
+SD card slot is designed to support 50 MHz high speed SD cards.
+The SDIO signals are connected to I/O bank 12 which has its VCCO set to VADJ. A Texas
+Instruments I TXB0108 8-bit bidirectional voltage-level translator is used between the FPGA
+and the SD card connector (U9).
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+25
+
+Chapter 1: KC705 Evaluation Board Features
+The following figure shows the connections of the SD card interface on the KC705 board.
+X-Ref Target - Figure 1-7
+
+VADJ
+
+NC
+
+A1
+
+B1
+
+A2
+
+B2
+
+A3
+
+B3
+
+A4
+
+B4
+
+A5
+
+B5
+
+A6
+
+B6
+
+A7
+
+B7
+
+A8
+
+B8
+
+OE
+
+GND
+
+C543
+0.1μF 25V
+X5R
+
+R457
+R458
+
+R456
+
+SDIO Card
+Connector
+
+4
+VDD
+7
+DAT0
+SDIO_DAT1 8
+DAT1
+SDIO_DAT2 9
+DAT2
+SDIO_CD_DAT3 1
+CD_DAT3
+SDIO_CMD 2
+CMD
+SDIO_CLK 5
+CLK
+SDIO_SDDET 10
+18
+DETECT
+IOGND2
+SDIO_SDWP 11
+PROTECT IOGND1 17
+NC 12
+D_P
+GNDTAB4 16
+15
+GNDTAB3
+14
+3 VSS1
+GNDTAB2
+13
+6 VSS2
+GNDTAB1
+SDIO_DAT0
+
+To FPGA
+Bank 12
+(U1)
+
+GND
+
+VADJ
+
+GND
+
+4.7K R34
+
+NC
+
+VCCB
+
+R35 4.7K
+
+SDIO_CLK_LS
+
+U9
+R454
+
+R452
+
+R450
+
+SDIO_CMD_LS
+
+R453
+
+R451
+
+R449
+
+R447
+R448
+
+SDIO_CD_DAT3_LS
+
+GND
+
+TXB0108
+Voltage-Level
+Translator
+VCCA
+
+SDIO_DAT2_LS
+
+To FPGA
+Bank 12
+(U1)
+
+C22
+0.1μF 25V
+X5R
+
+GND
+
+U57
+
+SDIO_DAT1_LS
+
+R455
+
+51.1K 1% Six Places
+
+C22
+0.1μF 25V
+X5R
+
+SDIO_DAT0_LS
+
+VCC3V3
+
+VCC3V3
+
+VCC3V3
+
+51.1K 1% Six Places
+
+GND
+
+GND
+
+UG810_c1_07_031214
+
+Figure 1-7:
+
+SD Card Interface
+
+The following table lists the SD card interface connections to the FPGA.
+Table 1-7:
+
+SDIO Connections to the FPGA
+
+U1 FPGA Pin Schematic Net Name I/O Standard
+
+U57 Level Shifter
+
+U9 SDIO Connector
+
+Pin Name (A) Pin Name (B) Pin Number Pin Name
+
+Y21
+
+SDIO_SDWP
+
+LVCMOS25
+
+N/A
+
+N/A
+
+11
+
+SDWP
+
+AA21
+
+SDIO_SDDET
+
+LVCMOS25
+
+N/A
+
+N/A
+
+10
+
+SDDET
+
+AB22
+
+SDIO_CMD_LS
+
+LVCMOS25
+
+A5
+
+B6
+
+2
+
+CMD
+
+AB23
+
+SDIO_CLK_LS
+
+LVCMOS25
+
+A6
+
+B7
+
+5
+
+CLK
+
+AA22
+
+SDIO_DAT2_LS
+
+LVCMOS25
+
+A3
+
+B4
+
+9
+
+DAT2
+
+AA23
+
+SDIO_DAT1_LS
+
+LVCMOS25
+
+A2
+
+B3
+
+8
+
+DAT1
+
+AC20
+
+SDIO_DAT0_LS
+
+LVCMOS25
+
+A1
+
+B1
+
+7
+
+DAT0
+
+AC21
+
+SDIO_CD_DAT3_LS
+
+LVCMOS25
+
+A4
+
+B5
+
+1
+
+CD_DAT3
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+26
+
+Chapter 1: KC705 Evaluation Board Features
+
+USB JTAG Module
+[Figure 1-2, callout 6]
+JTAG configuration is provided through a Digilent onboard USB-to-JTAG configuration
+logic module (U59) where a host computer accesses the KC705 board JTAG chain through a
+standard-A plug (host side) to micro-B plug (KC705 board side) USB cable.
+A 2-mm JTAG header (J60) is also provided in parallel for access by Xilinx® download cables
+such as the Platform Cable USB II and the Parallel Cable IV.
+The JTAG chain of the KC705 board is illustrated in Figure 1-8. JTAG configuration is allowed
+at any time regardless of FPGA mode pin settings. JTAG initiated configuration takes
+priority over the configuration method selected through the FPGA mode pin settings at
+SW13.
+X-Ref Target - Figure 1-8
+
+SPST Bus Switch
+U76
+
+SPST Bus Switch
+U77
+
+N.C.
+USB
+Module
+or
+JTAG
+Connector
+(J60)
+TDO
+
+N.C.
+
+3.3V
+
+J22
+
+J2
+
+FMC HPC
+Connector
+
+FMC LPC
+Connector
+
+U102
+
+TDI TDO
+
+TDI TDO
+
+TDI
+
+2.5V
+U1
+Kintex-7
+FPGA
+
+SN74AVC1T45
+Voltage
+Translator
+
+TDI
+
+TDO
+
+TDI
+TDO
+UG810_c1_08_031214
+
+Figure 1-8:
+
+JTAG Chain Block Diagram
+
+When an FMC card is attached to the KC705 board, it is automatically added to the JTAG
+chain through electronically controlled single-pole single-throw (SPST) switches U76 and
+U77. The SPST switches are in a normally closed state and transition to an open state when
+an FMC mezzanine card is attached. Switch U76 adds an attached FMC HPC mezzanine card
+to the FPGAs JTAG chain as determined by the FMC_HPC_PRSNT_M2C_B signal. Switch U77
+adds an attached FMC HPC mezzanine card to the FPGAs JTAG chain as determined by the
+FMC_LPC_PRSNT_M2C_B signal. The attached FMC card must implement a TDI-to-TDO
+connection via a device or bypass jumper for the JTAG chain to be completed to the FPGA
+U1.
+The JTAG connectivity on the KC705 board allows a host computer to download bitstreams
+to the FPGA using the Xilinx software. In addition, the JTAG connector allows debug tools or
+a software debugger to access the FPGA.
+The Xilinx software tool can also indirectly program the Linear BPI or the Quad SPI flash
+memory. To accomplish this, the software configures the FPGA with a temporary design to
+access and program the BPI or Quad SPI flash memory device.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+27
+
+Chapter 1: KC705 Evaluation Board Features
+The JTAG circuit is shown in the figure below.
+X-Ref Target - Figure 1-9
+
+VCC3V3
+
+U59
+Digilent
+USB-JTAG
+Module
+
+R381 15Ω
+
+VCC3V3
+
+U5
+
+J22
+
+SN74LV541A
+Voltage
+Translator
+
+FMC HPC
+Connector
+
+HPC_PRSNT_M2C_B
+
+TDI
+
+TDI
+
+U76
+FMC_HPC_PRSNT_M2C_B
+
+R382 15Ω
+TMS
+R380 15Ω
+
+FMC_HPC_TDO
+
+TCK
+
+TDO
+
+FMC_TMS_BUF
+
+TDO
+
+TMS
+
+FMC_HPC_TCK_BUF
+
+TCK
+
+VCC3V3
+
+VCC3V3
+
+J60
+
+PRSNT_L
+
+FMC_TDI_BUF
+
+J2
+
+JTAG
+Header
+
+FMC LPC
+Connector
+LPC_PRSNT_M2C_B
+
+TDI
+TMS
+TCK
+TDO
+
+PRSNT_L
+
+JTAG_TDI
+
+TDI
+
+U77
+FMC_LPC_PRSNT_M2C_B
+
+JTAG_TMS
+JTAG_TCK
+
+FMC_LPC_TDO
+
+TDO
+
+FMC_LPC_TMS_BUF
+
+JTAG_TDO
+
+TMS
+
+FMC_LPC_TCK_BUF
+
+TCK
+
+U1
+VCC3V3
+VCC3V3
+
+VCC2V5
+
+U69
+SN74AVC2T45
+Voltage
+Translator
+
+VCC2V5
+
+U102
+
+Kintex-7
+FPGA
+
+SN74AVC1T45
+Voltage
+Translator
+TDI
+
+FPGA_TMS_BUF
+FPGA_TCK_BUF
+FPGA_TDO
+
+TMS
+TCK
+TDO
+UG810_c1_09_031214
+
+Figure 1-9:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+JTAG Circuit
+
+www.xilinx.com
+
+Send Feedback
+
+28
+
+Chapter 1: KC705 Evaluation Board Features
+
+Clock Generation
+The following table lists the five clock sources available for the FPGA fabric on the KC705
+board.
+Table 1-8:
+
+KC705 Board Clock Sources
+
+Clock Name
+
+Reference
+
+Description
+
+U6
+
+SiT9102 2.5V LVDS 200 MHz Fixed Frequency Oscillator (Si Time). See
+System Clock Source.
+
+System Clock
+User Clock
+
+Si570 3.3V LVDS I2C Programmable Oscillator
+U45
+
+User SMA Clock
+(differential pair)
+
+J11
+J12
+
+GTX SMA REF Clock
+(differential pair)
+
+J16
+J15
+
+Jitter Attenuated
+Clock
+
+U70
+
+(Silicon Labs). Default power-on frequency 156.250 MHz. See
+Programmable User Clock Source.
+USER_SMA_CLOCK_P (net name).
+See User SMA Clock Input.
+USER_SMA_CLOCK_N (net name)
+See User SMA Clock Input
+SMA_MGT_REFCLK_P (net name).
+See GTX SMA Clock Input.
+SMA_MGT_REFCLK_N (net name).
+See GTX SMA Clock Input.
+Si5324C LVDS precision clock multiplier/jitter attenuator (Silicon
+Labs).
+See Jitter Attenuated Clock.
+
+The following table lists the pin-to-pin connections from each clock source to the FPGA.
+Table 1-9:
+
+Clock Source to FPGA U1 Connections
+
+Clock Source Pin
+
+Schematic Net Name
+
+I/O Standard
+
+U1 FPGA Pin
+
+U6.5
+
+SYSCLK_N
+
+LVDS
+
+AD11
+
+U6.4
+
+SYSCLK_P
+
+LVDS
+
+AD12
+
+U45.5
+
+USER_CLOCK_N
+
+LVDS_25
+
+K29
+
+U45.4
+
+USER_CLOCK_P
+
+LVDS_25
+
+K28
+
+J12.1
+
+USER_SMA_CLOCK_N
+
+LVDS_25
+
+K25
+
+J11.1
+
+USER_SMA_CLOCK_P
+
+LVDS_25
+
+L25
+
+J15.1
+
+SMA_MGT_REFCLK_N
+
+N/A (MGT REFCLK INPUT)
+
+J7
+
+J16.1
+
+SMA_MGT_REFCLK_P
+
+N/A (MGT REFCLK INPUT)
+
+J8
+
+U70.29
+
+Si5326_OUT_N
+
+N/A (MGT REFCLK INPUT)
+
+L7
+
+U70.28
+
+Si5326_OUT_P
+
+N/A (MGT REFCLK INPUT)
+
+L8
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+29
+
+Chapter 1: KC705 Evaluation Board Features
+
+System Clock Source
+[Figure 1-2, callout 7]
+The KC705 board has a 2.5V LVDS differential 200 MHz oscillator (U6) soldered onto the
+back side of the board and wired to an FPGA MRCC clock input on bank 33. This 200 MHz
+signal pair is named SYSCLK_P and SYSCLK_N, which are connected to FPGA U1 pins AD12
+and AD11 respectively.
+•
+
+Oscillator: Si Time SiT9102AI-243N25E200.00000 (200 MHz)
+
+•
+
+PPM frequency jitter: 50 ppm
+
+•
+
+Differential Output
+
+The system clock circuit is shown in the figure below.
+X-Ref Target - Figure 1-10
+
+VCC2V5
+U6
+SIT9102
+200 MHz
+Oscillator
+
+C550
+0.1 μF 10V
+X5R
+
+1
+6
+OE
+VCC
+2
+5
+NC
+OUT_B
+3
+4
+GND
+OUT
+GND
+
+SYSCLK_N
+R459
+100Ω 1%
+
+SYSCLK_P
+
+UG810_c1_10_031214
+
+Figure 1-10:
+
+System Clock Source
+
+For more about the Si Time SiT9102, see [Ref 7].
+
+Programmable User Clock Source
+[Figure 1-2, callout 8]
+The KC705 board has a programmable low-jitter 3.3V differential oscillator (U45) the FPGA
+MRCC inputs of bank 15. This USER_CLOCK_P and USER_CLOCK_N clock signal pair are
+connected to FPGA U1 pins K28 and K29 respectively. On power-up the user clock defaults
+to an output frequency of 156.250 MHz. User applications can change the output frequency
+within the range of 10 MHz to 810 MHz through an I2C interface. Power cycling the KC705
+board reverts the user clock to its default frequency of 156.250 MHz.
+•
+
+Programmable Oscillator: Silicon Labs Si570BAB0000544DG (10 MHz - 810 MHz)
+
+•
+
+Differential Output
+
+•
+
+I2C address 0x5D
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+30
+
+Chapter 1: KC705 Evaluation Board Features
+The user clock circuit is shown in the figure below.
+X-Ref Target - Figure 1-11
+
+VCC3V3
+
+VCC3V3
+R8
+4.7KΩ 5%
+
+C77
+0.01 μF 25V
+X7R
+
+U45
+Si570
+Programmable
+Oscillator
+1 NC
+2 OE
+To I2C
+Bus Switch
+(U49)
+
+USER CLOCK SDA 7
+USER CLOCK SCL 8
+3
+
+SDA
+SCL
+
+GND
+
+VDD 6
+
+USER CLOCK N
+CLK- 5
+USER CLOCK P
+4
+CLK+
+
+10 MHz - 810 MHz
+50 PPM
+
+GND
+
+GND
+
+UG810_c1_11_031214
+
+Figure 1-11:
+
+User Clock Source
+
+For more information about the Silicon Labs Si570, see [Ref 8].
+Reference design files are available to demonstrate how to program the Si570
+programmable oscillator. See these files and presentations:
+•
+
+XTP186, KC705 Si570 Programming [Ref 9]
+
+•
+
+RDF0175, KC705 Si570 Programming Design Files [Ref 10]
+
+•
+
+XTP187, KC705 Si570 Fixed Frequencies [Ref 11]
+
+•
+
+RDF0176, KC705 Si570 Fixed Frequencies Design Files [Ref 12]
+
+User SMA Clock Input
+[Figure 1-2, callout 9]
+An external high-precision clock signal can be provided to the FPGA bank 15 by connecting
+differential clock signals through the onboard 50Ω SMA connectors J11 (P) and J12 (N). The
+differential clock has signal names are USER_SMA_CLOCK_P and USER_SMA_CLOCK_N,
+which are connected to FPGA U1 pins L25 and K25, respectively. J11 (P) and J12 (N) are
+connected directly to the noted FPGA pins (no series capacitors and no external parallel
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+31
+
+Chapter 1: KC705 Evaluation Board Features
+termination resistor). The user-provided 2.5V differential clock circuit is shown in the figure
+below.
+J11
+SMA
+Connector
+
+USER_SMA_CLOCK_P
+
+J12
+SMA
+Connector
+
+GND
+USER_SMA_CLOCK_N
+
+GND
+UG810_c1_12_031214
+
+Figure 1-11:
+
+User SMA Clock Source
+
+GTX SMA Clock Input
+[Figure 1-2, callout 10]
+The KC705 board includes a pair of SMA connectors for a GTX clock wired to GTX Quad bank
+117. This differential clock has signal names SMA_MGT_REFCLK_P and SMA_REFCLK_N,
+which are connected to FPGA U1 pins J8 and J7 respectively. Figure 1-12 shows this
+AC-coupled clock circuit.
+•
+
+External user-provided GTX reference clock on SMA input connectors
+
+•
+
+Differential Input
+
+X-Ref Target - Figure 1-12
+
+J16
+SMA_MGT_REFCLK_C_P
+
+SMA
+Connector
+
+SMA_MGT_REFCLK_P
+
+0.01 μF 25V
+X7R
+J15
+
+SMA
+Connector
+
+C11
+
+GND
+SMA_MGT_REFCLK_C_N
+
+C10
+
+SMA_MGT_REFCLK_N
+
+0.01 μF 25V
+X7R
+GND
+UG810_c1_13_031214
+
+Figure 1-12:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+GTX SMA Clock Source
+
+www.xilinx.com
+
+Send Feedback
+
+32
+
+Chapter 1: KC705 Evaluation Board Features
+
+Jitter Attenuated Clock
+[Figure 1-2, callout 11]
+The KC705 board includes a Silicon Labs Si5324 jitter attenuator U70 on the back side of the
+board. FPGA user logic can implement a clock recovery circuit and then output this clock to
+a differential I/O pair on I/O bank 13 (REC_CLOCK_C_P, FPGA U1 pin W27 and
+REC_CLOCK_C_N, FPGA U1 pin W28) for jitter attenuation. The jitter attenuated clock
+(SI5326_OUT_C_P, SI5326_OUT_C_N) is then routed as a reference clock to GTX Quad 116
+inputs MGTREFCLK0P (FPGA U1 pin L8) and MGTREFCLK0N (FPGA U1 pin L7).
+The Silicon Labs Si5324 U70 pin 1 reset net SI5326_RST must be driven High to enable the
+device. U70 pin 1 net SI5326_RST is level-shifted to VADJ by U75 and is connected to U1
+bank 12 pin AE20. An active-Low input performs an external hardware reset of the device.
+This resets all internal logic to a known state and forces the device registers to their default
+value. The clock outputs are disabled during reset. The part must be programmed after a
+reset or power-up to get a clock output. The reset pin 1 has a weak internal pull-up.
+The primary purpose of this clock is to support CPRI/OBSAI applications that perform clock
+recovery from a user-supplied SFP/SFP+ module and use the jitter attenuated recovered
+clock to drive the reference clock inputs of a GTX transceiver. The jitter attenuated clock
+circuit is shown in Figure 1-13.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+33
+
+Chapter 1: KC705 Evaluation Board Features
+
+X-Ref Target - Figure 1-13
+
+SI5326_VCC
+
+U70
+Si5324C-C-GM
+Clock Multiplier/
+Jitter Attenuator
+5
+
+X5
+
+10
+
+114.285 MHz
+20 ppm
+XA 1
+2 GND1
+
+32
+SI5326_XTAL_XA
+
+6
+
+2
+
+NC
+
+2
+
+NC
+
+VDDA
+
+2
+NC3
+
+NC
+
+XA
+
+NC4
+
+5
+
+NC
+
+8
+
+NC
+
+VDDA
+
+NC1
+
+VDDA
+
+NC2
+
+NC5
+4 GND2
+
+XB 3
+
+GND
+REC_CLOCK_C_P
+
+REC_CLOCK_C_N
+
+SI5326_XTAL_XB
+
+7
+
+C475
+0.1μF 25V
+X5R
+REC_CLOCK_P
+
+16
+
+R337
+100Ω
+
+XB
+
+CKOUT1_N
+
+CKOUT1_P
+CKIN1_P
+
+CKOUT2_N
+CKOUT2_P
+
+REC_CLOCK_N
+C476
+0.1μF 25V
+X5R
+
+17
+
+NC 12
+NC 13
+
+29
+
+SI5326_OUT_N
+
+C473
+0.1μF 25V
+X5R
+SI5326_OUT_C_N
+
+28
+
+SI5326_OUT_P
+
+SI5326_OUT_C_P
+
+35 NC
+
+C474
+0.1μF 25V
+X5R
+
+34 NC
+
+CKIN1_N
+CKIN2_P
+CKIN2_N
+
+37
+CMODE 36
+SDI 27
+SDA_SDO 23
+SCL 22
+A0 24
+A1 31
+31
+A2_SS
+9
+GND1
+31
+GNDPAD
+
+SI5326_INT_ALM
+
+3
+NC
+
+4
+
+NC 11
+NC 15
+NC 18
+NC 19
+NC 20
+SI5326_RST
+
+1
+21
+
+INT_C1B
+C2B
+RATE0
+RATE1
+LOL
+DEC
+INC
+RST_B
+CS_CA
+
+NC
+SI5326_SDA
+SI5326_SCL
+
+GND2
+
+R424
+4.7KΩ 5%
+GND
+
+GND
+
+Figure 1-13:
+
+UG810_c1_14_031214
+
+Jitter Attenuated Clock
+
+For more information about the Silicon Labs Si5324, see [Ref 8].
+
+GTX Transceivers
+[Figure 1-2, callout 12]
+The KC705 board provides access to 16 GTX transceivers:
+•
+
+Eight of the GTX transceivers are wired to the PCI Express® x8 endpoint edge
+connector (P1) fingers
+
+•
+
+Four of the GTX transceivers are wired to the FMC HPC connector (J22)
+
+•
+
+One GTX is wired to the FMC LPC connector (J2)
+
+•
+
+One GTX is wired to SMA connectors (RX: J17, J18 TX: J19, J20)
+
+•
+
+One GTX is wired to the SFP/SFP+ Module connector (P5)
+
+•
+
+One GTX is used for the SGMII connection to the Ethernet PHY (U37)
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+34
+
+Chapter 1: KC705 Evaluation Board Features
+The GTX transceivers in 7 series FPGAs are grouped into four channels described as Quads.
+The reference clock for a Quad can be sourced from the Quad above or Quad below the GTX
+Quad of interest. There are four GTX Quads on the KC705 board with connectivity as shown
+here:
+•
+
+•
+
+•
+
+•
+
+Quad 115:
+°
+
+Contains 4 GTX transceivers for PCI Express lanes 4-7
+
+°
+
+MGTREFCLK1 - PCIE_CLK from P1
+
+Quad 116:
+°
+
+MGTREFCLK0 - Si5326 jitter attenuator
+
+°
+
+MGTREFCLK1 - FMC LPC GBT clock 0
+
+°
+
+Contains 4 GTX transceivers for PCIe lanes 0-3
+
+Quad 117:
+°
+
+MGTREFCLK0 - SGMII clock
+
+°
+
+MGTREFCLK1 - SMA clock
+
+°
+
+Contains 4 GTX transceivers with one allocated for: SMA, SGMII, SFP, and FMC LPC
+(DP0)
+
+Quad 118:
+°
+
+MGTREFCLK0 - FMC HPC GBT clock 0
+
+°
+
+MGTREFCLK1 - FMC HPC GBT clock 1
+
+°
+
+Contains 4 GTX transceivers for FMC HPC (DP0 - DP3)
+
+The following table lists the GTX interface connections to the FPGA (U1).
+Table 1-10:
+
+GTX Interface Connections for FPGA U1
+
+Transceiver Bank
+MGT_BANK_115
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+Associated Net Name
+
+Connections
+
+GTXE2_CHANNEL_X0Y0
+
+PCIe7
+
+GTXE2_CHANNEL_X0Y1
+
+PCIe6
+
+GTXE2_CHANNEL_X0Y2
+
+PCIe5
+
+GTXE2_CHANNEL_X0Y3
+
+PCIe4
+
+MGTREFCLK0
+
+N/C
+
+MGTREFCLK1
+
+PCIe_CLK
+
+www.xilinx.com
+
+Send Feedback
+
+35
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-10:
+
+GTX Interface Connections for FPGA U1 (Cont’d)
+
+Transceiver Bank
+MGT_BANK_116
+
+MGT_BANK_117
+
+MGT_BANK_118
+
+Associated Net Name
+
+Connections
+
+GTXE2_CHANNEL_X0Y4
+
+PCIe3
+
+GTXE2_CHANNEL_X0Y5
+
+PCIe2
+
+GTXE2_CHANNEL_X0Y6
+
+PCIe1
+
+GTXE2_CHANNEL_X0Y7
+
+PCIe0
+
+MGTREFCLK0
+
+Si5326
+
+MGTREFCLK1
+
+FMC LPC GBT_CLK0
+
+GTXE2_CHANNEL_X0Y8
+
+SMA
+
+GTXE2_CHANNEL_X0Y9
+
+SGMII
+
+GTXE2_CHANNEL_X0Y10
+
+SFP+
+
+GTXE2_CHANNEL_X0Y11
+
+FMC LPC DP0
+
+MGTREFCLK0
+
+SGMII_CLK
+
+MGTREFCLK1
+
+SMA_CLK
+
+GTXE2_CHANNEL_X0Y12
+
+FMC HPC DP0
+
+GTXE2_CHANNEL_X0Y13
+
+FMC HPC DP1
+
+GTXE2_CHANNEL_X0Y14
+
+FMC HPC DP2
+
+GTXE2_CHANNEL_X0Y15
+
+FMC HPC DP3
+
+MGTREFCLK0
+
+FMC HPC GBT_CLK0
+
+MGTREFCLK1
+
+FMC HPC GBT_CLK1
+
+For more information on the GTX transceivers, see 7 Series FPGAs GTX Transceivers
+User Guide (UG476) [Ref 13].
+
+PCI Express Edge Connector
+[Figure 1-2, callout 13]
+The 8-lane PCI Express edge connector performs data transfers at the rate of 2.5 GT/s for a
+Gen1 application and 5.0 GT/s for a Gen2 application. The PCIe transmit and receive signal
+datapaths have a characteristic impedance of 85Ω ±10%. The PCIe clock is routed as a 100Ω
+differential pair. The 7 series FPGAs GTX transceivers are used for multi-gigabit per second
+serial interfaces.
+The XC7K325T-2FFG900C FPGA (-2 speed grade) included with the KC705 board supports
+up to Gen2 x8.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+36
+
+Chapter 1: KC705 Evaluation Board Features
+The PCIe clock is input from the edge connector. It is AC coupled to the FPGA through the
+MGTREFCLK1 pins of Quad 115. PCIE_CLK_Q0_P is connected to FPGA U1 pin U8, and the _N
+net is connected to pin U7. The PCI Express clock circuit is shown in Figure 1-14.
+X-Ref Target - Figure 1-14
+
+P1
+PCI Express
+Eight-Lane
+Edge connector
+
+A13
+
+PCIE_CLK_Q0_C_P
+
+C544
+0.01μF 25V
+X7R
+PCIE_CLK_Q0_P
+
+A14
+
+PCIE_CLK_Q0_C_N
+
+PCIE_CLK_Q0_N
+
+OE
+GND
+REFCLK+
+REFCLKGND
+
+A12
+
+A15
+
+C545
+0.01μF 25V
+X7R
+
+GND
+
+UG810_c1_15_031214
+
+Figure 1-14:
+
+PCI Express Clock
+
+PCIe lane width/size is selected via jumper J32 (Figure 1-15). The default lane size selection
+is 8-lane (J32 pins 5 and 6 jumpered).
+X-Ref Target - Figure 1-15
+
+PCIE_PRSNT_X1
+PCIE_PRSNT_X4
+PCIE_PRSNT_X8
+
+1
+3
+5
+
+J32
+
+2
+4
+6
+
+PCIE_PRSNT_B
+
+UG810_c1_16_031214
+
+Figure 1-15:
+
+PCI Express Lane Size Select Jumper J32
+
+The following table lists the PCIe edge connector connections.
+Table 1-11:
+
+PCIe Edge Connector Connections
+FPGA Pin
+(U1)
+
+PCIe Edge
+Connector
+Pin
+
+PCIe Edge
+Pin Name
+
+PCIE_RX0_P
+
+M6
+
+B14
+
+PCIE_RX0_N
+
+M5
+
+PCIE_RX1_P
+
+Schematic Net
+Name
+
+Function
+
+FFG900 Placement
+
+PETp0
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y7
+
+B15
+
+PETn0
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y7
+
+P6
+
+B19
+
+PETp1
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y6
+
+PCIE_RX1_N
+
+P5
+
+B20
+
+PETn1
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y6
+
+PCIE_RX2_P
+
+R4
+
+B23
+
+PETp2
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y5
+
+PCIE_RX2_N
+
+R3
+
+B24
+
+PETn2
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y5
+
+PCIE_RX3_P
+
+T6
+
+B27
+
+PETp3
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y4
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+37
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-11:
+
+PCIe Edge Connector Connections (Cont’d)
+FPGA Pin
+(U1)
+
+PCIe Edge
+Connector
+Pin
+
+PCIe Edge
+Pin Name
+
+PCIE_RX3_N
+
+T5
+
+B28
+
+PCIE_RX4_P
+
+V6
+
+PCIE_RX4_N
+
+Schematic Net
+Name
+
+Function
+
+FFG900 Placement
+
+PETn3
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y4
+
+B33
+
+PETp4
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y3
+
+V5
+
+B34
+
+PETn4
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y3
+
+PCIE_RX5_P
+
+W4
+
+B37
+
+PETp5
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y2
+
+PCIE_RX5_N
+
+W3
+
+B38
+
+PETn5
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y2
+
+PCIE_RX6_P
+
+Y6
+
+B41
+
+PETp6
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y1
+
+PCIE_RX6_N
+
+Y5
+
+B42
+
+PETn6
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y1
+
+PCIE_RX7_P
+
+AA4
+
+B45
+
+PETp7
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y0
+
+PCIE_RX7_N
+
+AA3
+
+B46
+
+PETn7
+
+Integrated Endpoint block
+receive pair
+
+GTXE2_CHANNEL_X0Y0
+
+PCIE_TX0_P
+
+L4
+
+A16
+
+PERp0
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y7
+
+PCIE_TX0_N
+
+L3
+
+A17
+
+PERn0
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y7
+
+PCIE_TX1_P
+
+M2
+
+A21
+
+PERp1
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y6
+
+PCIE_TX1_N
+
+M1
+
+A22
+
+PERn1
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y6
+
+PCIE_TX2_P
+
+N4
+
+A25
+
+PERp2
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y5
+
+PCIE_TX2_N
+
+N3
+
+A26
+
+PERn2
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y5
+
+PCIE_TX3_P
+
+P2
+
+A29
+
+PERp3
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y4
+
+PCIE_TX3_N
+
+P1
+
+A30
+
+PERn3
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y4
+
+PCIE_TX4_P
+
+T2
+
+A35
+
+PERp4
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y3
+
+PCIE_TX4_N
+
+T1
+
+A36
+
+PERn4
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y3
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+38
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-11:
+
+PCIe Edge Connector Connections (Cont’d)
+FPGA Pin
+(U1)
+
+PCIe Edge
+Connector
+Pin
+
+PCIe Edge
+Pin Name
+
+PCIE_TX5_P
+
+U4
+
+A39
+
+PCIE_TX5_N
+
+U3
+
+PCIE_TX6_P
+
+Schematic Net
+Name
+
+Function
+
+FFG900 Placement
+
+PERp5
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y2
+
+A40
+
+PERn5
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y2
+
+V2
+
+A43
+
+PERp6
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y1
+
+PCIE_TX6_N
+
+V1
+
+A44
+
+PERn6
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y1
+
+PCIE_TX7_P
+
+Y2
+
+A47
+
+PERp7
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y0
+
+PCIE_TX7_N
+
+Y1
+
+A48
+
+PERn7
+
+Integrated Endpoint block
+transmit pair
+
+GTXE2_CHANNEL_X0Y0
+
+PCIE_CLK_QO_P
+
+U8
+
+A13
+
+REFCLK+
+
+Integrated Endpoint block
+differential clock pair from
+PCIe
+
+MGT_BANK_115
+
+PCIE_CLK_QO_N
+
+U7
+
+A14
+
+REFCLK-
+
+Integrated Endpoint block
+differential clock pair from
+PCIe
+
+MGT_BANK_115
+
+PCIE_PRSNT_B
+
+J32 2, 4, 6
+
+A1
+
+PRSNT#1
+
+J42 Lane Size Select jumper
+
+N/A
+
+PCIE_WAKE_B
+
+F23
+
+B11
+
+WAKE#
+
+Integrated Endpoint block
+wake signal, not connected
+on KC705 board
+
+N/A
+
+PCIE_PERST_B
+
+G25
+
+A11
+
+PERST
+
+Integrated Endpoint block
+reset signal
+
+N/A
+
+The following table lists the PCIe edge connector connections for Quad 115.
+Table 1-12:
+
+GTX Quad 115 PCIe Edge Connector Connections
+PCIe Edge
+Connector PCIe Edge
+Pin Name
+Pin
+
+FPGA
+Pin (U1)
+
+Schematic Net Name
+
+MGTXTXP0_115_Y2
+
+Y2
+
+PCIE_TX7_P
+
+A47
+
+PERp7
+
+GTXE2_CHANNEL_X0Y0
+
+MGTXTXN0_115_Y1
+
+Y1
+
+PCIE_TX7_N
+
+A48
+
+PERn7
+
+GTXE2_CHANNEL_X0Y0
+
+MGTXRXP0_115_AA4
+
+AA4
+
+PCIE_RX7_P
+
+B45
+
+PETp7
+
+GTXE2_CHANNEL_X0Y0
+
+MGTXRXN0_115_AA3
+
+AA3
+
+PCIE_RX7_N
+
+B46
+
+PETn7
+
+GTXE2_CHANNEL_X0Y0
+
+MGTXTXP1_115_V2
+
+V2
+
+PCIE_TX6_P
+
+A43
+
+PERp6
+
+GTXE2_CHANNEL_X0Y1
+
+MGTXTXN1_115_V1
+
+V1
+
+PCIE_TX6_N
+
+A44
+
+PERn6
+
+GTXE2_CHANNEL_X0Y1
+
+MGTXRXP1_115_Y6
+
+Y6
+
+PCIE_RX6_P
+
+B41
+
+PETp6
+
+GTXE2_CHANNEL_X0Y1
+
+MGTXRXN1_115_Y5
+
+Y5
+
+PCIE_RX6_N
+
+B42
+
+PETn6
+
+GTXE2_CHANNEL_X0Y1
+
+Quad 115 Pin Name
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+FFG900 Placement
+
+Send Feedback
+
+39
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-12:
+
+GTX Quad 115 PCIe Edge Connector Connections (Cont’d)
+PCIe Edge PCIe Edge
+Connector
+Pin Name
+Pin
+
+FPGA
+Pin (U1)
+
+Schematic Net Name
+
+MGTXTXP2_115_U4
+
+U4
+
+PCIE_TX5_P
+
+A39
+
+PERp5
+
+GTXE2_CHANNEL_X0Y2
+
+MGTXTXN2_115_U3
+
+U3
+
+PCIE_TX5_N
+
+A40
+
+PERn5
+
+GTXE2_CHANNEL_X0Y2
+
+MGTXRXP2_115_W4
+
+W4
+
+PCIE_RX5_P
+
+B37
+
+PETp5
+
+GTXE2_CHANNEL_X0Y2
+
+MGTXRXN2_115_W3
+
+W3
+
+PCIE_RX5_N
+
+B38
+
+PETn5
+
+GTXE2_CHANNEL_X0Y2
+
+MGTXTXP3_115_T2
+
+T2
+
+PCIE_TX4_P
+
+A35
+
+PERp4
+
+GTXE2_CHANNEL_X0Y3
+
+MGTXTXN3_115_T1
+
+T1
+
+PCIE_TX4_N
+
+A36
+
+PERn4
+
+GTXE2_CHANNEL_X0Y3
+
+MGTXRXP3_115_V6
+
+V6
+
+PCIE_RX4_P
+
+B33
+
+PETp4
+
+GTXE2_CHANNEL_X0Y3
+
+MGTXRXN3_115_V5
+
+V5
+
+PCIE_RX4_N
+
+B34
+
+PETn4
+
+GTXE2_CHANNEL_X0Y3
+
+MGTREFCLK0P_115_R8
+
+R8
+
+NC
+
+MGT_BANK_115
+
+MGTREFCLK0N_115_R7
+
+R7
+
+NC
+
+MGT_BANK_115
+
+MGTREFCLK1P_115_U8
+
+U8
+
+PCIE_CLK_QO_P
+
+A13
+
+REFCLK+
+
+MGT_BANK_115
+
+MGTREFCLK1N_115_U7
+
+U7
+
+PCIE_CLK_QO_N
+
+A14
+
+REFCLK-
+
+MGT_BANK_115
+
+MGTAVTTRCAL_115_W7
+
+W7
+
+MGTAVTT
+
+MGT_BANK_115
+
+MGTRREF_115_W8
+
+W8
+
+100 ohm P/U to MGTAVTT
+
+MGT_BANK_115
+
+Quad 115 Pin Name
+
+FFG900 Placement
+
+The following table lists the PCIe edge connector connections for Quad 116.
+Table 1-13:
+
+GTX Quad 116 to PCIe Edge Connector Connections
+
+FPGA
+Quad 116 Pin Name Pin (U1)
+
+Schematic Net Name
+
+PCIe Edge
+Connector
+Pin
+
+PCIe
+Edge in
+Name
+
+FFG900 Placement
+
+MGTXTXP0_116_P2
+
+P2
+
+PCIE_TX3_P
+
+A29
+
+PERp3
+
+GTXE2_CHANNEL_X0Y4
+
+MGTXTXN0_116_P1
+
+P1
+
+PCIE_TX3_N
+
+A30
+
+PERn3
+
+GTXE2_CHANNEL_X0Y4
+
+MGTXRXP0_116_T6
+
+T6
+
+PCIE_RX3_P
+
+B27
+
+PETp3
+
+GTXE2_CHANNEL_X0Y4
+
+MGTXRXN0_116_T5
+
+T5
+
+PCIE_RX3_N
+
+B28
+
+PETn3
+
+GTXE2_CHANNEL_X0Y4
+
+MGTXTXP1_116_N4
+
+N4
+
+PCIE_TX2_P
+
+A25
+
+PERp2
+
+GTXE2_CHANNEL_X0Y5
+
+MGTXTXN1_116_N3
+
+N3
+
+PCIE_TX2_N
+
+A26
+
+PERn2
+
+GTXE2_CHANNEL_X0Y5
+
+MGTXRXP1_116_R4
+
+R4
+
+PCIE_RX2_P
+
+B23
+
+PETp2
+
+GTXE2_CHANNEL_X0Y5
+
+MGTXRXN1_116_R3
+
+R3
+
+PCIE_RX2_N
+
+B24
+
+PETn2
+
+GTXE2_CHANNEL_X0Y5
+
+MGTXTXP2_116_M2
+
+M2
+
+PCIE_TX1_P
+
+A21
+
+PERp1
+
+GTXE2_CHANNEL_X0Y6
+
+MGTXTXN2_116_M1
+
+M1
+
+PCIE_TX1_N
+
+A22
+
+PERn1
+
+GTXE2_CHANNEL_X0Y6
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+40
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-13:
+
+GTX Quad 116 to PCIe Edge Connector Connections (Cont’d)
+FPGA
+Pin (U1)
+
+Schematic Net Name
+
+PCIe Edge
+Connector
+Pin
+
+PCIe
+Edge in
+Name
+
+FFG900 Placement
+
+MGTXRXP2_116_P6
+
+P6
+
+PCIE_RX1_P
+
+B19
+
+PETp1
+
+GTXE2_CHANNEL_X0Y6
+
+MGTXRXN2_116_P5
+
+P5
+
+PCIE_RX1_N
+
+B20
+
+PETn1
+
+GTXE2_CHANNEL_X0Y6
+
+MGTXTXP3_116_L4
+
+L4
+
+PCIE_TX0_P
+
+A16
+
+PERp0
+
+GTXE2_CHANNEL_X0Y7
+
+MGTXTXN3_116_L3
+
+L3
+
+PCIE_TX0_N
+
+A17
+
+PERn0
+
+GTXE2_CHANNEL_X0Y7
+
+MGTXRXP3_116_M6
+
+M6
+
+PCIE_RX0_P
+
+B14
+
+PETp0
+
+GTXE2_CHANNEL_X0Y7
+
+MGTXRXN3_116_M5
+
+M5
+
+PCIE_RX0_N
+
+B15
+
+PETn0
+
+GTXE2_CHANNEL_X0Y7
+
+MGTREFCLK0P_116_L8
+
+L8
+
+SI5326_OUT_C_P
+
+MGT_BANK_116
+
+MGTREFCLK0N_116_L7
+
+L7
+
+SI5326_OUT_C_N
+
+MGT_BANK_116
+
+MGTREFCLK1P_116_N8
+
+N8
+
+FMC_LPC_GBTCLK0_M2C_C_P
+
+MGT_BANK_116
+
+MGTREFCLK1N_116_N7
+
+N7
+
+FMC_LPC_GBTCLK0_M2C_C_N
+
+MGT_BANK_116
+
+Quad 116 Pin Name
+
+For more information, see the 7 Series FPGAs GTX Transceivers User Guide (UG476) [Ref 13]
+and the 7 Series FPGAs Integrated Block for PCI Express LogiCORE IP Product Guide (PG054)
+[Ref 14].
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+41
+
+Chapter 1: KC705 Evaluation Board Features
+
+SFP/SFP+ Connector
+[Figure 1-2, callout 14]
+The KC705 board contains a small form-factor pluggable (SFP+) connector and cage
+assembly that accepts SFP or SFP+ modules. The figure below shows the SFP+ module
+connector circuitry.
+X-Ref Target - Figure 1-16
+
+VCC3V3
+
+P5
+
+VCC3V3
+
+L3
+4.7μH
+3.0 A
+
+SFP+ Module
+Connector
+74441-0010
+
+L4
+4.7μH
+3.0 A
+SFP_VCCR 15
+SFP_VCCT 16
+
+C55
+22μF
+
+C29
+0.1μF
+
+C587
+22μF
+
+C28
+0.1μF
+
+10
+11
+14
+1
+17
+
+VCCR
+
+RD_N
+RD_P
+
+VCCT
+
+TD_P
+VEER_1
+
+12
+
+SFP_RX_N
+
+13
+
+SFP_RX_P
+
+18
+
+SFP_TX_P
+
+VCC3V3
+19
+
+SFP_TX_N
+
+VEER_3
+
+SDA 4
+
+SFP_IIC_SDA
+
+VEET_1
+
+SCL 5
+
+SFP_IIC_SCL
+
+VEER_2
+
+VEET_2
+
+20
+
+TD_N
+
+TX_FAULT
+
+2
+
+VEET_3
+TX_DISABLE 3
+GND1
+6
+22
+GND2
+MOD_ABS
+23
+GND3
+24
+GND4
+8
+LOS
+25
+GND5
+26
+GND6
+27
+GND7
+28
+GND8
+29
+GND9
+30
+GND10
+31
+GND11
+32
+GND12
+9
+RS1
+21
+
+GND
+
+R37
+4.7KΩ
+
+R36
+4.7KΩ
+
+R40
+4.7KΩ
+
+R41
+4.7KΩ
+J10
+1
+
+SFP_TX_FAULT
+SFP_TX_DISABLE_TRANS
+SFP_MOD_DETECT
+
+1
+
+SFP_LOS
+
+1
+
+2
+
+J4
+
+J8
+
+HDR_1X1
+
+1 HDR_1X2
+
+SFP Enable
+
+J9
+
+3
+
+GND
+
+Q2
+NDS331N
+460 mW
+1 SFP_TX_DISABLE
+
+2
+SFP_RS1
+VCC3V3
+
+VCC3V3
+GND
+R552
+4.7KΩ
+1
+RS0
+
+7
+
+SFP_RS0
+
+R551
+4.7KΩ
+
+HDR_1X3
+J27 J28
+1
+
+2
+
+2
+
+3
+
+3
+
+GND
+1-2: FULL BW RX
+2-3: LOW BW RX
+
+GND
+1-2: FULL BW TX
+2-3: LOW BW TX
+UG810_c1_17_031413
+
+Figure 1-16:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+SFP+ Module Connector
+
+www.xilinx.com
+
+Send Feedback
+
+42
+
+Chapter 1: KC705 Evaluation Board Features
+The following table lists the SFP+ module RX and TX connections to the FPGA.
+Table 1-14:
+
+FPGA U1 to SFP+ Module Connections
+
+FPGA Pin (U1)
+
+Schematic Net Name
+
+SFP+ Pin (P5)
+
+SFP+ Pin Name (P5)
+
+G3
+
+SFP_RX_N
+
+12
+
+RD_N (1)
+
+G4
+
+SFP_RX_P
+
+13
+
+RD_P(1)
+
+H1
+
+SFP_TX_N
+
+19
+
+TX_N (2)
+
+H2
+
+SFP_TX_P
+
+18
+
+TX_P (2)
+
+Y20
+
+SFP_TX_DISABLE_TRANS (3)
+
+3
+
+TX_DISABLE
+
+Notes:
+1. On KC705 boards prior to Rev 1.1, SFP+ connector P5 pin 18 RD_P is connected to net SFP_RX_N, and pin 19 RD_N
+is connected to net SFP_RX_P.
+2. On KC705 boards prior to Rev 1.1, SFP+ connector P5 pin 18 TD_P is connected to net SFP_TX_N, and pin 19 TD_N
+is connected to net SFP_TX_P.
+3. SFP_TX_DISABLE_TRANS I/O standard = LVCMOS25.
+
+The following table lists the SFP+ module control and status connections to the FPGA.
+Table 1-15:
+
+SFP+ Module Control and Status
+
+SFP Control/Status Signal
+SFP_TX_FAULT
+
+Board Connection
+Test Point J10
+High = Fault
+Low = Normal Operation
+
+SFP_TX_DISABLE
+
+Jumper J4
+Off = FP Disabled
+On = SFP Enabled
+
+SFP_MOD_DETECT
+
+Test Point J9
+High = Module Not Present
+Low = Module Present
+
+SFP_RS0
+
+Jumper J27
+Jumper Pins 1-2 = Full RX Bandwidth
+Jumper Pins 2-3 = Reduced RX Bandwidth
+
+SFP_RS1
+
+Jumper J28
+Jumper Pins 1-2 = Full TX Bandwidth
+Jumper Pins 2-3 = Reduced TX Bandwidth
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+43
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-15:
+
+SFP+ Module Control and Status (Cont’d)
+
+SFP Control/Status Signal
+SFP_LOS
+
+Board Connection
+Test Point J8
+High = Loss of Receiver Signal
+Low = Normal Operation
+
+Notes:
+1. Default jumper shunt positions are shown in bold text.
+
+10/100/1000 Tri-Speed Ethernet PHY
+[Figure 1-2, callout 15]
+The KC705 board utilizes the Marvell Alaska PHY device (88E1111) U37 for Ethernet
+communications at 10, 100, or 1000 Mb/s. The board supports MII, GMII, RGMII, and SGMII
+interfaces from the FPGA to the PHY (Table 1-16). The PHY connection to a user-provided
+Ethernet cable is through a Halo HFJ11-1G01E RJ-45 connector (P3) with built-in magnetics.
+Table 1-16:
+
+PHY Default Interface Mode
+Mode
+
+Jumper Settings
+J29
+
+J30
+
+J64
+
+GMII/MII to copper (default)
+
+Jumper over pins 1-2
+
+Jumper over pins 1-2
+
+No jumper
+
+SGMII to copper, no clock
+
+Jumper over pins 2-3
+
+Jumper over pins 2-3
+
+No jumper
+
+RGMII
+
+Jumper over pins 1-2
+
+No jumper
+
+Jumper on
+
+On power-up, or on reset, the PHY is configured to operate in GMII mode with PHY address
+0b00111 using the settings shown in the table below. These settings can be overwritten via
+software commands passed over the MDIO interface.
+Table 1-17:
+
+Board Connections for PHY Configuration Pins
+
+Pin
+
+Connection on
+Board
+
+Bit[2] Definition and
+Value
+
+Bit[1] Definition and
+Value
+
+Bit[0] Definition and
+Value
+
+CFG0
+
+V CC 2.5V
+
+PHYADR[2] = 1
+
+PHYADR[1] = 1
+
+PHYADR[0] = 1
+
+CFG1
+
+Ground
+
+ENA_PAUSE = 0
+
+PHYADR[4] = 0
+
+PHYADR[3] = 0
+
+CFG2
+
+V CC 2.5V
+
+ANEG[3] = 1
+
+ANEG[2] = 1
+
+ANEG[1] = 1
+
+CFG3
+
+V CC 2.5V
+
+ANEG[0] = 1
+
+ENA_XC = 1
+
+DIS_125 = 1
+
+CFG4
+
+V CC 2.5V
+
+HWCFG_MD[2] = 1
+
+HWCFG_MD[1] = 1
+
+HWCFG_MD[0] = 1
+
+CFG5
+
+V CC 2.5V
+
+DIS_FC = 1
+
+DIS_SLEEP = 1
+
+HWCFG_MD[3] = 1
+
+CFG6
+
+PHY_LED_RX
+
+SEL_BDT = 0
+
+INT_POL = 1
+
+75/50Ω= 0
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+44
+
+Chapter 1: KC705 Evaluation Board Features
+
+SGMII GTX Transceiver Clock Generator
+[Figure 1-2, callout 16]
+An Integrated Circuit Systems ICS844021I chip (U2) generates a high-quality, low-jitter,
+125 MHz LVDS clock from a 25 MHz crystal (X3). This clock is sent to FPGA U1, bank 117 GTX
+transceiver (clock pins G8 (P) and G7 (N)) driving the SGMII interface. Series AC coupling
+capacitors are present to allow the clock input of the FPGA to set the common mode
+voltage. The following figure shows the Ethernet SGMII clock source.
+X-Ref Target - Figure 1-17
+
+VDDA_SGMIICLK
+
+C93
+18pF 50V
+NPO
+
+VDD_SGMIICLK
+
+U2
+ICS844021I-01
+Clock Generator
+
+X3
+
+OE
+
+25.00 MHz
+
+1
+
+R134
+1.0MΩ 5%
+
+2 GND2
+
+X1 1
+
+SGMIICLK_XTAL_OUT
+
+3
+
+C94
+18pF 50V
+NPO
+
+4 GND2
+
+X2 3
+
+SGMIICLK_XTAL_IN
+
+4
+2
+
+GND_SGMIICLK
+
+GND_SGMIICLK
+
+VDD
+
+VDDA
+XTAL_OUT
+
+Q0
+
+XTAL_IN
+
+NQ0
+
+5
+
+7
+
+SGMIICLK_Q0_C_P
+
+C14
+0.1μF 25V
+X5R
+SGMIICLK_Q0_P
+
+6
+
+SGMIICLK_Q0_C_N
+
+SGMIICLK_Q0_N
+
+8
+
+C15
+0.1μF 25V
+X5R
+
+GND
+
+GND_SGMIICLK
+
+Figure 1-17:
+
+UG810_c1_18_031214
+
+Ethernet 125 MHz SGMII GTX Clock
+
+The following table shows the connections and pin numbers for the M88E1111 PHY.
+Table 1-18:
+
+Ethernet PHY Connections
+
+U1 FPGA Pin
+
+Schematic Net Name
+
+I/O Standard
+
+J21
+
+PHY_MDIO
+
+R23
+
+M88E1111 (U37)
+Pin Number
+
+Pin Name
+
+LVCMOS25
+
+M1
+
+MDIO
+
+PHY_MDC
+
+LVCMOS25
+
+L3
+
+MDC
+
+N30
+
+PHY_INT
+
+LVCMOS25
+
+L1
+
+INT_B
+
+L20
+
+PHY_RESET
+
+LVCMOS25
+
+K3
+
+RESET_B
+
+R30
+
+PHY_CRS
+
+LVCMOS25
+
+B5
+
+CRS
+
+W19
+
+PHY_COL
+
+LVCMOS25
+
+B6
+
+COL
+
+U27
+
+PHY_RXCLK
+
+LVCMOS25
+
+C1
+
+RXCLK
+
+V26
+
+PHY_RXER
+
+LVCMOS25
+
+D2
+
+RXER
+
+R28
+
+PHY_REXCTL_RXDV
+
+LVCMOS25
+
+B1
+
+RXDV
+
+U30
+
+PHY_RXD0
+
+LVCMOS25
+
+B2
+
+RXD0
+
+U25
+
+PHY_RXD1
+
+LVCMOS25
+
+D3
+
+RXD1
+
+T25
+
+PHY_RXD2
+
+LVCMOS25
+
+C3
+
+RXD2
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+45
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-18:
+
+Ethernet PHY Connections (Cont’d)
+
+U1 FPGA Pin
+
+Schematic Net Name
+
+I/O Standard
+
+U28
+
+PHY_RXD3
+
+R19
+
+M88E1111 (U37)
+Pin Number
+
+Pin Name
+
+LVCMOS25
+
+B3
+
+RXD3
+
+PHY_RXD4
+
+LVCMOS25
+
+C4
+
+RXD4
+
+T27
+
+PHY_RXD5
+
+LVCMOS25
+
+A1
+
+RXD5
+
+T26
+
+PHY_RXD6
+
+LVCMOS25
+
+A2
+
+RXD6
+
+T28
+
+PHY_RXD7
+
+LVCMOS25
+
+C5
+
+RXD7
+
+K30
+
+PHY_TXC_GTXCLK
+
+LVCMOS25
+
+E2
+
+GTXCLK
+
+M28
+
+PHY_TXCLK
+
+LVCMOS25
+
+D1
+
+TXCLK
+
+N29
+
+PHY_TXER
+
+LVCMOS25
+
+F2
+
+TXER
+
+M27
+
+PHY_TXCTL_TXEN
+
+LVCMOS25
+
+E1
+
+TXEN
+
+N27
+
+PHY_TXD0
+
+LVCMOS25
+
+F1
+
+TXD0
+
+N25
+
+PHY_TXD1
+
+LVCMOS25
+
+G2
+
+TXD1
+
+M29
+
+PHY_TXD2
+
+LVCMOS25
+
+G3
+
+TXD2
+
+L28
+
+PHY_TXD3
+
+LVCMOS25
+
+H2
+
+TXD3
+
+J26
+
+PHY_TXD4
+
+LVCMOS25
+
+H1
+
+TXD4
+
+K26
+
+PHY_TXD5
+
+LVCMOS25
+
+H3
+
+TXD5
+
+L30
+
+PHY_TXD6
+
+LVCMOS25
+
+J1
+
+TXD6
+
+J28
+
+PHY_TXD7
+
+LVCMOS25
+
+J2
+
+TXD7
+
+J4
+
+SGMII_TX_P
+
+LVCMOS25
+
+A3
+
+SIN_P
+
+J3
+
+SGMII_TX_N
+
+LVCMOS25
+
+A4
+
+SIN_N
+
+H6
+
+SGMII_RX_P
+
+LVCMOS25
+
+A7
+
+SOUT_P
+
+H5
+
+SGMII_RX_N
+
+LVCMOS25
+
+A8
+
+SOUT_N
+
+Details about the tri-mode Ethernet MAC core are provided in LogiCORE IP Tri-Mode
+Ethernet MAC User Guide (PG051) [Ref 15].
+For more information about the Marvell 88E1111, see [Ref 16].
+For more information about the ICS 844021-01, see [Ref 17].
+
+USB-to-UART Bridge
+[Figure 1-2, callout 17]
+The KC705 board contains a Silicon Labs CP2103GM USB-to-UART bridge device (U12)
+which allows a connection to a host computer with a USB port. The USB cable is supplied in
+the Evaluation Kit (standard-A plug to host computer, mini-B plug to KC705 board
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+46
+
+Chapter 1: KC705 Evaluation Board Features
+connector J6). The CP2103GM is powered by the USB 5V provided by the host PC when the
+USB cable is plugged into the USB port on the KC705 board.
+Xilinx UART IP is expected to be implemented in the FPGA fabric. The FPGA supports the
+USB-to-UART bridge using four signal pins: Transmit (TX), Receive (RX), Request to Send
+(RTS), and Clear to Send (CTS).
+Silicon Labs provides royalty-free Virtual COM Port (VCP) drivers for the host computer.
+These drivers permit the CP2103GM USB-to-UART bridge to appear as a COM port to
+communications application software (for example, Tera Term or HyperTerm) that runs on
+the host computer. The VCP device drivers must be installed on the host PC prior to
+establishing communications with the KC705 board.
+The following table shows the USB signal definitions at J6:
+Table 1-19:
+
+USB J6 Mini-B Receptacle Pin Assignments and Signal Definitions
+
+USB Receptacle Receptacle Pin Schematic Net
+Pins (J6)
+Name
+Name
+
+Description
+
+U12 Pin
+(CP2103GM)
+
+U12 Pin Name
+(CP2103GM)
+
+1
+
+VBUS
+
+USB_VBUS
+
++5V from host system
+- U12 CP2103 power
+
+7, 8
+
+REGIN, VBUS
+
+2
+
+D_N
+
+USB_D_N
+
+Bidirectional
+differential serial data
+(N-side)
+
+4
+
+D-
+
+3
+
+D_P
+
+USB_D_P
+
+Bidirectional
+differential serial data
+(P-side)
+
+3
+
+D+
+
+4
+
+GND
+
+USB_GND
+
+Signal ground
+
+2, 29
+
+GND, GND
+
+The following table shows the USB connections between the FPGA and the UART.
+Table 1-20:
+
+FPGA to UART Connections
+FPGA U1
+
+CP2103 Device U12
+
+Schematic
+Net Name
+
+Pin
+
+Function
+
+Direction
+
+Pin
+
+Function
+
+Direction
+
+I/O
+Standard
+
+L27
+
+RTS
+
+Output
+
+LVCMOS25
+
+USB_CTS
+
+22
+
+CTS
+
+Input
+
+K23
+
+CTS
+
+Input
+
+LVCMOS25
+
+USB_RTS
+
+23
+
+RTS
+
+Output
+
+K24
+
+TX
+
+Output
+
+LVCMOS25
+
+USB_RX
+
+24
+
+RXD
+
+Input
+
+M19
+
+RX
+
+Input
+
+LVCMOS25
+
+USB_TX
+
+25
+
+TXD
+
+Output
+
+For more information about the CP2103GM and to download the VCP drivers, see [Ref 8].
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+47
+
+Chapter 1: KC705 Evaluation Board Features
+
+HDMI Video Output
+[Figure 1-2, callout 18]
+The KC705 board provides a High-Definition Multimedia Interface (HDMI) video output
+using the Analog Devices ADV7511KSTZ-P HDMI transmitter (U65). The HDMI output is
+provided on a Molex 500254-1927 HDMI type-A connector (P6). The ADV7511 is wired to
+support 1080P 60Hz, YCbCr 4:2:2 encoding via 16-bit input data mapping.
+The KC705 board supports the following HDMI device interfaces:
+•
+
+18 data lines
+
+•
+
+Independent VSYNC, HSYNC
+
+•
+
+Single-ended input CLK
+
+•
+
+Interrupt Out Pin to FPGA
+
+•
+
+I2C
+
+•
+
+SPDIF
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+48
+
+Chapter 1: KC705 Evaluation Board Features
+The following figure shows the HDMI codec circuit.
+X-Ref Target - Figure 1-18
+
+VCC3V3
+R388
+2.43K
+1/10W
+1%
+
+1
+
+HDMI_INT
+
+VADJ
+
+R389
+2.43K
+1/10W
+1%
+
+VCC2V5
+
+U72
+
+R435
+2.43K
+1/10W
+1%
+
+ADV7511
+45
+38
+55
+56
+
+IIC_SCL_HDMI
+IIC_SDA_HDMI
+HDMI_VSYNC
+HDMI_HSYNC
+
+2
+98
+
+HDMI_CLK
+
+79
+
+HDMI_HEAC_C_N
+
+30
+
+To HDMI
+Connector to
+FPGA U1
+
+HDMI_D17
+HDMI_D16
+HDMI_D15
+HDMI_D14
+HDMI_D13
+HDMI_D12
+HDMI_D11
+HDMI_D10
+HDMI_D9
+HDMI_D8
+HDMI_D7
+HDMI_D6
+HDMI_D5
+HDMI_D4
+HDMI_D3
+HDMI_D2
+HDMI_D1
+HDMI_D0
+
+HDMI_DE
+HDMI_SPDIF
+
+SIT8102
+12.00000 MHZ
+50PPM
+
+U65
+INT
+PD
+SCL
+SDA
+
+CEC_CLK
+
+50
+
+HDMI_CEC_CLK_R
+
+SPDIF_OUT
+
+46
+
+HDMI_SPDIF_OUT
+
+R607
+24.9
+1/10W
+1%
+
+HDMI_CEC_CLK
+
+VSYNC
+HSYNC
+
+C592
+0.1UF
+25V
+X5R
+
+CLK
+HDMI_PLVDD
+
+HPD
+
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+78
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+
+D35
+D34
+D33
+D32
+D31
+D30
+D29
+D28
+D27
+D26
+D25
+D24
+D23
+D22
+D21
+D20
+D19
+D18
+D17
+D16
+D15
+D14
+D13
+D12
+D11
+D10
+D9
+D8
+D7
+D6
+D5
+D4
+D3
+D2
+D1
+D0
+
+97
+
+DE
+
+10
+
+SPDIF
+
+3
+4
+5
+6
+7
+8
+9
+
+DSD0
+DSD1
+DSD2
+DSD3
+DSD4
+DSD5
+DSD_CLK
+
+11
+
+MCLK
+
+12
+13
+14
+15
+16
+17
+
+I2S0
+I2S1
+I2S2
+I2S3
+SCLK
+LRCLK
+
+PVDD1
+PVDD2
+PVDD3
+
+21
+24
+25
+
+AVDD1
+AVDD2
+AVDD3
+
+29
+34
+41
+
+DVDD1
+DVDD2
+DVDD3
+DVDD4
+DVDD5
+
+76
+77
+49
+19
+1
+
+DVDD_3V
+
+47
+
+BGVDD
+
+26
+
+HDMI_AVDD
+
+4 VCC
+
+OE 1
+
+3 OUT
+
+GND 2
+
+1
+
+GND
+
+2
+GND
+
+HDMI_AVDD
+
+HDMI_DVDD
+
+HDMI_DVDD_3V
+
+TX0_P
+TX0_N
+TX1_P
+TX1_N
+TX2_P
+TX2_N
+TXC_P
+TXC_N
+DDCSDA
+DDCSCL
+HEAC_P
+HEAC_N
+CEC
+
+GND1
+GND2
+GND3
+GND4
+GND5
+GND6
+GND7
+GND8
+GND9
+GND10
+GND11
+
+28 R_EXT
+
+HDMI_PLVDD
+
+36
+35
+40
+39
+43
+42
+33
+32
+
+HDMI_D0_P
+HDMI_D0_N
+HDMI_D1_P
+HDMI_D1_N
+HDMI_D2_P
+HDMI_D2_N
+HDMI_CLK_P
+HDMI_CLK_N
+
+54
+53
+
+HDMI_DDCSDA
+HDMI_DDCSCL
+
+52
+51
+
+HDMI_HEAC_P
+HDMI_HEAC_N
+
+48
+
+HDMI_CEC
+
+To HDMI
+Connector
+
+99
+100
+18
+20
+22
+23
+27
+31
+37
+44
+75
+
+R433
+887
+
+GND
+UG810_c1_19_031214
+
+GND
+
+Figure 1-18:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+HDMI Codec Circuit
+
+www.xilinx.com
+
+Send Feedback
+
+49
+
+Chapter 1: KC705 Evaluation Board Features
+The following table lists the connections between the codec and the FPGA.
+Table 1-21:
+
+FPGA to HDMI Codec Connections (ADV7511)
+
+U1 FPGA Pin
+
+Schematic Net Name
+
+I/O Standard
+
+B23
+
+HDMI_D0
+
+A23
+
+ADV7511 (U65)
+Pin Number
+
+Pin Name
+
+LVCMOS25
+
+88
+
+D8
+
+HDMI_D1
+
+LVCMOS25
+
+87
+
+D9
+
+E23
+
+HDMI_D2
+
+LVCMOS25
+
+86
+
+D10
+
+D23
+
+HDMI_D3
+
+LVCMOS25
+
+85
+
+D11
+
+F25
+
+HDMI_D4
+
+LVCMOS25
+
+84
+
+D12
+
+E25
+
+HDMI_D5
+
+LVCMOS25
+
+83
+
+D13
+
+E24
+
+HDMI_D6
+
+LVCMOS25
+
+82
+
+D14
+
+D24
+
+HDMI_D7
+
+LVCMOS25
+
+81
+
+D15
+
+F26
+
+HDMI_D8
+
+LVCMOS25
+
+80
+
+D16
+
+E26
+
+HDMI_D9
+
+LVCMOS25
+
+78
+
+D17
+
+G23
+
+HDMI_D10
+
+LVCMOS25
+
+74
+
+D18
+
+G24
+
+HDMI_D11
+
+LVCMOS25
+
+73
+
+D19
+
+J19
+
+HDMI_D12
+
+LVCMOS25
+
+72
+
+D20
+
+H19
+
+HDMI_D13
+
+LVCMOS25
+
+71
+
+D21
+
+L17
+
+HDMI_D14
+
+LVCMOS25
+
+70
+
+D22
+
+L18
+
+HDMI_D15
+
+LVCMOS25
+
+69
+
+D23
+
+K19
+
+HDMI_D16
+
+LVCMOS25
+
+68
+
+D24
+
+K20
+
+HDMI_D17
+
+LVCMOS25
+
+67
+
+D25
+
+H17
+
+HDMI_DE
+
+LVCMOS25
+
+97
+
+DE
+
+J17
+
+HDMI_SPDIF
+
+LVCMOS25
+
+10
+
+SPDIF
+
+K18
+
+HDMI_CLK
+
+LVCMOS25
+
+79
+
+CLK
+
+H20
+
+HDMI_VSYNC
+
+LVCMOS25
+
+2
+
+VSYNC
+
+J18
+
+HDMI_HSYNC
+
+LVCMOS25
+
+98
+
+HSYNC
+
+AH24
+
+HDMI_INT
+
+LVCMOS25
+
+45
+
+INT
+
+G20
+
+HDMI_SPDIF_OUT
+
+LVCMOS25
+
+46
+
+SPDIF_OUT
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+50
+
+Chapter 1: KC705 Evaluation Board Features
+The following table lists the connections between the codec and the HDMI connector P6.
+Table 1-22:
+
+ADV7511 to HDMI Connector Connections
+
+ADV7511 (U65)
+
+Schematic Net Name
+
+HDMI Connector P6 Pin
+
+36
+
+HDMI_D0_P
+
+7
+
+35
+
+HDMI_D0_N
+
+9
+
+40
+
+HDMI_D1_P
+
+4
+
+39
+
+HDMI_D1_N
+
+6
+
+43
+
+HDMI_D2_P
+
+1
+
+42
+
+HDMI_D2_N
+
+3
+
+33
+
+HDMI_CLK_P
+
+10
+
+32
+
+HDMI_CLK_N
+
+12
+
+54
+
+HDMI_DDCSDA
+
+16
+
+53
+
+HDMI_DDCSCL
+
+15
+
+52
+
+HDMI_HEAC_P
+
+14
+
+51
+
+HDMI_HEAC_N
+
+19
+
+48
+
+HDMI_CRC
+
+13
+
+For more information about the ADV7511KSTZ-P part, see [Ref 18].
+
+LCD Character Display
+[Figure 1-2, callout 19]
+A 2-line by 16-character display is provided on the KC705 board (Figure 1-19).
+X-Ref Target - Figure 1-19
+
+LCD Display (16 x 2)
+
+UG810_c1_20_031214
+
+Figure 1-19:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+LCD Display
+
+www.xilinx.com
+
+Send Feedback
+
+51
+
+Chapter 1: KC705 Evaluation Board Features
+The character display runs at 5.0V and is connected to the FPGA's 1.5V HP bank 33 through
+a Texas Instruments TXS0108E 8-bit bidirectional voltage level translator (U10). The figure
+below shows the LCD interface circuit.
+X-Ref Target - Figure 1-20
+
+VCC1V5_FPGA
+
+VCC5V0
+
+C23
+0.1μF 25V
+X5R
+
+U10
+
+GND
+LCD_E_LS
+LCD_RW_LS
+LCD_DB4_LS
+LCD_DB5_LS
+LCD_DB6_LS
+LCD_DB7_LS
+LCD_RS_LS
+
+C24
+0.1μF 25V
+X5R
+
+TXS0108E 8-Bit
+Bidirectional
+Voltage Level
+Translator
+2
+1
+3
+4
+5
+6
+7
+8
+NC 9
+10
+
+VCCA
+A1
+A2
+A3
+A4
+A5
+A6
+A7
+A8
+OE
+
+GND
+
+VCCB
+B1
+B2
+B3
+B4
+B5
+B6
+B7
+B8
+GND
+
+19
+20
+18
+17
+16
+15
+14
+13
+12 NC
+11
+
+LCD_E
+LCD_RW
+LCD_DB4
+LCD_DB5
+LCD_DB6
+LCD_DB7
+LCD_RS
+
+GND
+VCC5V0
+
+VCC5V0
+LCD_DB7
+LCD_DB5
+
+1
+3
+NC 5
+NC 7
+9
+11
+13
+
+LCD_E
+LCD_RS
+
+J31
+
+LCD_DB6
+LCD_DB4
+
+2
+4
+6 NC
+8 NC
+10
+12
+14
+
+R92
+6.81kΩ
+
+LCD_RW
+LCD_VEE
+
+R133 LCD Contrast
+2 kΩ Potentiometer
+
+GND
+
+GND
+
+UG810_c1_21_031214
+
+Figure 1-20:
+
+LCD Interface Circuit
+
+The KC705 board base board uses a male Samtec MTLW-107-07-G-D-265 2x7 header (J31)
+with 0.025-inch square posts on 0.100-inch centers for connecting to a Samtec
+SLW-107-01-L-D female socket on the LCD display panel assembly. The LCD header is
+shown in the figure below.
+X-Ref Target - Figure 1-21
+
+LCD Display Assembly
+
+Low Profile Socket
+Samtec SLW-107-01-L-D
+
+10 mm
+
+Low Profile Terminal
+Samtec MTLW-107-07-G-D-265
+
+KC705 PWA
+UG810_c1_22_031214
+
+Figure 1-21:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+LCD Header Details
+
+www.xilinx.com
+
+Send Feedback
+
+52
+
+Chapter 1: KC705 Evaluation Board Features
+The following table lists the connections between the FPGA and the LCD header.
+Table 1-23:
+
+FPGA to LCD Header Connections
+
+FPGA Pin (U1)
+
+Schematic Net Name
+
+I/O Standard
+
+LCD Header Pin (J31)
+
+AA13
+
+LCD_DB4_LS
+
+LVCMOS15
+
+4
+
+AA10
+
+LCD_DB5_LS
+
+LVCMOS15
+
+3
+
+AA11
+
+LCD_DB6_LS
+
+LVCMOS15
+
+2
+
+Y10
+
+LCD_DB7_LS
+
+LVCMOS15
+
+1
+
+AB13
+
+LCD_RW_LS
+
+LVCMOS15
+
+10
+
+Y11
+
+LCD_RS_LS
+
+LVCMOS15
+
+11
+
+AB10
+
+LCD_E_LS
+
+LVCMOS15
+
+9
+
+For more information about the Displaytech S162D LCD, see [Ref 19].
+
+I2C Bus Switch
+[Figure 1-2, callout 20]
+The KC705 board implements a single I2C port on the FPGA (IIC_SDA_MAIN, IIC_SDA_SCL),
+which is routed through a TI PCA9548 1-to-8 channel I2C switch (U49). U49 pin 24 net
+IIC_MUX_RESET_B is connected to U1 bank 15 pin P23. This is an active-Low signal and must
+be driven High (FPGA U1 pin P23) to enable I2C bus transactions between the FPGA U1 and
+the other components on the I2C bus. The I2C switch can operate at speeds up to 400 kHz.
+The U49 bus switch at I2C address 0x74/0b01110100 must be addressed and configured
+to select the desired target back-side device.
+The KC705 board I2C bus topology is shown in the figure below.
+X-Ref Target - Figure 1-22
+
+U49
+PCA9548
+12C 1-to-8
+Bus Switch
+
+U1
+FPGA
+Bank 15
+(2.5V)
+
+CH0 - USER_CLOCK_SDA/SCL
+CH1 - FMC_HPC_IIC_SDA/SCL
+CH2 - FMC_LPC_IIC_SDA/SCL
+CH3 - EEPROM_IIC_SDA/SCL
+
+IIC_SDA/SCL_MAIN
+
+CH4 - SFP_IIC_SDA/SCL
+CH5 - IIC_SDA/SCL_HDMI
+CH6 - IIC_SDA/SCL_DDR3
+CH7 - SI5326_SDA/SCL
+UG810_C1_23_031214
+
+Figure 1-22:
+
+I2C Bus Topology
+
+User applications that communicate with devices on one of the downstream I2C buses must
+first set up a path to the desired bus through the U49 bus switch at I2C address
+0x74/0b01110100.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+53
+
+Chapter 1: KC705 Evaluation Board Features
+The following table lists the address for each device on the I2C bus.
+Table 1-24:
+
+I2C Devices
+
+I2C Device
+
+I2C Switch
+Position
+
+I2C Address
+
+Si570 Clock
+
+0
+
+0b1011101
+
+FMC HPC
+
+1
+
+0bXXXXXXX
+
+FMC LPC
+
+2
+
+0bXXXXXXX
+
+IIC EEPROM
+
+3
+
+0b1010100
+
+SFP Module
+
+4
+
+0b1010000
+
+ADV7511 HDMI
+
+5
+
+0b0111001
+
+DDR3 SODIMM
+
+6
+
+0b1010000, 0b0011000
+
+Si5324 Clock
+
+7
+
+0b1101000
+
+For more information about the TI PCA9548 part, see [Ref 20].
+
+Status LEDs
+[Figure 1-2, callout 21]
+The following table defines the status LEDs. For user controlled LEDs, see User I/O.
+Table 1-25:
+
+Status LEDs
+
+Reference
+Designator
+
+Signal Name
+
+Color
+
+DS14
+
+PWRCTL1_VCC4A_PG
+
+Green
+
+FMC power good
+
+DS20
+
+FPGA_DONE
+
+Green
+
+FPGA configured successfully
+
+DS21
+
+FPGA_INIT_B
+
+Green/red
+
+Description
+
+GREEN: FPGA initialization successful,
+RED: FPGA initialization in progress
+
+DS22
+
+VCC12_P_IN
+
+Green
+
+12V power ON
+
+DS23
+
+PWRCTL_PWRGOOD
+
+Green
+
+UCD9248 power controllers (U55, U56) power
+good
+
+DS24
+
+LINEAR_POWER_GOOD
+
+Green
+
+TPS51200 (U33) VTTDDR Power Good
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+54
+
+Chapter 1: KC705 Evaluation Board Features
+
+Ethernet PHY Status LEDs
+[Figure 1-2, callout 21]
+The Ethernet PHY status LEDs are mounted to be visible through the metal bracket on the
+left edge of the KC705 board when it is installed into a PCIe slot in a PC chassis. The six PHY
+status LEDs are located above the RJ45 Ethernet jack as shown in the figure below.
+X-Ref Target - Figure 1-23
+
+Half Duplex
+
+10
+
+TX
+
+100
+
+RX
+
+1000
+
+Direction
+Indicator
+
+Link Rate
+(Mb/s)
+
+RJ45 Ethernet
+Jack
+
+UG810_c1_24_031214
+
+Figure 1-23:
+
+Ethernet PHY Status LEDs
+
+The following table lists the Ethernet PHY status LEDs.
+Table 1-26:
+
+Ethernet PHY Status LEDs
+
+Reference
+Designator
+
+Signal Name
+
+Color
+
+Description
+
+DS11
+
+PHY_LED_RX
+
+GREEN
+
+Ethernet PHY RX
+
+DS11
+
+PHY_LED_LINK1000
+
+GREEN
+
+Ethernet Link Speed is 1000 Mb/s
+
+DS12
+
+PHY_LED_TX
+
+GREEN
+
+Ethernet PHY TX
+
+DS12
+
+PHY_LED_LINK100
+
+GREEN
+
+Ethernet Link Speed is 100 Mb/s
+
+DS13
+
+PHY_LED_DUPLEX
+
+GREEN
+
+Ethernet Link is Half-duplex
+
+DS13
+
+PHY_LED_LINK10
+
+GREEN
+
+Ethernet Link Speed is 10 Mb/s
+
+User I/O
+[Figure 1-2, callout 22 - 26]
+The KC705 board provides the following user and general purpose I/O capabilities:
+•
+
+Eight user LEDs (callout 22)
+°
+
+•
+
+GPIO_LED_[7-0]: DS27, DS26, DS25, DS3, DS10, DS1, DS4
+
+Five user pushbuttons and reset switch (callout 23)
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+55
+
+Chapter 1: KC705 Evaluation Board Features
+
+•
+
+°
+
+GPIO_SW_[NESWC]: SW2, SW3, SW4, SW6, SW5
+
+°
+
+CPU_RESET: SW7
+
+4-position user DIP Switch (callout 24)
+°
+
+•
+
+User Rotary Switch (callout 25, hidden beneath the LCD)
+°
+
+•
+
+ROTARY_PUSH, ROTARY_INCA, ROTARY_INCB: SW8
+
+User SMA (callout 26)
+°
+
+•
+
+GPIO_DIP_SW[3:0]: SW11
+
+USER_SMA_GPIO_P, USER_SMA_GPIO_N: J13, J14
+
+2 line x 16 character LCD Character Display (callout 19)
+°
+
+If the display is unmounted, connector J31 pins are available as 7 independent 5V
+GPIOs
+
+User GPIO LEDs
+[Figure 1-2, callout 34]
+The following figure shows the user LED circuits.
+X-Ref Target - Figure 1-24
+
+GPIO_LED_0
+GPIO_LED_1
+GPIO_LED_2
+GPIO_LED_3
+GPIO_LED_4
+GPIO_LED_5
+GPIO_LED_6
+GPIO_LED_7
+
+DS27
+
+DS26
+
+DS25
+
+DS3
+
+DS2
+
+DS10
+
+DS1
+
+DS4
+
+R442
+49.9Ω
+1%
+
+R441
+49.9Ω
+1%
+
+R440
+49.9Ω
+1%
+
+R97
+49.9Ω
+1%
+
+R96
+49.9Ω
+1%
+
+R95
+49.9Ω
+1%
+
+R94
+49.9Ω
+1%
+
+R93
+49.9Ω
+1%
+
+GND
+
+UG810_c1_25_031214
+
+Figure 1-24:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+User LEDs
+
+www.xilinx.com
+
+Send Feedback
+
+56
+
+Chapter 1: KC705 Evaluation Board Features
+
+User Pushbuttons
+[Figure 1-2, callout 23]
+The figure below shows the user pushbutton switch circuits.
+X-Ref Target - Figure 1-25
+
+VCC1V5
+
+SW2
+GPIO SW N
+
+4
+
+1
+
+3
+
+2
+R13
+4.7kΩ
+0.1 W
+5%
+
+GND
+VCC1V5
+
+VADJ
+
+SW6
+GPIO SW W
+
+4
+
+1
+
+3
+
+2
+
+GPIO SW C
+
+SW3
+
+4
+
+1
+
+3
+
+2
+
+R14
+4.7kΩ
+0.1 W
+5%
+
+GND
+
+VCC1V5
+
+SW5
+GPIO SW E
+
+R13
+4.7kΩ
+0.1 W
+5%
+
+4
+
+1
+
+3
+
+2
+R11
+4.7kΩ
+0.1 W
+5%
+
+GND
+
+GND
+VCC1V5
+
+SW4
+GPIO SW S
+
+4
+
+1
+
+3
+
+2
+R12
+4.7kΩ
+0.1 W
+5%
+
+GND
+
+Figure 1-25:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+UG810_c1_26_031214
+
+User Pushbuttons
+
+www.xilinx.com
+
+Send Feedback
+
+57
+
+Chapter 1: KC705 Evaluation Board Features
+
+CPU Reset Pushbutton
+[Figure 1-2, callout 37]
+The figure below shows the CPU reset pushbutton circuit.
+X-Ref Target - Figure 1-26
+
+VCC1V5
+
+SW7
+CPU_RESET
+
+4
+
+1
+
+3
+
+2
+R15
+4.7kΩ
+0.1 W
+5%
+
+GND
+UG810_c1_27_031214
+
+Figure 1-26:
+
+CPU Reset Pushbutton
+
+GPIO DIP Switch
+[Figure 1-2, callout 24]
+The following figure shows the GPIO DIP Switch circuit.
+X-Ref Target - Figure 1-27
+
+SW11
+
+VADJ
+
+GPIO_DIP_SW3
+
+1
+
+8
+
+GPIO_DIP_SW2
+GPIO_DIP_SW1
+
+2
+
+7
+
+3
+
+6
+
+GPIO_DIP_SW0
+
+4
+
+5
+
+R24
+4.7kΩ
+0.1 W
+5%
+R25
+4.7kΩ
+0.1 W
+5%
+
+R22
+4.7kΩ
+0.1 W
+5%
+R23
+4.7kΩ
+0.1 W
+5%
+
+GND
+
+Figure 1-27:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+SDA04H1SBD
+
+UG810_c1_28_031214
+
+GPIO DIP Switch
+
+www.xilinx.com
+
+Send Feedback
+
+58
+
+Chapter 1: KC705 Evaluation Board Features
+
+Rotary Switch
+The figure below shows the rotary switch SW8.
+[Figure 1-2, callout 25]
+X-Ref Target - Figure 1-28
+
+VCC1V8
+Edge Drive
+Jog Encoder
+EVQ-WK4001
+B
+SW1B
+SW2
+SW1A
+COM
+A
+
+6
+5
+4
+3
+2
+1
+
+ROTARY INCB
+ROTARY PUSH
+
+ROTARY INCA
+
+GND
+SW8
+
+7
+
+GND
+
+1
+
+R31
+
+2
+
+4.7K
+1/10W
+5%
+
+1
+
+R30
+
+2
+
+4.7K
+1/10W
+5%
+
+1
+
+R32
+
+2
+
+4.7K
+1/10W
+5%
+
+GND
+UG810_c1_29_031214
+
+Figure 1-28:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+Rotary Switch SW8
+
+www.xilinx.com
+
+Send Feedback
+
+59
+
+Chapter 1: KC705 Evaluation Board Features
+
+GPIO SMA Connectors
+The figure below shows the GPIO SMAs J13 and J14.
+[Figure 1-2, callout 26]
+X-Ref Target - Figure 1-29
+
+J13
+USER SMA GPIO P
+
+SMA
+Connector
+
+GND
+J14
+USER SMA GPIO N
+
+SMA
+Connector
+
+GND
+UG885_c1_30_031214
+
+Figure 1-29:
+
+GPIO SMAs J13 and J14
+
+The following table lists the GPIO Connections to FPGA U1.
+Table 1-27:
+
+GPIO Connections to FPGA U1
+
+U1 FPGA Pin
+
+Schematic Net Name
+
+I/O Standard
+
+GPIO Pin
+
+AB8
+
+GPIO_LED_0
+
+LVCMOS15
+
+DS4.2
+
+AA8
+
+GPIO_LED_1
+
+LVCMOS15
+
+DS1.2
+
+AC9
+
+GPIO_LED_2
+
+LVCMOS15
+
+DS10.2
+
+AB9
+
+GPIO_LED_3
+
+LVCMOS15
+
+DS2.2
+
+AE26
+
+GPIO_LED_4
+
+LVCMOS25
+
+DS3.2
+
+G19
+
+GPIO_LED_5
+
+LVCMOS25
+
+DS25.2
+
+E18
+
+GPIO_LED_6
+
+LVCMOS25
+
+DS26.2
+
+F16
+
+GPIO_LED_7
+
+LVCMOS25
+
+DS27.2
+
+AA12
+
+GPIO_SW_N
+
+LVCMOS15
+
+SW2.1
+
+AG5
+
+GPIO_SW_E
+
+LVCMOS15
+
+SW3.1
+
+Indicator LEDs (Active-High)
+
+Directional Pushbutton Switches
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+60
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-27:
+
+GPIO Connections to FPGA U1 (Cont’d)
+
+U1 FPGA Pin
+
+Schematic Net Name
+
+I/O Standard
+
+GPIO Pin
+
+AB12
+
+GPIO_SW_S
+
+LVCMOS15
+
+SW4.1
+
+AC6
+
+GPIO_SW_W
+
+LVCMOS15
+
+SW6.1
+
+G12
+
+GPIO_SW_C
+
+LVCMOS25
+
+SW5.1
+
+AB7
+
+CPU_RESET
+
+LVCMOS15
+
+SW7.1
+
+Y29
+
+GPIO_DIP_SW0
+
+LVCMOS25
+
+SW11.4
+
+W29
+
+GPIO_DIP_SW1
+
+LVCMOS25
+
+SW11.3
+
+AA28
+
+GPIO_DIP_SW2
+
+LVCMOS25
+
+SW11.2
+
+Y28
+
+GPIO_DIP_SW3
+
+LVCMOS25
+
+SW11.1
+
+Y25
+
+ROTARY_INCB SW
+
+LVCMOS25
+
+SW8.6
+
+AA26
+
+ROTARY_PUSH SW
+
+LVCMOS25
+
+SW8.5
+
+Y26
+
+ROTARY_INCA SW
+
+LVCMOS25
+
+SW8.1
+
+Y23
+
+USER_SMA_GPIO_P
+
+LVCMOS25
+
+J13.1
+
+Y24
+
+USER_SMA_GPIO_N
+
+LVCMOS25
+
+J14.1
+
+4-Pole DIP Switch
+
+User Rotary Switch
+
+User SMA
+
+Switches
+[Figure 1-2, callout 27 - 28]
+The KC705 evaluation board includes a power and a configuration switch:
+•
+
+Power on/off slide switch SW15 (callout 27)
+
+•
+
+FPGA_PROG_B SW14, active-Low (callout 28)
+
+Power On/Off Slide Switch SW15
+[Figure 1-2, callout 27]
+The KC705 board power switch is SW15. Sliding the switch actuator from the Off to On
+position applies 12V power from J49, a 6-pin mini-fit connector. Green LED DS22
+illuminates when the KC705 board power is on. See Power Management for details on the
+onboard power system.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+61
+
+Chapter 1: KC705 Evaluation Board Features
+CAUTION! Do NOT plug a PC ATX power supply 6-pin connector into J49 on the KC705 board The ATX
+
+6-pin connector has a different pinout than J49. Connecting an ATX 6-pin connector into J49 will
+damage the KC705 board and void the board warranty.
+
+The following figure shows the power connector J49, power switch SW15 and indicator LED
+DS22.
+X-Ref Target - Figure 1-30
+
+J49
+
+SW15
+
+VCC12_P
+
+U115
+1
+
+1
+12V
+4
+12V
+2
+N/C
+5
+N/C
+3
+COM
+6
+COM
+
+VCC12_P_IN
+
+2
+3
+
+1
+
+8
+C539
+330μF
+25V
+
+4
+5
+6
+C804
+1μF
+25V
+
+INPUT_GND
+
+PCIe
+Power
+
+R369
+1kΩ
+1%
+
+7
+6
+3
+
+INPUT_GND
+
+DS22
+
+5
+
+GND
+
+GND
+UG810_c1_31_031214
+
+Figure 1-30:
+
+Power On/Off Switch SW15
+
+The KC705 Evaluation Kit provides the adapter cable shown in Figure 1-31 for powering the
+KC705 board from the ATX power supply 4-pin peripheral connector. The Xilinx part number
+for this cable is 2600304, and is equivalent to Sourcegate Technologies part number
+AZCBL-WH-1109-RA4. For information on ordering this cable, see [Ref 21].
+X-Ref Target - Figure 1-31
+
+To ATX 4-Pin Peripheral
+Power Connector
+
+To J49 on KC705 Board
+
+UG810_c1_32_031214
+
+Figure 1-31:
+
+ATX Power Supply Adapter Cable
+
+FPGA_PROG_B Pushbutton SW14 (Active-Low)
+[Figure 1-2, callout 28]
+Switch SW14 grounds the FPGA PROG_B pin when pressed. This action initiates an FPGA
+reconfiguration. The FPGA_PROG_B signal is connected to FPGA U1 pin K10.
+See 7 Series FPGAs Configuration User Guide (UG470) [Ref 3] for further details on
+configuring the 7 series FPGAs.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+62
+
+Chapter 1: KC705 Evaluation Board Features
+The following figure shows SW14.
+X-Ref Target - Figure 1-32
+
+VCC2V5
+R295
+4.7kΩ
+0.1 W
+5%
+
+FPGA_PROG_B
+
+SW14
+
+1
+
+4
+
+2
+
+3
+
+GND
+UG810_c1_33_031214
+
+Figure 1-32:
+
+FPGA_PROG_B Pushbutton SW14
+
+Configuration Mode and Upper Linear Flash Address Switch (SW13)
+[Figure 1-2, callout 29]
+FPGA Configuration Mode: DIP switch SW13 positions 3, 4, and 5 control which
+configuration mode is used at power-up or when the PROG pushbutton is pressed.
+Linear BPI Flash Memory Upper Addresses: DIP switch SW13 positions 1 and 2 control the
+setting of address bits FLASH_A25 and FLASH_A24. The mode signals FPGA_M2, _M1 and
+_M0 are connected to FPGA U1 pins AB1, AB2 and AB5 respectively. The BPI flash memory
+U58 address signals FLASH_A24 AND FLASH_A25 are connected to FPGA U1 pins M23 and
+M22 respectively. Configuration mode is used at power-up or when the PROG pushbutton
+is pressed.
+The following figure shows the SW13 circuit.
+X-Ref Target - Figure 1-33
+
+VCC2V5
+
+SW13
+FLASH_A25
+
+10
+
+1
+
+FLASH_A24
+FPGA_M2
+
+9
+
+2
+
+8
+
+3
+
+FPGA_M1
+
+7
+
+4
+
+FPGA_M0
+
+6
+
+5
+
+R401
+220Ω
+0.1 W
+1%
+
+R402
+220Ω
+0.1 W
+1%
+
+SDA05H1SBD
+R398
+1.21kΩ
+0.1 W
+1%
+
+R396
+1.21kΩ
+0.1 W
+1%
+R397
+1.21kΩ
+0.1 W
+1%
+
+R400
+1.21kΩ
+0.1 W
+1%
+R399
+1.21kΩ
+0.1 W
+1%
+
+GND
+UG810_c1_34_031214
+
+Figure 1-33:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+Configuration Mode and Upper Linear Flash Address Switch
+
+www.xilinx.com
+
+Send Feedback
+
+63
+
+Chapter 1: KC705 Evaluation Board Features
+
+FPGA Mezzanine Card Interface
+[Figure 1-2, callout 30 - 31]
+The KC705 evaluation board for the Kintex-7 FPGA supports the VITA 57.1 FPGA Mezzanine
+Card (FMC) specification by providing subset implementations of a high pin count (HPC)
+connector at J22 and a low pin count (LPC) connector at J2. Both connectors use the same
+10 x 40 form factor, except the HPC version is fully populated with 400 pins and the LPC
+version is partially populated with 160 pins. Both connectors are keyed so that a the
+mezzanine card faces away from the KC705 board when connected.
+Signaling Speed Ratings:
+•
+
+Single-ended: 9 GHz (18 Gb/s)
+
+•
+
+Differential Optimal Vertical: 9 GHz (18 Gb/s)
+
+•
+
+Differential Optimal Horizontal: 16 GHz (32 Gb/s)
+
+•
+
+High Density Vertical: 7 GHz (15 Gb/s)
+
+The Samtec connector system is rated for signaling speeds up to 9 GHz (18 Gb/s) based on
+a -3 dB insertion loss point within a two-level signaling environment.
+Connector Type:
+•
+
+Samtec SEAF Series, 1.27 mm (0.050 in) pitch. Mates with SEAM series connector
+
+For more information about SEAF series connectors, see [Ref 20].
+
+HPC Connector J22
+[Figure 1-2, callout 30]
+The 400-pin HPC connector defined by the FMC specification (Figure B-1) provides
+connectivity for up to:
+•
+
+160 single-ended or 80 differential user-defined signals
+
+•
+
+10 GTX transceivers
+
+•
+
+2 GTX clocks
+
+•
+
+4 differential clocks
+
+•
+
+159 ground and 15 power connections
+
+The connections between the HPC connector at J22 and FPGA U1 (Table 1-28) implement a
+subset of this connectivity:
+•
+
+58 differential user defined pairs
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+64
+
+Chapter 1: KC705 Evaluation Board Features
+°
+
+34 LA pairs (LA00-LA33)
+
+°
+
+24 HA pairs (HA00-HA23)
+
+•
+
+4 GTX transceivers
+
+•
+
+2 GTX clocks
+
+•
+
+2 differential clocks
+
+•
+
+159 ground and 15 power connections
+
+The HPC signals are distributed across GTX Quads 116, 117, and 118. Each of these Quads
+have their VCCO voltage connected to VADJ.
+Note: The KC705 board VADJ voltage for the J22 and J2 connectors is determined by the FMC VADJ
+power sequencing logic described in Power Management.
+
+Table 1-28:
+
+HPC Connections, J22 to FPGA U1
+
+J22 Pin
+
+Schematic Net Name
+
+I/O
+FPGA
+J22 Pin
+Standard U1 Pin
+
+Schematic Net Name
+
+A2
+
+FMC_HPC_DP1_M2C_P
+
+D6
+
+B1
+
+NC
+
+A3
+
+FMC_HPC_DP1_M2C_N
+
+D5
+
+B4
+
+NC
+
+A6
+
+FMC_HPC_DP2_M2C_P
+
+B6
+
+B5
+
+NC
+
+A7
+
+FMC_HPC_DP2_M2C_N
+
+B5
+
+B8
+
+NC
+
+A10
+
+FMC_HPC_DP3_M2C_P
+
+A8
+
+B9
+
+NC
+
+A11
+
+FMC_HPC_DP3_M2C_N
+
+A7
+
+B12
+
+NC
+
+A14
+
+NC
+
+B13
+
+NC
+
+A15
+
+NC
+
+B16
+
+NC
+
+A18
+
+NC
+
+B17
+
+NC
+
+A19
+
+NC
+
+B20
+
+FMC_HPC_GBTCLK1_M2C_P
+
+LVDS
+
+E8
+
+A22
+
+FMC_HPC_DP1_C2M_P
+
+C4
+
+B21
+
+FMC_HPC_GBTCLK1_M2C_N
+
+LVDS
+
+E7
+
+A23
+
+FMC_HPC_DP1_C2M_N
+
+C3
+
+B24
+
+NC
+
+A26
+
+FMC_HPC_DP2_C2M_P
+
+B2
+
+B25
+
+NC
+
+A27
+
+FMC_HPC_DP2_C2M_N
+
+B1
+
+B28
+
+NC
+
+A30
+
+FMC_HPC_DP3_C2M_P
+
+A4
+
+B29
+
+NC
+
+A31
+
+FMC_HPC_DP3_C2M_N
+
+A3
+
+B32
+
+NC
+
+A34
+
+NC
+
+B33
+
+NC
+
+A35
+
+NC
+
+B36
+
+NC
+
+A38
+
+NC
+
+B37
+
+NC
+
+A39
+
+NC
+
+B40
+
+NC
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+I/O
+FPGA
+Standard U1 Pin
+
+Send Feedback
+
+65
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-28:
+
+HPC Connections, J22 to FPGA U1 (Cont’d)
+
+J22 Pin
+
+Schematic Net Name
+
+I/O
+FPGA J22 Pin
+Standard U1 Pin
+
+Schematic Net Name
+
+I/O
+FPGA
+Standard U1 Pin
+
+C2
+
+FMC_HPC_DP0_C2M_P
+
+D2
+
+D1
+
+PWRCTL1_VCC4A_PG
+
+C3
+
+FMC_HPC_DP0_C2M_N
+
+D1
+
+D4
+
+FMC_HPC_GBTCLK0_M2C_P
+
+LVDS
+
+C8
+
+C6
+
+FMC_HPC_DP0_M2C_P
+
+E4
+
+D5
+
+FMC_HPC_GBTCLK0_M2C_N
+
+LVDS
+
+C7
+
+C7
+
+FMC_HPC_DP0_M2C_N
+
+E3
+
+D8
+
+FMC_HPC_LA01_CC_P
+
+LVDS
+
+D26
+
+C10
+
+FMC_HPC_LA06_P
+
+LVDS
+
+H30
+
+D9
+
+FMC_HPC_LA01_CC_N
+
+LVDS
+
+C26
+
+C11
+
+FMC_HPC_LA06_N
+
+LVDS
+
+G30
+
+D11
+
+FMC_HPC_LA05_P
+
+LVDS
+
+G29
+
+C14
+
+FMC_HPC_LA10_P
+
+LVDS
+
+D29
+
+D12
+
+FMC_HPC_LA05_N
+
+LVDS
+
+F30
+
+C15
+
+FMC_HPC_LA10_N
+
+LVDS
+
+C30
+
+D14
+
+FMC_HPC_LA09_P
+
+LVDS
+
+B30
+
+C18
+
+FMC_HPC_LA14_P
+
+LVDS
+
+B28
+
+D15
+
+FMC_HPC_LA09_N
+
+LVDS
+
+A30
+
+C19
+
+FMC_HPC_LA14_N
+
+LVDS
+
+A28
+
+D17
+
+FMC_HPC_LA13_P
+
+LVDS
+
+A25
+
+C22
+
+FMC_HPC_LA18_CC_P
+
+LVDS
+
+F21
+
+D18
+
+FMC_HPC_LA13_N
+
+LVDS
+
+A26
+
+C23
+
+FMC_HPC_LA18_CC_N
+
+LVDS
+
+E21
+
+D20
+
+FMC_HPC_LA17_CC_P
+
+LVDS
+
+F20
+
+C26
+
+FMC_HPC_LA27_P
+
+LVDS
+
+C19
+
+D21
+
+FMC_HPC_LA17_CC_N
+
+LVDS
+
+E20
+
+C27
+
+FMC_HPC_LA27_N
+
+LVDS
+
+B19
+
+D23
+
+FMC_HPC_LA23_P
+
+LVDS
+
+B22
+
+C30
+
+FMC_HPC_IIC_SCL
+
+D24
+
+FMC_HPC_LA23_N
+
+LVDS
+
+A22
+
+C31
+
+FMC_HPC_IIC_SDA
+
+D26
+
+FMC_HPC_LA26_P
+
+LVDS
+
+B18
+
+C34
+
+GA0=0=GND
+
+D27
+
+FMC_HPC_LA26_N
+
+LVDS
+
+A18
+
+C35
+
+VCC12_P
+
+D29
+
+FMC_HPC_TCK_BUF
+
+C37
+
+VCC12_P
+
+D30
+
+FMC_TDI_BUF
+
+C39
+
+VCC3V3
+
+D31
+
+FMC_HPC_TDO_LPC_TDI
+
+D32
+
+VCC3V3
+
+D33
+
+FMC_TMS_BUF
+
+D34
+
+NC
+
+D35
+
+GA1=0=GND
+
+D36
+
+VCC3V3
+
+D38
+
+VCC3V3
+
+D40
+
+VCC3V3
+
+E2
+
+FMC_HPC_HA01_CC_P
+
+LVDS
+
+H14
+
+F1
+
+FMC_HPC_PG_M2C
+
+LVDS
+
+J29
+
+E3
+
+FMC_HPC_HA01_CC_N
+
+LVDS
+
+G14
+
+F4
+
+FMC_HPC_HA00_CC_P
+
+LVDS
+
+D12
+
+E6
+
+FMC_HPC_HA05_P
+
+LVDS
+
+F15
+
+F5
+
+FMC_HPC_HA00_CC_N
+
+LVDS
+
+D13
+
+E7
+
+FMC_HPC_HA05_N
+
+LVDS
+
+E16
+
+F7
+
+FMC_HPC_HA04_P
+
+LVDS
+
+F11
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+66
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-28:
+
+HPC Connections, J22 to FPGA U1 (Cont’d)
+I/O
+FPGA J22 Pin
+Standard U1 Pin
+
+Schematic Net Name
+
+I/O
+FPGA
+Standard U1 Pin
+
+J22 Pin
+
+Schematic Net Name
+
+E9
+
+FMC_HPC_HA09_P
+
+LVDS
+
+F12
+
+F8
+
+FMC_HPC_HA04_N
+
+LVDS
+
+E11
+
+E10
+
+FMC_HPC_HA09_N
+
+LVDS
+
+E13
+
+F10
+
+FMC_HPC_HA08_P
+
+LVDS
+
+E14
+
+E12
+
+FMC_HPC_HA13_P
+
+LVDS
+
+L16
+
+F11
+
+FMC_HPC_HA08_N
+
+LVDS
+
+E15
+
+E13
+
+FMC_HPC_HA13_N
+
+LVDS
+
+K16
+
+F13
+
+FMC_HPC_HA12_P
+
+LVDS
+
+C15
+
+E15
+
+FMC_HPC_HA16_P
+
+LVDS
+
+L15
+
+F14
+
+FMC_HPC_HA12_N
+
+LVDS
+
+B15
+
+E16
+
+FMC_HPC_HA16_N
+
+LVDS
+
+K15
+
+F16
+
+FMC_HPC_HA15_P
+
+LVDS
+
+H15
+
+E18
+
+FMC_HPC_HA20_P
+
+LVDS
+
+K13
+
+F17
+
+FMC_HPC_HA15_N
+
+LVDS
+
+G15
+
+E19
+
+FMC_HPC_HA20_N
+
+LVDS
+
+J13
+
+F19
+
+FMC_HPC_HA19_P
+
+LVDS
+
+H11
+
+E21
+
+NC
+
+F20
+
+FMC_HPC_HA19_N
+
+LVDS
+
+H12
+
+E22
+
+NC
+
+F22
+
+NC
+
+E24
+
+NC
+
+F23
+
+NC
+
+E25
+
+NC
+
+F25
+
+NC
+
+E27
+
+NC
+
+F26
+
+NC
+
+E28
+
+NC
+
+F28
+
+NC
+
+E30
+
+NC
+
+F29
+
+NC
+
+E31
+
+NC
+
+F31
+
+NC
+
+E33
+
+NC
+
+F32
+
+NC
+
+E34
+
+NC
+
+F34
+
+NC
+
+E36
+
+NC
+
+F35
+
+NC
+
+E37
+
+NC
+
+F37
+
+NC
+
+E39
+
+VADJ
+
+F38
+
+NC
+
+F40
+
+VADJ
+
+G2
+
+FMC_HPC_CLK1_M2C_P
+
+LVDS
+
+D17
+
+H1
+
+NC
+
+G3
+
+FMC_HPC_CLK1_M2C_N
+
+LVDS
+
+D18
+
+H2
+
+FMC_HPC_PRSNT_M2C_B
+
+LVCMOS
+25
+
+M20
+
+G6
+
+FMC_HPC_LA00_CC_P
+
+LVDS
+
+C25
+
+H4
+
+FMC_HPC_CLK0_M2C_P
+
+LVDS
+
+D27
+
+G7
+
+FMC_HPC_LA00_CC_N
+
+LVDS
+
+B25
+
+H5
+
+FMC_HPC_CLK0_M2C_N
+
+LVDS
+
+C27
+
+G9
+
+FMC_HPC_LA03_P
+
+LVDS
+
+H26
+
+H7
+
+FMC_HPC_LA02_P
+
+LVDS
+
+H24
+
+G10
+
+FMC_HPC_LA03_N
+
+LVDS
+
+H27
+
+H8
+
+FMC_HPC_LA02_N
+
+LVDS
+
+H25
+
+G12
+
+FMC_HPC_LA08_P
+
+LVDS
+
+E29
+
+H10
+
+FMC_HPC_LA04_P
+
+LVDS
+
+G28
+
+G13
+
+FMC_HPC_LA08_N
+
+LVDS
+
+E30
+
+H11
+
+FMC_HPC_LA04_N
+
+LVDS
+
+F28
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+67
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-28:
+
+HPC Connections, J22 to FPGA U1 (Cont’d)
+I/O
+FPGA J22 Pin
+Standard U1 Pin
+
+Schematic Net Name
+
+I/O
+FPGA
+Standard U1 Pin
+
+J22 Pin
+
+Schematic Net Name
+
+G15
+
+FMC_HPC_LA12_P
+
+LVDS
+
+C29
+
+H13
+
+FMC_HPC_LA07_P
+
+LVDS
+
+E28
+
+G16
+
+FMC_HPC_LA12_N
+
+LVDS
+
+B29
+
+H14
+
+FMC_HPC_LA07_N
+
+LVDS
+
+D28
+
+G18
+
+FMC_HPC_LA16_P
+
+LVDS
+
+B27
+
+H16
+
+FMC_HPC_LA11_P
+
+LVDS
+
+G27
+
+G19
+
+FMC_HPC_LA16_N
+
+LVDS
+
+A27
+
+H17
+
+FMC_HPC_LA11_N
+
+LVDS
+
+F27
+
+G21
+
+FMC_HPC_LA20_P
+
+LVDS
+
+E19
+
+H19
+
+FMC_HPC_LA15_P
+
+LVDS
+
+C24
+
+G22
+
+FMC_HPC_LA20_N
+
+LVDS
+
+D19
+
+H20
+
+FMC_HPC_LA15_N
+
+LVDS
+
+B24
+
+G24
+
+FMC_HPC_LA22_P
+
+LVDS
+
+C20
+
+H22
+
+FMC_HPC_LA19_P
+
+LVDS
+
+G18
+
+G25
+
+FMC_HPC_LA22_N
+
+LVDS
+
+B20
+
+H23
+
+FMC_HPC_LA19_N
+
+LVDS
+
+F18
+
+G27
+
+FMC_HPC_LA25_P
+
+LVDS
+
+G17
+
+H25
+
+FMC_HPC_LA21_P
+
+LVDS
+
+A20
+
+G28
+
+FMC_HPC_LA25_N
+
+LVDS
+
+F17
+
+H26
+
+FMC_HPC_LA21_N
+
+LVDS
+
+A21
+
+G30
+
+FMC_HPC_LA29_P
+
+LVDS
+
+C17
+
+H28
+
+FMC_HPC_LA24_P
+
+LVDS
+
+A16
+
+G31
+
+FMC_HPC_LA29_N
+
+LVDS
+
+B17
+
+H29
+
+FMC_HPC_LA24_N
+
+LVDS
+
+A17
+
+G33
+
+FMC_HPC_LA31_P
+
+LVDS
+
+G22
+
+H31
+
+FMC_HPC_LA28_P
+
+LVDS
+
+D16
+
+G34
+
+FMC_HPC_LA31_N
+
+LVDS
+
+F22
+
+H32
+
+FMC_HPC_LA28_N
+
+LVDS
+
+C16
+
+G36
+
+FMC_HPC_LA33_P
+
+LVDS
+
+H21
+
+H34
+
+FMC_HPC_LA30_P
+
+LVDS
+
+D22
+
+G37
+
+FMC_HPC_LA33_N
+
+LVDS
+
+H22
+
+H35
+
+FMC_HPC_LA30_N
+
+LVDS
+
+C22
+
+G39
+
+VADJ
+
+H37
+
+FMC_HPC_LA32_P
+
+LVDS
+
+D21
+
+H38
+
+FMC_HPC_LA32_N
+
+LVDS
+
+C21
+
+H40
+
+VADJ
+
+J2
+
+NC
+
+K1
+
+NC
+
+J3
+
+NC
+
+K4
+
+NC
+
+J6
+
+FMC_HPC_HA03_P
+
+LVDS
+
+C12
+
+K5
+
+NC
+
+J7
+
+FMC_HPC_HA03_N
+
+LVDS
+
+B12
+
+K7
+
+FMC_HPC_HA02_P
+
+LVDS
+
+D11
+
+J9
+
+FMC_HPC_HA07_P
+
+LVDS
+
+B14
+
+K8
+
+FMC_HPC_HA02_N
+
+LVDS
+
+C11
+
+J10
+
+FMC_HPC_HA07_N
+
+LVDS
+
+A15
+
+K10
+
+FMC_HPC_HA06_P
+
+LVDS
+
+D14
+
+J12
+
+FMC_HPC_HA11_P
+
+LVDS
+
+B13
+
+K11
+
+FMC_HPC_HA06_N
+
+LVDS
+
+C14
+
+J13
+
+FMC_HPC_HA11_N
+
+LVDS
+
+A13
+
+K13
+
+FMC_HPC_HA10_P
+
+LVDS
+
+A11
+
+J15
+
+FMC_HPC_HA14_P
+
+LVDS
+
+J16
+
+K14
+
+FMC_HPC_HA10_N
+
+LVDS
+
+A12
+
+J16
+
+FMC_HPC_HA14_N
+
+LVDS
+
+H16
+
+K16
+
+FMC_HPC_HA17_CC_P
+
+LVDS
+
+G13
+
+J18
+
+FMC_HPC_HA18_P
+
+LVDS
+
+K14
+
+K17
+
+FMC_HPC_HA17_CC_N
+
+LVDS
+
+F13
+
+J19
+
+FMC_HPC_HA18_N
+
+LVDS
+
+J14
+
+K19
+
+FMC_HPC_HA21_P
+
+LVDS
+
+J11
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+68
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-28:
+
+HPC Connections, J22 to FPGA U1 (Cont’d)
+I/O
+FPGA J22 Pin
+Standard U1 Pin
+
+Schematic Net Name
+
+I/O
+FPGA
+Standard U1 Pin
+
+J22 Pin
+
+Schematic Net Name
+
+J21
+
+FMC_HPC_HA22_P
+
+LVDS
+
+L11
+
+K20
+
+FMC_HPC_HA21_N
+
+LVDS
+
+J12
+
+J22
+
+FMC_HPC_HA22_N
+
+LVDS
+
+K11
+
+K22
+
+FMC_HPC_HA23_P
+
+LVDS
+
+L12
+
+J24
+
+NC
+
+K23
+
+FMC_HPC_HA23_N
+
+LVDS
+
+L13
+
+J25
+
+NC
+
+K25
+
+NC
+
+J27
+
+NC
+
+K26
+
+NC
+
+J28
+
+NC
+
+K28
+
+NC
+
+J30
+
+NC
+
+K29
+
+NC
+
+J31
+
+NC
+
+K31
+
+NC
+
+J33
+
+NC
+
+K32
+
+NC
+
+J34
+
+NC
+
+K34
+
+NC
+
+J36
+
+NC
+
+K35
+
+NC
+
+J37
+
+NC
+
+K37
+
+NC
+
+J39
+
+NC
+
+K38
+
+NC
+
+K40
+
+NC
+
+LPC Connector J2
+[Figure 1-2, callout 31]
+The 160-pin LPC connector defined by the FMC specification (Figure B-2) provides
+connectivity for up to:
+•
+
+68 single-ended or 34 differential user-defined signals
+
+•
+
+1 GTX transceiver
+
+•
+
+1 GTX clock
+
+•
+
+2 differential clocks
+
+•
+
+61 ground and 10 power connections
+
+The connections between the LPC connector at J2 and FPGA U1 (Table 1-29) implement a
+subset of this connectivity:
+•
+
+34 differential user defined pairs
+°
+
+34 LA pairs (LA00-LA33)
+
+•
+
+1 GTX transceiver
+
+•
+
+1 GTX clock
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+69
+
+Chapter 1: KC705 Evaluation Board Features
+•
+
+2 differential clocks
+
+•
+
+61 ground and 9 power connections
+
+Table 1-29:
+
+LPC Connections, J2 to FPGA U1
+U1
+FPGA
+Pin
+
+J2
+Pin
+
+Schematic Net Name
+
+FMC_LPC_DP0_C2M_P
+
+F2
+
+D1
+
+PWRCTL1_VCC4A_PG
+
+C3
+
+FMC_LPC_DP0_C2M_N
+
+F1
+
+D4
+
+C6
+
+FMC_LPC_DP0_M2C_P
+
+F6
+
+C7
+
+FMC_LPC_DP0_M2C_N
+
+C10
+
+FMC_LPC_LA06_P
+
+C11
+
+I/O
+Standard
+
+U1
+FPGA
+Pin
+
+FMC_LPC_GBTCLK0_M2C_P
+
+LVDS
+
+N8
+
+D5
+
+FMC_LPC_GBTCLK0_M2C_N
+
+LVDS
+
+N7
+
+F5
+
+D8
+
+FMC_LPC_LA01_CC_P
+
+LVDS
+
+AE23
+
+LVDS
+
+AK20
+
+D9
+
+FMC_LPC_LA01_CC_N
+
+LVDS
+
+AF23
+
+FMC_LPC_LA06_N
+
+LVDS
+
+AK21
+
+D11
+
+FMC_LPC_LA05_P
+
+LVDS
+
+AG22
+
+C14
+
+FMC_LPC_LA10_P
+
+LVDS
+
+AJ24
+
+D12
+
+FMC_LPC_LA05_N
+
+LVDS
+
+AH22
+
+C15
+
+FMC_LPC_LA10_N
+
+LVDS
+
+AK25
+
+D14
+
+FMC_LPC_LA09_P
+
+LVDS
+
+AK23
+
+C18
+
+FMC_LPC_LA14_P
+
+LVDS
+
+AD21
+
+D15
+
+FMC_LPC_LA09_N
+
+LVDS
+
+AK24
+
+C19
+
+FMC_LPC_LA14_N
+
+LVDS
+
+AE21
+
+D17
+
+FMC_LPC_LA13_P
+
+LVDS
+
+AB24
+
+C22
+
+FMC_LPC_LA18_CC_P
+
+LVDS
+
+AD27
+
+D18
+
+FMC_LPC_LA13_N
+
+LVDS
+
+AC25
+
+C23
+
+FMC_LPC_LA18_CC_N
+
+LVDS
+
+AD28
+
+D20
+
+FMC_LPC_LA17_CC_P
+
+LVDS
+
+AB27
+
+C26
+
+FMC_LPC_LA27_P
+
+LVDS
+
+AJ28
+
+D21
+
+FMC_LPC_LA17_CC_N
+
+LVDS
+
+AC27
+
+C27
+
+FMC_LPC_LA27_N
+
+LVDS
+
+AJ29
+
+D23
+
+FMC_LPC_LA23_P
+
+LVDS
+
+AH26
+
+C30
+
+FMC_LPC_IIC_SCL
+
+D24
+
+FMC_LPC_LA23_N
+
+LVDS
+
+AH27
+
+C31
+
+FMC_LPC_IIC_SDA
+
+D26
+
+FMC_LPC_LA26_P
+
+LVDS
+
+AK29
+
+C34
+
+GA0=0=GND
+
+D27
+
+FMC_LPC_LA26_N
+
+LVDS
+
+AK30
+
+C35
+
+VCC12_P
+
+D29
+
+FMC_LPC_TCK_BUF
+
+C37
+
+VCC12_P
+
+D30
+
+FMC_HPC_TDO_LPC_TDI
+
+C39
+
+VCC3V3
+
+D31
+
+FMC_LPC_TDO_FPGA_TDI
+
+D32
+
+VCC3V3
+
+D33
+
+FMC_LPC_TMS_BUF
+
+D34
+
+NC
+
+D35
+
+GA1=0=GND
+
+D36
+
+VCC3V3
+
+D38
+
+VCC3V3
+
+D40
+
+VCC3V3
+
+H1
+
+NC
+
+J2 Pin
+
+Schematic Net Name
+
+C2
+
+G2
+
+FMC_LPC_CLK1_M2C_P
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+I/O
+Standard
+
+LVDS
+
+AG29
+
+www.xilinx.com
+
+Send Feedback
+
+70
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-29:
+
+LPC Connections, J2 to FPGA U1 (Cont’d)
+
+J2 Pin
+
+Schematic Net Name
+
+I/O
+Standard
+
+U1
+FPGA
+Pin
+
+J2
+Pin
+
+Schematic Net Name
+
+I/O
+Standard
+
+G3
+
+FMC_LPC_CLK1_M2C_N
+
+LVDS
+
+AH29
+
+H2
+
+FMC_LPC_PRSNT_M2C_B
+
+LVCMOS25
+
+G6
+
+FMC_LPC_LA00_CC_P
+
+LVCOMS1
+8
+
+AD23
+
+H4
+
+FMC_LPC_CLK0_M2C_P
+
+LVDS
+
+AF22
+
+G7
+
+FMC_LPC_LA00_CC_N
+
+LVCOMS1
+8
+
+AE24
+
+H5
+
+FMC_LPC_CLK0_M2C_N
+
+LVDS
+
+AG23
+
+G9
+
+FMC_LPC_LA03_P
+
+LVDS
+
+AG20
+
+H7
+
+FMC_LPC_LA02_P
+
+LVDS
+
+AF20
+
+G10
+
+FMC_LPC_LA03_N
+
+LVDS
+
+AH20
+
+H8
+
+FMC_LPC_LA02_N
+
+LVDS
+
+AF21
+
+G12
+
+FMC_LPC_LA08_P
+
+LVDS
+
+AJ22
+
+H10
+
+FMC_LPC_LA04_P
+
+LVDS
+
+AH21
+
+G13
+
+FMC_LPC_LA08_N
+
+LVDS
+
+AJ23
+
+H11
+
+FMC_LPC_LA04_N
+
+LVDS
+
+AJ21
+
+G15
+
+FMC_LPC_LA12_P
+
+LVDS
+
+AA20
+
+H13
+
+FMC_LPC_LA07_P
+
+LVDS
+
+AG25
+
+G16
+
+FMC_LPC_LA12_N
+
+LVDS
+
+AB20
+
+H14
+
+FMC_LPC_LA07_N
+
+LVDS
+
+AH25
+
+G18
+
+FMC_LPC_LA16_P
+
+LVDS
+
+AC22
+
+H16
+
+FMC_LPC_LA11_P
+
+LVDS
+
+AE25
+
+G19
+
+FMC_LPC_LA16_N
+
+LVDS
+
+AD22
+
+H17
+
+FMC_LPC_LA11_N
+
+LVDS
+
+AF25
+
+G21
+
+FMC_LPC_LA20_P
+
+LVDS
+
+AF26
+
+H19
+
+FMC_LPC_LA15_P
+
+LVDS
+
+AC24
+
+G22
+
+FMC_LPC_LA20_N
+
+LVDS
+
+AF27
+
+H20
+
+FMC_LPC_LA15_N
+
+LVDS
+
+AD24
+
+G24
+
+FMC_LPC_LA22_P
+
+LVDS
+
+AJ27
+
+H22
+
+FMC_LPC_LA19_P
+
+LVDS
+
+AJ26
+
+G25
+
+FMC_LPC_LA22_N
+
+LVDS
+
+AK28
+
+H23
+
+FMC_LPC_LA19_N
+
+LVDS
+
+AK26
+
+G27
+
+FMC_LPC_LA25_P
+
+LVDS
+
+AC26
+
+H25
+
+FMC_LPC_LA21_P
+
+LVDS
+
+AG27
+
+G28
+
+FMC_LPC_LA25_N
+
+LVDS
+
+AD26
+
+H26
+
+FMC_LPC_LA21_N
+
+LVDS
+
+AG28
+
+G30
+
+FMC_LPC_LA29_P
+
+LVDS
+
+AE28
+
+H28
+
+FMC_LPC_LA24_P
+
+LVDS
+
+AG30
+
+G31
+
+FMC_LPC_LA29_N
+
+LVDS
+
+AF28
+
+H29
+
+FMC_LPC_LA24_N
+
+LVDS
+
+AH30
+
+G33
+
+FMC_LPC_LA31_P
+
+LVDS
+
+AD29
+
+H31
+
+FMC_LPC_LA28_P
+
+LVDS
+
+AE30
+
+G34
+
+FMC_LPC_LA31_N
+
+LVDS
+
+AE29
+
+H32
+
+FMC_LPC_LA28_N
+
+LVDS
+
+AF30
+
+G36
+
+FMC_LPC_LA33_P
+
+LVDS
+
+AC29
+
+H34
+
+FMC_LPC_LA30_P
+
+LVDS
+
+AB29
+
+G37
+
+FMC_LPC_LA33_N
+
+LVDS
+
+AC30
+
+H35
+
+FMC_LPC_LA30_N
+
+LVDS
+
+AB30
+
+G39
+
+VADJ
+
+H37
+
+FMC_LPC_LA32_P
+
+LVDS
+
+Y30
+
+H38
+
+FMC_LPC_LA32_N
+
+LVDS
+
+AA30
+
+H40
+
+VADJ
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+U1
+FPGA
+Pin
+
+71
+
+Chapter 1: KC705 Evaluation Board Features
+
+Power Management
+[Figure 1-2, callout 32]
+The KC705 board uses power regulators and PMBus compliant digital PWM system
+controllers from Texas Instruments to supply core and auxiliary voltages. The Texas
+Instruments Fusion Digital Power graphical user interface (GUI) is used to monitor the
+current and temperature levels of the board power modules. If any module temperature
+approaches 85°C, forced air cooling must be provided to keep the module temperature
+within rated limits.
+The PCB layout and power system have been designed to meet the recommended criteria
+described in 7 Series FPGAs PCB Design and Pin Planning Guide (UG483) [Ref 22].
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+72
+
+Chapter 1: KC705 Evaluation Board Features
+The KC705 board power distribution diagram is shown in Figure 1-34.
+X-Ref Target - Figure 1-34
+
+VCC12_P
+Power Plane
+From SW15
+
+Power Controller 1 (Core)
+U55 Address 52
+
+U55
+VCCINT
+
+Switching Regulator
+1.0V at 20A
+
+U21
+VCCAUX
+
+Switching Regulator
+1.8V at 20A
+Switching Regulator
+3.3V at 10A
+
+U103
+
+Switching Regulator
+0V - 3.3V at 10A
+
+U17
+
+VCC3V3
+
+VADJ
+
+VCC1V8
+
+Linear Regulator
+1.8V at 1.5A
+
+U62
+
+Power Controller 2 (Aux)
+U56 Address 53
+
+U56
+VCC1V5
+
+Switching Regulator
+1.5V at 10A
+Switching Regulator
+2.5V at 10A
+
+VCC2V5
+U104
+MGTAVCC
+
+Switching Regulator
+1.0V at 10A
+Switching Regulator
+1.2V at 10A
+
+U105
+
+Linear Regulator
+5.0V at 2A
+
+U71
+
+MGTAVTT
+
+VCC5V0
+
+XADC VCC
+
+Linear Regulator
+1.7V - 2.0V at 300 mA
+
+U39
+
+Linear Regulator
+2.8V at 300 MA
+
+U62
+
+Power Controller 3
+U89 Address 54
+
+VCC_SPI
+
+U89
+VCCAUX_IO
+
+Switching Regulator
+2.0V at 10A
+
+VCCBRAM
+
+Switching Regulator
+1.0V at 10A
+
+U106
+
+Switching Regulator
+1.8V at 10A
+
+U99
+
+MGTVCCAUX
+UG810_c1_35_031214
+
+Figure 1-34:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+KC705 Board Onboard Power Regulators
+
+www.xilinx.com
+
+Send Feedback
+
+73
+
+Chapter 1: KC705 Evaluation Board Features
+The KC705 board core and auxiliary voltages are listed in Table 1-30.
+Table 1-30:
+
+Onboard Power System Devices
+
+Device Type
+
+Reference
+Designator
+
+Description
+
+Power Rail Net
+Name
+
+Power Rail Schematic
+Voltage
+Page
+
+Core Voltage Controller and Regulators
+UCD9248PFC (1)
+
+U55
+
+PMBus Controller (Addr = 52)
+
+PTD08A020W
+
+U21
+
+Adjustable switching regulator
+20A, 0.6V to 3.6V
+
+VCCINT_FPGA
+
+1.00V
+
+37
+
+PTD08D021W
+(V OUT A)
+
+U103
+
+Adjustable switching regulator
+dual 10A, 0.6Vto 3.6V
+
+VCCAUX
+
+1.80V
+
+38
+
+Adjustable switching regulator
+dual 10A, 0.6Vto 3.6V
+
+VCC3V3
+
+3.30V
+
+38
+
+Adjustable switching regulator
+10A, 0.6V to 3.6V
+
+VCC_ADJ
+
+0-3.30V
+
+39
+
+PTD08D021W
+(V OUT B)
+PTD08A010W
+
+U17
+
+36
+
+Auxiliary Voltage Controller and Regulators
+UCD9248PFC (2)
+
+U56
+
+PMBus Controller
+(Addr = 53)
+
+PTD08D021W
+(V OUT A)
+
+U104
+
+Adjustable switching regulator
+dual 10A, 0.6Vto 3.6V
+
+VCC2V5_FPGA
+
+2.50V
+
+41
+
+Adjustable switching regulator
+dual 10A, 0.6Vto 3.6V
+
+VCC1V5_FPGA
+
+1.50V
+
+41
+
+Adjustable switching regulator
+dual 10A, 0.6Vto 3.6V
+
+MGTAVCC
+
+1.00V
+
+42
+
+Adjustable switching regulator
+dual 10A, 0.6Vto 3.6V
+
+MGTAVTT
+
+1.20V
+
+42
+
+PTD08D021W
+(V OUT B)
+PTD08D021W
+(V OUT A)
+
+U105
+
+PTD08D021W
+(V OUT B)
+
+40
+
+UCD9248PFC (3)
+
+U89
+
+PMBus Controller
+(Addr = 54)
+
+PTD08D021W
+(V OUT A)
+
+U106
+
+Dual 10A 0.6V - 3.6V Adj. Switching
+Regulator
+
+VCCAUX_IO
+
+2.00V
+
+44
+
+Dual 10A 0.6V - 3.6V Adj. Switching
+Regulator
+
+VCCBRAM
+
+1.00V
+
+44
+
+10A 0.6V - 3.6V Adj. Switching
+Regulator
+
+MGTVCCAUX
+
+1.80V
+
+45
+
+PTD08D021W
+(V OUT B)
+PTD08A010W
+
+U99
+
+43
+
+Linear Regulators
+LMZ12002
+
+U71
+
+Fixed Linear Regulator 2A
+
+VCC5V0
+
+5.00V
+
+46
+
+TL1962ADC
+
+U62
+
+Fixed Linear Regulator, 1.5A
+
+VCC1V8
+
+1.80V
+
+46
+
+ADP123
+
+U17
+
+Fixed Linear Regulator, 300mA
+
+VCC_SPI
+
+2.80V
+
+46
+
+ADP123
+
+U18
+
+Fixed Linear Regulator, 300mA
+
+XADC_VCC
+
+1.80V
+
+31
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+74
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-30:
+
+Onboard Power System Devices (Cont’d)
+
+Device Type
+TPS51200DR
+
+Reference
+Designator
+U33
+
+Description
+Tracking Regulator, 3A
+
+Power Rail Net
+Name
+VTTDDR
+
+Power Rail Schematic
+Voltage
+Page
+0.75V
+
+46
+
+Notes:
+1. See Table 1-31.
+2. See Table 1-32.
+3. See Table 1-33.
+
+FMC_VADJ Voltage Control
+The FMC_VADJ rail is set to 2.5V. When the KC705 board is powered on, the state of the
+FMC_VADJ_ON_B signal wired to header J65 is sampled by the Texas Instruments UCD9248
+controller U55. If a jumper is installed on J65, signal FMC_VADJ_ON_B is held low, and the TI
+controller U55 energizes the FMC_VADJ rail at power on.
+Because the rail turn on decision is made at power on time based on the presence of the J65
+jumper, removing the jumper at J65 after the board is powered up does not affect the 2.5V
+power delivered to the FMC_VADJ rail and it remains on.
+A jumper installed at J65 is the default setting.
+If a jumper is not installed on J65, signal FMC_VADJ_ON_B is High, and the KC705 board
+does not energize the FMC_VADJ 2.5V at power on. In this mode you can control when to
+turn on FMC_VADJ and to what voltage level (1.8V - 3.3V). With FMC_VADJ off, the FPGA still
+configures and has access to the TI controller PMBUS (on bank 32) along with the
+FMC_VADJ_ON_B signal (on bank 15 pin J27). The combination of these allows you to
+develop code to command the FMC_VADJ rail to be set to something other than the default
+setting of 2.5V. After the new FMC_VADJ voltage level has been programmed into TI
+controller U55, the FMC_VADJ_ON_B signal can be driven Low by the user logic and the
+FMC_VADJ rail comes up at the new FMC_VADJ voltage level. Installing a jumper at J65 after
+a KC705 board powers up in this mode turns on the FMC_VADJ rail.
+For Texas Instruments fusion tools documentation describing PMBUS programming for the
+UCD9248 digital power controller, see [Ref 20].
+
+Cooling Fan Control
+Cooling fan RPM is controlled and monitored by user-created IP in the FPGA using the fan
+control circuit is shown in Figure 1-35.
+FPGA U1 is cooled by a 12V DC fan connected to J61. 12VDC is provided to the fan through
+J61 pin 2. The fan GND return is provided through J61 pin 1 and transistor Q17. Fan speed
+is controlled by a pulse-width-modulated signal from FPGA U1 pin L26 (on bank 15) driving
+the gate of Q17. The default unprogrammed FPGA fan operation mode is ON. The fan speed
+tachometer signal on J61 pin 3 can be monitored on FPGA U1 pin U22 (on bank 14).
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+75
+
+Chapter 1: KC705 Evaluation Board Features
+
+X-Ref Target - Figure 1-35
+
+VCC12_P
+
+R392
+10.0K 1%
+1/10W
+
+J61
+Fan Tach
+Cooling
+Fan
+
+Fan +12V
+Fan GND
+
+3
+
+R393
+10.0K 1%
+1/10W
+
+2
+D14
+100V
+500 mW
+DL4148
+
+1
+VCC2V5
+
+FPGA
+U1 Pin L26
+
+SM_FAN_PWM
+
+2
+R391
+1.00K 1%
+1/16W 1
+
+SM_FAN_TACH
+
+FPGA
+U1 Pin U22
+
+D15
+2.7V
+500 mW
+MM3Z2V7B
+
+R390
+4.75K 1%
+1/10W
+
+GND
+
+4
+Q17
+NDT30555L
+1.3 W
+
+3
+GND
+
+Figure 1-35:
+
+UG810_c1_36_031214
+
+FPGA Cooling Fan Circuit
+
+Monitoring Voltage and Current
+Voltage and current monitoring and control are available for selected power rails through
+the Texas Instruments Fusion Digital Power GUI. The three onboard TI power controllers
+(U55 at address 52, U56 at address 53, and U89 at address 54) are wired to the same PMBus.
+The PMBus connector, J39, is provided for use with the TI USB Interface Adapter PMBus pod
+(TI part number EVM USB-TO-GPIO), which can be ordered from the TI website [Ref 24], and
+the associated TI Fusion Digital Power Designer GUI (downloadable from the Texas
+Instrument website [Ref 25]). This is the simplest and most convenient way to monitor the
+voltage and current values for the power rail listed in Table 1-31, Table 1-32, and Table 1-33.
+In each of these the three tables (one per controller), the Power Good (PG) On Threshold is
+the set-point at or below which the particular rail is deemed “good”. The PG Off Threshold
+is the set-point at or below which the particular rail is no longer deemed “good”. The
+controller internally ORs these PG conditions together and drives an output PG pin High
+only if all active rail PG states are “good”. The On and Off Delay and rise and fall times are
+relative to when the board power on-off slide switch SW15 is turned on and off.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+76
+
+Chapter 1: KC705 Evaluation Board Features
+The following table defines the voltage and current values for each power rail controlled by
+the UCD9248 PMBus controller at Address 52 (U55).
+Table 1-31:
+
+Power Rail Specifications for UCD9248 PMBus controller at Address 52
+
+Nominal VOUT (V)
+
+PG On Threshold (V)
+
+PG Off Threshold (V)
+
+On Delay (ms)
+
+Rise Time (ms)
+
+Off Delay (ms)
+
+Fall Time (ms)
+
+VOUT Over Fault (V)
+
+IOUT Over Fault (A)
+
+Temp Over Fault (°C)
+
+Shutdown
+Threshold(1)
+
+1
+
+Rail #1
+
+VCCINT_FPGA
+
+1
+
+0.9
+
+0.85
+
+0
+
+5
+
+10
+
+1
+
+1.15
+
+20
+
+90
+
+2
+
+Rail #2
+
+VCCAUX
+
+1.8
+
+1.62
+
+1.53
+
+0
+
+5
+
+5
+
+1
+
+2.07
+
+10.41
+
+90
+
+3
+
+Rail #3
+
+VCC3V3
+
+3.3
+
+2.97
+
+2.805
+
+0
+
+5
+
+4
+
+1
+
+3.795
+
+10.41
+
+90
+
+4
+
+Rail #4
+
+VADJ
+
+2.5
+
+2.25
+
+2.125
+
+0
+
+5
+
+3
+
+1
+
+2.875
+
+10.41
+
+90
+
+Rail
+Rail
+Schematic
+Number Name Rail Name
+
+Notes:
+1. The values defined in these columns are the voltage, current, and temperature thresholds that cause the regulator to shut
+down if the value is exceeded.
+
+The following table defines the voltage and current values for each power rail controlled by
+the UCD9248 PMBus controller at Address 53 (U56).
+Table 1-32:
+
+Power Rail Specifications for UCD9248 PMBus controller at Address 53
+
+Rail
+Schematic
+Name Rail Name
+
+Nominal VOUT (V)
+
+PG On Threshold (V)
+
+PG Off Threshold (V)
+
+On Delay (ms)
+
+Rise Time (ms)
+
+Off Delay (ms)
+
+Fall Time (ms)
+
+VOUT Over Fault (V)
+
+IOUT Over Fault (A)
+
+Temp Over Fault (°C)
+
+Shutdown
+Threshold(1)
+
+1
+
+Rail #1
+
+VCC2V5_FPGA
+
+2.5
+
+2.25
+
+2.125
+
+0
+
+5
+
+1
+
+1
+
+2.875
+
+10.41
+
+90
+
+2
+
+Rail #2
+
+VCC1V5
+
+1.5
+
+1.35
+
+1.275
+
+0
+
+5
+
+0
+
+1
+
+1.725
+
+10.41
+
+90
+
+3
+
+Rail #3
+
+MGTAVCC
+
+1
+
+0.9
+
+0.85
+
+0
+
+5
+
+7
+
+1
+
+1.45
+
+10.41
+
+90
+
+Rail
+Number
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+77
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-32:
+
+Power Rail Specifications for UCD9248 PMBus controller at Address 53 (Cont’d)
+
+PG Off Threshold (V)
+
+On Delay (ms)
+
+Rise Time (ms)
+
+Off Delay (ms)
+
+Fall Time (ms)
+
+VOUT Over Fault (V)
+
+IOUT Over Fault (A)
+
+Temp Over Fault (°C)
+
+4
+
+Rail
+Schematic
+Name Rail Name
+
+PG On Threshold (V)
+
+Rail
+Number
+
+Nominal VOUT (V)
+
+Shutdown
+Threshold(1)
+
+Rail #4
+
+1.2
+
+1.08
+
+1.02
+
+0
+
+5
+
+8
+
+1
+
+1.38
+
+10.41
+
+90
+
+MGTAVTT
+
+Notes:
+1. The values defined in these columns are the voltage, current, and temperature thresholds that cause the regulator to shut
+down if the value is exceeded.
+
+The following table defines the voltage and current values for each power rail controlled by
+the UCD9248 PMBus controller at Address 54 (U89).
+Table 1-33:
+
+Power Rail Specifications for UCD9248 PMBus controller at Address 54
+
+PG On Threshold (V)
+
+PG Off Threshold (V)
+
+On Delay (ms)
+
+Rise Time (ms)
+
+Off Delay (ms)
+
+Fall Time (ms)
+
+IOUT Over Fault (A)
+
+Temp Over Fault (°C)
+
+1
+
+Rail #1
+
+VCCAUX_IO
+
+2
+
+1.8
+
+1.7
+
+0
+
+5
+
+2
+
+1
+
+10.41
+
+90
+
+2
+
+Rail #2
+
+VCC_BRAM
+
+1
+
+0.9
+
+0.85
+
+0
+
+5
+
+9
+
+1
+
+10.41
+
+90
+
+3
+
+Rail #3
+
+MGTVCCAUX
+
+1.8
+
+1.62
+
+1.53
+
+0
+
+5
+
+6
+
+1
+
+10.41
+
+90
+
+Rail
+Rail
+Schematic
+Number Name Rail Name
+
+VOUT Over Fault (V)
+
+Nominal VOUT (V)
+
+Shutdown
+Threshold(1)
+
+Notes:
+1. The values defined in these columns are the voltage, current, and temperature thresholds that cause the regulator to shut
+down if the value is exceeded.
+
+For more information about the UCD9248PFC, PTD08A010W, PTD08A020W, PTD08D021W,
+LMZ12002, TL1962ADC, and TPS51200DR power system components, see [Ref 20].
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+78
+
+Chapter 1: KC705 Evaluation Board Features
+
+XADC Header
+[Figure 1-2, callout 33]
+7 series FPGAs provide an analog-to-digital converter (XADC) block. The XADC block
+includes a dual 12-bit, 1 MSPS analog-to-digital converter (ADC) and on-chip sensors.
+See 7 Series FPGAs XADC Dual 12-Bit 1MSPS Analog-to-Digital Converter User Guide
+(UG480) [Ref 26] for details on the capabilities of the analog front end.
+The following figure shows the KC705 board XADC support features.
+X-Ref Target - Figure 1-36
+
+VCCAUX
+Ferrite Bead
+
+U1
+
+FPGA
+
+To J69.3
+
+J48
+
+XADC_VCC
+
+VCCADC
+
+XADC_VCC Header J46
+1.8V 150 mV max
+ADP123
+In
+Out
+Gnd
+
+1 μF
+
+VCC5V0
+
+Ferrite Bead
+
+U39
+
+100 nF
+Close to
+Package Pins
+XADC_AGND
+
+AV_5V To Header J46
+
+J68
+10 μF
+
+100 nF
+
+1 nF
+
+GNDADC
+XADC_AGND
+
+XADC_AGND
+Filter 5V Supply
+Locate Components on Board
+
+U42
+
+To Header J46
+VREF (1.25V)
+
+J47
+
+10 μF
+
+VREFP
+
+VREFP
+
+J69
+
+REF3012
+Out
+In
+Gnd
+XADC_VCC
+
+Internal
+Reference
+
+100 nF
+Dual Use IO
+(Analog/Digital)
+
+VREFN
+
+100Ω
+
+J43
+
+Star Grid
+Connection
+
+1 nF
+VAUX0N
+
+VN
+
+100Ω
+VAUX8P
+
+GND
+
+XADC_AGND
+
+VP
+
+1 nF
+
+100Ω
+
+Ferrite Bead
+
+XADC_AGND
+
+100Ω
+VAUX0P
+
+To
+Header
+J46
+
+Close to
+Package Pins
+
+100Ω
+
+DXP
+
+J42
+
+To
+Header
+J46
+
+1 nF
+VAUX8N
+
+DXN
+
+100Ω
+UG810_c1_37_031214
+
+Figure 1-36:
+
+Header XADC_VREF Voltage Source Options
+
+The KC705 board supports both the internal FPGA sensor measurements and the external
+measurement capabilities of the XADC. Internal measurements of the die temperature,
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+79
+
+Chapter 1: KC705 Evaluation Board Features
+VCCINT, VCCAUX, and VCCBRAM are available. The KC705 board VCCINT and VCCBRAM are
+provided by a common 1.0 V supply.
+Jumper J47 can be used to select either an external differential voltage reference
+(XADC_VREF) or on-chip voltage reference (jumper J47 2–3) for the analog-to-digital
+converter.
+For external measurements an XADC header (J46) is provided. This header can be used to
+provide analog inputs to the FPGA dedicated VP/VN channel, and to the
+VAUXP[0]/VAUXN[0], VAUXP[8]/VAUXN[8] auxiliary analog input channels. Simultaneous
+sampling of Channel 0 and Channel 8 is supported.
+A user-provided analog signal multiplexer card can be used to sample additional external
+analog inputs using the 4 GPIO pins available on the XADC header as multiplexer address
+lines. The following figure shows the XADC header connections.
+X-Ref Target - Figure 1-37
+
+XADC_VN
+XADC_VAUX0P
+XADC_VCC5V0
+VADJ
+
+1
+3
+5
+7
+9
+11
+13
+15
+17
+19
+
+XADC_VAUX8N
+XADC_DXP
+XADC_VREF
+XADC_GPIO_1
+XADC_GPIO_3
+
+J46
+
+XADC_VP
+
+2
+4
+6
+8
+10
+12
+14
+16
+18
+20
+
+XADC_VAUX0N
+XADC_VAUX8P
+XADC_DXN
+XADC_VCC_HEADER
+XADC_GPIO_0
+XADC_GPIO_2
+GND
+
+XADC_AGND
+
+XADC_AGND
+UG810_c1_38_031214
+
+Figure 1-37:
+
+XADC Header (J46)
+
+The following table describes the XADC header J46 pin functions.
+Table 1-34:
+
+XADC Header J46 Pinout
+
+Net Name
+
+J46 Pin
+Number
+
+VN, VP
+
+1, 2
+
+Dedicated analog input channel for the XADC.
+
+XADC_VAUX0P, N
+
+3, 6
+
+Auxiliary analog input channel 0. Also supports use as I/O inputs when
+anti alias capacitor is not present.
+
+XADC_VAUX8N, P
+
+7, 8
+
+Auxiliary analog input channel 8. Also supports use as I/O inputs when
+anti alias capacitor is not present.
+
+DXP, DXN
+
+9, 12
+
+Access to thermal diode.
+
+XADC_AGND
+
+4, 5, 10
+
+Analog ground reference.
+
+XADC_VREF
+
+11
+
+1.25V reference from the board.
+
+XADC_VCC5V0
+
+13
+
+Filtered 5V supply from board.
+
+XADC_VCC_HEADER
+
+14
+
+Analog 1.8V supply for XADC.
+
+VADJ
+
+15
+
+VCCO supply for bank which is the source of DIO pins.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+Description
+
+www.xilinx.com
+
+Send Feedback
+
+80
+
+Chapter 1: KC705 Evaluation Board Features
+Table 1-34:
+
+XADC Header J46 Pinout (Cont’d)
+
+Net Name
+
+J46 Pin
+Number
+
+GND
+
+16
+
+XADC_GPIO_3, 2, 1, 0
+
+19, 20, 17, 18
+
+Description
+Digital Ground (board) Reference
+Digital I/O. These pins should come from the same bank. These I/Os
+should not be shared with other functions because they are required to
+support 3-state operation.
+
+Configuration Options
+The FPGA on the KC705 board can be configured by the following methods:
+•
+
+Master BPI (uses the Linear BPI flash memory)
+
+•
+
+Master SPI (uses the Quad SPI flash memory)
+
+•
+
+JTAG (uses the USB-to-JTAG Bridge or Download cable). See USB JTAG Module for more
+information
+
+See 7 Series FPGAs Configuration User Guide (UG470) [Ref 3] for details on configuration
+modes.
+The method used to configure the FPGA is controlled by the mode pin (M2, M1, M0)
+settings selected through DIP switch SW13.
+The following table lists the supported mode switch settings.
+Table 1-35:
+
+Mode Switch SW13 Settings
+
+Configuration Mode
+
+Mode Pins (M[2:0])
+
+Bus Width
+
+CCLK Direction
+
+Master SPI
+
+001
+
+x1, x2, x4
+
+Output
+
+Master BPI
+
+010
+
+x8, x16
+
+Output
+
+JTAG
+
+101
+
+x1
+
+Not Applicable
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+81
+
+Chapter 1: KC705 Evaluation Board Features
+The following figure shows mode switch SW13.
+X-Ref Target - Figure 1-38
+
+VCC2V5
+
+R401
+220Ω
+0.1 W
+1%
+
+SW13
+ON
+
+FLASH_A25
+
+10
+
+FLASH_A24
+FPGA_M2
+
+9
+
+2
+
+8
+
+3
+
+FPGA_M1
+
+7
+
+4
+
+FPGA_M0
+
+6
+
+5
+
+R402
+220Ω
+0.1 W
+1%
+
+1
+
+SDA05H1SBD
+R398
+1.21kΩ
+0.1 W
+1%
+
+R396
+1.21kΩ
+0.1 W
+1%
+R397
+1.21kΩ
+0.1 W
+1%
+
+R400
+1.21kΩ
+0.1 W
+1%
+R399
+1.21kΩ
+0.1 W
+1%
+
+GND
+
+UG810_c1_39_031214
+
+Figure 1-38:
+
+Mode Switch
+
+The mode pins settings on SW13 determine if the Linear BPI or the Quad SPI flash memory
+is used for configuring the FPGA. DIP switch SW13 also provides the upper two address bits
+for the Linear BPI flash memory and can be used to select one of multiple stored
+configuration bitstreams. Figure 1-39 shows the connectivity between the onboard
+nonvolatile flash devices used for configuration and the FPGA.
+To obtain the fastest configuration speed an external 66 MHz oscillator is wired to the
+EMCCLK pin of the FPGA. This allows users to create bitstreams that configure the FPGA
+over the 16-bit datapath from the Linear BPI flash memory at a maximum synchronous read
+rate of 33 MHz. The bitstream stored in the flash memory must be generated with a BitGen
+option to divide the EMCCLK by two.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+82
+
+Chapter 1: KC705 Evaluation Board Features
+
+X-Ref Target - Figure 1-39
+
+U1
+
+SW14
+
+PROG_B
+GND
+
+SW13
+U58
+
+Mode
+Switch
+M0
+
+P30 1Gb
+Flash Memory
+
+M[2:0]
+
+RST_B
+
+INIT_B
+
+CLK
+
+CCLK
+
+FPGA
+VCCAUXIO (2.0V)
+VCCBATT
+TCK
+TMS
+TDI
+Bank 0
+TDO
+
+D11
+BAS40-04
+4.7 kΩ
+300 Ω
+
+B1
+
+DONE
+WE_B
+
+FWE_B
+
+OE_B
+
+FOE_B
+
+ADV_B
+
+ADV_B
+
+2.5 V
+
+GND
+
+27.4 Ω
+
+Bank 15
+
+Part of
+SW13
+
+CE_B
+
+DS20
+GREEN
+
+GND
+RS1
+RS0
+
+A26
+A25
+
+GND
+NC
+A[26:00]
+
+A[27:01]
+
+A[26:25]
+A[24:16]
+A[15:00]
+
+D[15:00]
+
+D[15:00]
+U63
+0
+
+U7
+
+FCS_B
+
+N25Q128A13BSF-40F
+QUAD SPI
+D
+Q
+
+Bank 14
+
+1
+CSO_B
+
+Boot Select
+Demultiplexer
+
+HOLD_B
+
+PUDC_B
+
+R405
+1 kΩ
+
+U64
+
+W_B
+
+Oscillator
+66 MHz
+
+C
+
+ETHERNET MDC
+
+EMCCLK
+
+S-B
+
+GND
+UG810_c1_40_070114
+
+Figure 1-39:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+KC705 Board Configuration Circuit
+
+www.xilinx.com
+
+Send Feedback
+
+83
+
+Appendix A
+
+Default Switch and Jumper Settings
+DIP Switch SW11 User GPIO
+See Figure 1-2 Item 24 for location of SW11. Default settings are shown in Figure A-1 and
+details are listed in Table A-1.
+X-Ref Target - Figure A-1
+
+SW11
+
+ON Position = 1
+
+1 2 3 4
+GPIO DIP SW
+OFF Position = 0
+UG810_aA_01_03214
+
+Figure A-1:
+
+Table A-1:
+
+SW11 Default Settings
+
+SW11 Default Switch Settings
+
+Position
+
+Function
+
+Default
+
+1
+
+GPIO_DIP_SW3
+
+Off
+
+2
+
+GPIO_DIP_SW2
+
+Off
+
+3
+
+GPIO_DIP_SW1
+
+Off
+
+4
+
+GPIO_DIP_SW0
+
+Off
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+84
+
+Appendix A: Default Switch and Jumper Settings
+
+DIP Switch SW13 Mode and Flash Memory Address
+Settings
+See Figure 1-2 Item 29 for location of SW13. Default settings are shown in Figure A-2 and
+details are listed in Table A-2.
+
+1 2 3 4 5
+
+SW13
+
+ON Position = 1
+
+A25
+A24
+M2
+M1
+M0
+
+X-Ref Target - Figure A-2
+
+OFF Position = 0
+UG810_aA_02_031214
+
+Figure A-2:
+
+SW13 Default Settings
+
+The default mode setting M[2:0] = 010 selects Master BPI configuration at board power-on.
+Table A-2:
+
+SW13 Default Switch Settings
+
+Position
+
+Function
+
+Default
+
+1
+
+FLASH_A25
+
+A25
+
+Off
+
+2
+
+FLASH_A24
+
+A24
+
+Off
+
+3
+
+FPGA_M2
+
+M2
+
+Off
+
+4
+
+FPGA_M1
+
+M1
+
+On
+
+5
+
+FPGA_M0
+
+M0
+
+Off
+
+Default Jumper Settings
+See Figure A-3 for the locations of jumpers listed in Table A-3.
+Table A-3:
+
+KC705 Default Jumper Settings
+Header
+Reference
+Designator
+
+Jumper
+Position
+
+Description
+
+Schematic
+0381502 Page
+
+1
+
+J3
+
+1-2
+
+SPI SELECT = Onboard SPI flash memory device
+
+26
+
+2
+
+J42
+
+None
+
+U35 REF3012 XADC_AGND L17 bypassed
+
+31
+
+3
+
+J43
+
+1-2
+
+U35 REF3012 XADC_AGND = GND
+
+31
+
+4
+
+J53
+
+None
+
+U55 UCD9248 RESET_B = LOGIC 1 (NOT RESET)
+
+36
+
+Callout
+2-pin
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+85
+
+Appendix A: Default Switch and Jumper Settings
+Table A-3:
+
+KC705 Default Jumper Settings (Cont’d)
+
+Callout
+
+Header
+Reference
+Designator
+
+Jumper
+Position
+
+Description
+
+Schematic
+0381502 Page
+
+5
+
+J56
+
+None
+
+U56 UCD9248 RESET_B = LOGIC 1 (NOT RESET)
+
+40
+
+6
+
+J65
+
+1-2
+
+FMC VADJ = ON
+
+36
+
+7
+
+J68
+
+1-2
+
+XADC_VCC5V0 =VCC5V0 (5V)
+
+31
+
+8
+
+J27
+
+2-3
+
+SFP RX BW = FULL
+
+22
+
+9
+
+J28
+
+2-3
+
+SFP TX BW = FULL
+
+22
+
+10
+
+J29
+
+1-2
+
+U32 EPHY CONFIG5 = LOGIC 1
+
+25
+
+11
+
+J30
+
+1-2
+
+U32 EPHY CONFIG4 = LOGIC 1
+
+25
+
+12
+
+J47
+
+1-2
+
+XADC_VREFP = REF3012 XADC_VREF
+
+31
+
+13
+
+J48
+
+2-3
+
+XADC_VCC = ADP123 1.85V
+
+31
+
+14
+
+J69
+
+1-2
+
+REF3012 VIN = XADC_VCC5V0
+
+31
+
+J32
+
+5-6
+
+PCIe lane width = 8
+
+21
+
+3-pin
+
+2x3
+15
+X-Ref Target - Figure A-3
+
+9
+
+8
+
+6
+4
+
+1
+
+13 7
+10 11
+
+14
+15
+
+12
+
+5
+3
+
+2
+
+UG810_aA_03_111414
+
+Figure A-3:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+KC705 Jumper Locations
+
+www.xilinx.com
+
+Send Feedback
+
+86
+
+Appendix B
+
+VITA 57.1 FMC Connector Pinouts
+The following figure shows the pinout of the FPGA Mezzanine Card (FMC) high pin count
+(HPC) connector defined by the VITA 57.1 FMC specification. For a description of how the
+KC705 board implements the FMC specification, see FPGA Mezzanine Card Interface and
+HPC Connector J22.
+X-Ref Target - Figure B-1
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+
+K
+VREF_B_M2C
+GND
+GND
+CLK2_M2C_P
+CLK2_M2C_N
+GND
+HA02_P
+HA02_N
+GND
+HA06_P
+HA06_N
+GND
+HA10_P
+HA10_N
+GND
+HA17_P_CC
+HA17_N_CC
+GND
+HA21_P
+HA21_N
+GND
+HA23_P
+HA23_N
+GND
+HB00_P_CC
+HB00_N_CC
+GND
+HB06_P_CC
+HB06_N_CC
+GND
+HB10_P
+HB10_N
+GND
+HB14_P
+HB14_N
+GND
+HB17_P_CC
+HB17_N_CC
+GND
+VIO_B_M2C
+
+J
+GND
+CLK3_M2C_P
+CLK3_M2C_N
+GND
+GND
+HA03_P
+HA03_N
+GND
+HA07_P
+HA07_N
+GND
+HA11_P
+HA11_N
+GND
+HA14_P
+HA14_N
+GND
+HA18_P
+HA18_N
+GND
+HA22_P
+HA22_N
+GND
+HB01_P
+HB01_N
+GND
+HB07_P
+HB07_N
+GND
+HB11_P
+HB11_N
+GND
+HB15_P
+HB15_N
+GND
+HB18_P
+HB18_N
+GND
+VIO_B_M2C
+GND
+
+H
+VREF_A_M2C
+PRSNT_M2C_L
+GND
+CLK0_M2C_P
+CLK0_M2C_N
+GND
+LA02_P
+LA02_N
+GND
+LA04_P
+LA04_N
+GND
+LA07_P
+LA07_N
+GND
+LA11_P
+LA11_N
+GND
+LA15_P
+LA15_N
+GND
+LA19_P
+LA19_N
+GND
+LA21_P
+LA21_N
+GND
+LA24_P
+LA24_N
+GND
+LA28_P
+LA28_N
+GND
+LA30_P
+LA30_N
+GND
+LA32_P
+LA32_N
+GND
+VADJ
+
+G
+GND
+CLK1_M2C_P
+CLK1_M2C_N
+GND
+GND
+LA00_P_CC
+LA00_N_CC
+GND
+LA03_P
+LA03_N
+GND
+LA08_P
+LA08_N
+GND
+LA12_P
+LA12_N
+GND
+LA16_P
+LA16_N
+GND
+LA20_P
+LA20_N
+GND
+LA22_P
+LA22_N
+GND
+LA25_P
+LA25_N
+GND
+LA29_P
+LA29_N
+GND
+LA31_P
+LA31_N
+GND
+LA33_P
+LA33_N
+GND
+VADJ
+GND
+
+F
+PG_M2C
+GND
+GND
+HA00_P_CC
+HA00_N_CC
+GND
+HA04_P
+HA04_N
+GND
+HA08_P
+HA08_N
+GND
+HA12_P
+HA12_N
+GND
+HA15_P
+HA15_N
+GND
+HA19_P
+HA19_N
+GND
+HB02_P
+HB02_N
+GND
+HB04_P
+HB04_N
+GND
+HB08_P
+HB08_N
+GND
+HB12_P
+HB12_N
+GND
+HB16_P
+HB16_N
+GND
+HB20_P
+HB20_N
+GND
+VADJ
+
+E
+GND
+HA01_P_CC
+HA01_N_CC
+GND
+GND
+HA05_P
+HA05_N
+GND
+HA09_P
+HA09_N
+GND
+HA13_P
+HA13_N
+GND
+HA16_P
+HA16_N
+GND
+HA20_P
+HA20_N
+GND
+HB03_P
+HB03_N
+GND
+HB05_P
+HB05_N
+GND
+HB09_P
+HB09_N
+GND
+HB13_P
+HB13_N
+GND
+HB19_P
+HB19_N
+GND
+HB21_P
+HB21_N
+GND
+VADJ
+GND
+
+D
+PG_C2M
+GND
+GND
+GBTCLK0_M2C_P
+GBTCLK0_M2C_N
+GND
+GND
+LA01_P_CC
+LA01_N_CC
+GND
+LA05_P
+LA05_N
+GND
+LA09_P
+LA09_N
+GND
+LA13_P
+LA13_N
+GND
+LA17_P_CC
+LA17_N_CC
+GND
+LA23_P
+LA23_N
+GND
+LA26_P
+LA26_N
+GND
+TCK
+TDI
+TDO
+3P3VAUX
+TMS
+TRST_L
+GA1
+3P3V
+GND
+3P3V
+GND
+3P3V
+
+C
+GND
+DP0_C2M_P
+DP0_C2M_N
+GND
+GND
+DP0_M2C_P
+DP0_M2C_N
+GND
+GND
+LA06_P
+LA06_N
+GND
+GND
+LA10_P
+LA10_N
+GND
+GND
+LA14_P
+LA14_N
+GND
+GND
+LA18_P_CC
+LA18_N_CC
+GND
+GND
+LA27_P
+LA27_N
+GND
+GND
+SCL
+SDA
+GND
+GND
+GA0
+12P0V
+GND
+12P0V
+GND
+3P3V
+GND
+
+B
+RES1
+GND
+GND
+DP9_M2C_P
+DP9_M2C_N
+GND
+GND
+DP8_M2C_P
+DP8_M2C_N
+GND
+GND
+DP7_M2C_P
+DP7_M2C_N
+GND
+GND
+DP6_M2C_P
+DP6_M2C_N
+GND
+GND
+GBTCLK1_M2C_P
+GBTCLK1_M2C_N
+GND
+GND
+DP9_C2M_P
+DP9_C2M_N
+GND
+GND
+DP8_C2M_P
+DP8_C2M_N
+GND
+GND
+DP7_C2M_P
+DP7_C2M_N
+GND
+GND
+DP6_C2M_P
+DP6_C2M_N
+GND
+GND
+RES0
+
+A
+GND
+DP1_M2C_P
+DP1_M2C_N
+GND
+GND
+DP2_M2C_P
+DP2_M2C_N
+GND
+GND
+DP3_M2C_P
+DP3_M2C_N
+GND
+GND
+DP4_M2C_P
+DP4_M2C_N
+GND
+GND
+DP5_M2C_P
+DP5_M2C_N
+GND
+GND
+DP1_C2M_P
+DP1_C2M_N
+GND
+GND
+DP2_C2M_P
+DP2_C2M_N
+GND
+GND
+DP3_C2M_P
+DP3_C2M_N
+GND
+GND
+DP4_C2M_P
+DP4_C2M_N
+GND
+GND
+DP5_C2M_P
+DP5_C2M_N
+GND
+
+UG810_aB_01_031214
+
+Figure B-1:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+FMC HPC Connector Pinout
+
+www.xilinx.com
+
+Send Feedback
+
+87
+
+Appendix B: VITA 57.1 FMC Connector Pinouts
+The following figure shows the pinout of the FMC card low pin count (LPC) connector
+defined by the VITA 57.1 FMC specification. For a description of how the KC705 board
+implements the FMC specification, see FPGA Mezzanine Card Interface and LPC Connector
+J2.
+X-Ref Target - Figure B-2
+
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+
+K
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+
+J
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+
+H
+VREF_A_M2C
+PRSNT_M2C_L
+GND
+CLK0_M2C_P
+CLK0_M2C_N
+GND
+LA02_P
+LA02_N
+GND
+LA04_P
+LA04_N
+GND
+LA07_P
+LA07_N
+GND
+LA11_P
+LA11_N
+GND
+LA15_P
+LA15_N
+GND
+LA19_P
+LA19_N
+GND
+LA21_P
+LA21_N
+GND
+LA24_P
+LA24_N
+GND
+LA28_P
+LA28_N
+GND
+LA30_P
+LA30_N
+GND
+LA32_P
+LA32_N
+GND
+VADJ
+
+G
+GND
+CLK1_M2C_P
+CLK1_M2C_N
+GND
+GND
+LA00_P_CC
+LA00_N_CC
+GND
+LA03_P
+LA03_N
+GND
+LA08_P
+LA08_N
+GND
+LA12_P
+LA12_N
+GND
+LA16_P
+LA16_N
+GND
+LA20_P
+LA20_N
+GND
+LA22_P
+LA22_N
+GND
+LA25_P
+LA25_N
+GND
+LA29_P
+LA29_N
+GND
+LA31_P
+LA31_N
+GND
+LA33_P
+LA33_N
+GND
+VADJ
+GND
+
+F
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+
+E
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+
+D
+PG_C2M
+GND
+GND
+GBTCLK0_M2C_P
+GBTCLK0_M2C_N
+GND
+GND
+LA01_P_CC
+LA01_N_CC
+GND
+LA05_P
+LA05_N
+GND
+LA09_P
+LA09_N
+GND
+LA13_P
+LA13_N
+GND
+LA17_P_CC
+LA17_N_CC
+GND
+LA23_P
+LA23_N
+GND
+LA26_P
+LA26_N
+GND
+TCK
+TDI
+TDO
+3P3VAUX
+TMS
+TRST_L
+GA1
+3P3V
+GND
+3P3V
+GND
+3P3V
+
+C
+GND
+DP0_C2M_P
+DP0_C2M_N
+GND
+GND
+DP0_M2C_P
+DP0_M2C_N
+GND
+GND
+LA06_P
+LA06_N
+GND
+GND
+LA10_P
+LA10_N
+GND
+GND
+LA14_P
+LA14_N
+GND
+GND
+LA18_P_CC
+LA18_N_CC
+GND
+GND
+LA27_P
+LA27_N
+GND
+GND
+SCL
+SDA
+GND
+GND
+GA0
+12P0V
+GND
+12P0V
+GND
+3P3V
+GND
+
+B
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+
+A
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+NC
+UG810_aB_02_031214
+
+Figure B-2:
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+FMC LPC Connector Pinout
+
+www.xilinx.com
+
+Send Feedback
+
+88
+
+Appendix C
+
+Xilinx Design Constraints
+The KC705 board Xilinx® design constraints (XDC) file template provides for designs
+targeting the KC705 board. Net names in the constraints correlate with net names on the
+latest KC705 board schematic. You must identify the appropriate pins and replace the net
+names with net names in the user RTL. See Vivado Design Suite User Guide: Using
+Constraints (UG903) [Ref 27] for more information.
+The FMC connectors J2 and J22 are connected to 2.5V Vcco banks. Because each FMC card
+implements customer-specific circuitry, the FMC bank I/O standards must be uniquely
+defined by each customer.
+Note: See the Kintex-7 KC705 Evaluation Kit product page Documentation tab for the latest versions
+of the FPGA pins constraints files (XDC files).
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+89
+
+Appendix D
+
+Board Setup
+Installing KC705 Board in a PC Chassis
+Installation of the KC705 board inside a computer chassis is required when developing or
+testing PCI Express functionality.
+When the KC705 board is used inside a computer chassis (plugged in to the PCIe® slot),
+power is provided from the ATX power supply 4-pin peripheral connector through the ATX
+adapter cable shown in Figure D-1 to J18 on the KC705 board. The Xilinx part number for
+this cable is 2600304 and is equivalent to Sourcegate Technologies part number
+AZCBL-WH-1109-RA4. For information on ordering this cable, see [Ref 21].
+X-Ref Target - Figure D-1
+
+To ATX 4-Pin Peripheral
+Power Connector
+
+To J49 on KC705 Board
+
+UG810_aD_01_031214
+
+Figure D-1:
+
+ATX Power Supply Adapter Cable
+
+To install the KC705 board in a PC chassis:
+1. On the KC705 board, remove the six screws retaining the six rubber feet with their
+standoffs, and the PCIe bracket. Reinstall the PCIe bracket using two of the previously
+removed screws.
+2. Power down the host computer and remove the power cord from the PC.
+3. Open the PC chassis following the instructions provided with the PC.
+4. Select a vacant PCIe expansion slot and remove the expansion cover (at the back of the
+chassis) by removing the screws on the top and bottom of the cover.
+5. Plug the KC705 board into the PCIe connector at this slot.
+6. Install the top mounting bracket screw into the PC expansion cover retainer bracket to
+secure the KC705 board in its slot.
+Note: The KC705 board is taller than standard PCIe cards. Ensure that the height of the card is
+free of obstructions.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+90
+
+Appendix D: Board Setup
+7. Connect the ATX power supply to the KC705 board using the ATX power supply adapter
+cable as shown in Figure D-1:
+a. Plug the 6-pin 2 x 3 Molex connector on the adapter cable into J49 on the KC705
+board.
+b. Plug the 4-pin 1 x 4 peripheral power connector from the ATX power supply into the
+4-pin adapter cable connector.
+8. Slide the KC705 board power switch SW12 to the ON position. The PC can now be
+powered on.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+91
+
+Appendix E
+
+Board Specifications
+Dimensions
+Height 5.5 in (14.0 cm)
+Length 10.5 in (26.7 cm)
+Note: The KC705 board height exceeds the standard 4.376 in (11.15 cm) height of a PCI Express card.
+
+Environmental
+Temperature
+Operating: 0°C to +45°C
+Storage: –25°C to +60°C
+
+Humidity
+10% to 90% non-condensing
+
+Operating Voltage
++12 VDC
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+92
+
+Appendix F
+
+Regulatory and Compliance Information
+Overview
+This product is designed and tested to conform to the European Union directives and
+standards described in this section.
+See the Kintex-7 FPGA KC705 Evaluation Kit Xilinx Answer (AR#45934) concerning the CE
+requirements for the PC Test Environment.
+
+Declaration of Conformity
+The Kintex-7 FPGA KC705 Declaration of Conformity is here.
+
+CE Directives
+2006/95/EC, Low Voltage Directive (LVD)
+2004/108/EC, Electromagnetic Compatibility (EMC) Directive
+
+CE Standards
+EN standards are maintained by the European Committee for Electrotechnical
+Standardization (CENELEC). IEC standards are maintained by the International
+Electrotechnical Commission (IEC).
+
+Electromagnetic Compatibility
+EN 55022:2010, Information Technology Equipment Radio Disturbance Characteristics –
+Limits and Methods of Measurement
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+93
+
+Appendix F: Regulatory and Compliance Information
+EN 55024:2010, Information Technology Equipment Immunity Characteristics – Limits and
+Methods of Measurement
+This is a Class A product and can cause radio interference. In a domestic environment, the
+user might be required to take adequate corrective measures.
+
+Safety
+IEC 60950-1:2005, Information technology equipment – Safety, Part 1: General requirements
+EN 60950-1:2006, Information technology equipment – Safety, Part 1: General requirements
+
+Markings
+In August of 2005, the European Union (EU) implemented the EU
+WEEE Directive 2002/96/EC and later the WEEE Recast Directive
+2012/19/EU requiring Producers of electronic and electrical
+equipment (EEE) to manage and finance the collection, reuse,
+recycling and to appropriately treat WEEE that the Producer places on
+the EU market after August 13, 2005. The goal of this directive is to
+minimize the volume of electrical and electronic waste disposal and
+to encourage re-use and recycling at the end of life.
+Xilinx has met its national obligations to the EU WEEE Directive by
+registering in those countries to which Xilinx is an importer. Xilinx has
+also elected to join WEEE Compliance Schemes in some countries to
+help manage customer returns at end-of-life.
+If you have purchased Xilinx-branded electrical or electronic products
+in the EU and are intending to discard these products at the end of
+their useful life, please do not dispose of them with your other
+household or municipal waste. Xilinx has labeled its branded
+electronic products with the WEEE Symbol to alert our customers that
+products bearing this label should not be disposed of in a landfill or
+with municipal or household waste in the EU.
+
+This product complies with Directive 2002/95/EC on the restriction of
+hazardous substances (RoHS) in electrical and electronic equipment.
+
+This product complies with CE Directives 2006/95/EC, Low Voltage
+Directive (LVD) and 2004/108/EC, Electromagnetic Compatibility (EMC)
+Directive.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+94
+
+Appendix G
+
+Additional Resources and Legal Notices
+Xilinx Resources
+For support resources such as Answers, Documentation, Downloads, and Forums, see Xilinx
+Support.
+
+Solution Centers
+See the Xilinx Solution Centers for support on devices, software tools, and intellectual
+property at all stages of the design cycle. Topics include design assistance, advisories, and
+troubleshooting tips.
+
+Documentation Navigator and Design Hubs
+Xilinx® Documentation Navigator provides access to Xilinx documents, videos, and support
+resources, which you can filter and search to find information. To open the Xilinx
+Documentation Navigator (DocNav):
+•
+
+From the Vivado® IDE, select Help > Documentation and Tutorials.
+
+•
+
+On Windows, select Start > All Programs > Xilinx Design Tools > DocNav.
+
+•
+
+At the Linux command prompt, enter docnav.
+
+Xilinx Design Hubs provide links to documentation organized by design tasks and other
+topics, which you can use to learn key concepts and address frequently asked questions. To
+access the Design Hubs:
+•
+
+In the Xilinx Documentation Navigator, click the Design Hubs View tab.
+
+•
+
+On the Xilinx website, see the Design Hubs page.
+
+Note: For more information on Documentation Navigator, see the Documentation Navigator page
+on the Xilinx website.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+95
+
+Appendix G: Additional Resources and Legal Notices
+
+References
+The most up to date information related to the KC705 board and its documentation is
+available on these websites:
+Kintex-7 KC705 FPGA KC705 Evaluation Kit
+Kintex-7 KC705 FPGA Evaluation Kit documentation
+Kintex-7 KC705 FGPA Evaluation Kit Master Answer Record (AR 45934)
+These documents and sites provide supplemental material useful with this guide:
+1. 7 Series FPGAs Overview (DS180)
+2. Kintex-7 FPGAs Data Sheet: DC and AC Switching Characteristics (DS182)
+3. 7 Series FPGAs Configuration User Guide (UG470)
+4. 7 Series FPGAs Memory Interface Solutions User Guide (UG586)
+5. 7 Series FPGAs Memory Resources User Guide (UG473)
+6. Micron Technology: www.micron.com
+(PC28F00AP30TF, N25Q128A13BSF40F, MT25QL128ABA8ESF-0SIT, and
+MT8JTF12864HZ-1G6G1)
+7. Si Time: www.sitime.com
+(SiT9102)
+8. Silicon Labs: www.silabs.com
+(Si570, Si5324C)
+9. KC705 Si570 Programming (XTP204)
+10. KC705 Si570 Programming Design Files (RDF0194)
+11. KC705 Si570 Fixed Frequencies (XTP203)
+12. KC705 Si570 Fixed Frequencies Design Files (RDF0193)
+13. 7 Series FPGAs GTX Transceivers User Guide (UG476)
+14. 7 Series FPGAs Integrated Block for PCI Express LogiCORE IP Product Guide (PG054)
+15. Tri-Mode Ethernet MAC LogiCORE IP Product Guide (PG051)
+16. Marvell Semiconductor: www.marvell.com and www.marvell.com/transceivers/alaska-gbe/
+(88E1111)
+17. Integrated Device Technology: www.idt.com
+(ICS844021-01)
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+96
+
+Appendix G: Additional Resources and Legal Notices
+18. Analog Devices: www.analog.com/en/index.html
+(ADP123, ADV7511KSTZ-P)
+19. Displaytech: www.displaytech-us.com
+(S162D)
+20. Texas Instruments: www.ti.com, www.ti.com/fusiondocs, and
+www.ti.com/ww/en/analog/digital-power/index.html
+
+(UCD9248PFC, PTD08A010W, PTD08A020W, PTD08D210W, LMZ12002, TL1962ADC,
+TPS51200DR, PCA9548, TXS0108E)
+21. Sourcegate Technologies: www.sourcegate.net. To order the custom Sourcegate cable,
+contact sgt-sales@sourcegate.net, +65 6483 2878 for price and availability.
+Note: The Xilinx ATX cable part number 2600304 is manufactured by Sourcegate Technologies
+and is equivalent to the Sourcegate Technologies part number AZCBL-WH-11009. Sourcegate
+only manufactures the latest revision, which is currently A4. This is a custom cable and cannot be
+ordered from the Sourcegate website.
+22. 7 Series FPGAs PCB Design Guide (UG483)
+23. Samtec: www.samtec.com.
+(SEAF series connectors)
+24. Texas Instruments: www.ti.com/xilinx_usb
+(USB-TO-GPIO Interface Adapter EVM, Part Number USB-TO-GPIO)
+25. Texas Instruments: www.ti.com/fusion-gui
+(TI Fusion Digital Power Designer GUI)
+26. 7 Series FPGAs and Zynq-7000 SoC XADC Dual 12-Bit 1 MSPS Analog-to-Digital
+Converter User Guide (UG480)
+27. Vivado Design Suite User Guide Using Constraints (UG903)
+28. 7 Series FPGAs Packaging and Pinout Product Specifications (UG475)
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+97
+
+Appendix G: Additional Resources and Legal Notices
+
+Please Read: Important Legal Notices
+The information disclosed to you hereunder (the “Materials”) is provided solely for the selection and use of Xilinx products. To the
+maximum extent permitted by applicable law: (1) Materials are made available "AS IS" and with all faults, Xilinx hereby DISCLAIMS
+ALL WARRANTIES AND CONDITIONS, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING BUT NOT LIMITED TO WARRANTIES OF
+MERCHANTABILITY, NON-INFRINGEMENT, OR FITNESS FOR ANY PARTICULAR PURPOSE; and (2) Xilinx shall not be liable (whether
+in contract or tort, including negligence, or under any other theory of liability) for any loss or damage of any kind or nature related
+to, arising under, or in connection with, the Materials (including your use of the Materials), including for any direct, indirect, special,
+incidental, or consequential loss or damage (including loss of data, profits, goodwill, or any type of loss or damage suffered as a
+result of any action brought by a third party) even if such damage or loss was reasonably foreseeable or Xilinx had been advised
+of the possibility of the same. Xilinx assumes no obligation to correct any errors contained in the Materials or to notify you of
+updates to the Materials or to product specifications. You may not reproduce, modify, distribute, or publicly display the Materials
+without prior written consent. Certain products are subject to the terms and conditions of Xilinx’s limited warranty, please refer to
+Xilinx’s Terms of Sale which can be viewed at https://www.xilinx.com/legal.htm#tos; IP cores may be subject to warranty and
+support terms contained in a license issued to you by Xilinx. Xilinx products are not designed or intended to be fail-safe or for use
+in any application requiring fail-safe performance; you assume sole risk and liability for use of Xilinx products in such critical
+applications, please refer to Xilinx’s Terms of Sale which can be viewed at https://www.xilinx.com/legal.htm#tos.
+AUTOMOTIVE APPLICATIONS DISCLAIMER
+AUTOMOTIVE PRODUCTS (IDENTIFIED AS “XA” IN THE PART NUMBER) ARE NOT WARRANTED FOR USE IN THE DEPLOYMENT OF
+AIRBAGS OR FOR USE IN APPLICATIONS THAT AFFECT CONTROL OF A VEHICLE (“SAFETY APPLICATION”) UNLESS THERE IS A
+SAFETY CONCEPT OR REDUNDANCY FEATURE CONSISTENT WITH THE ISO 26262 AUTOMOTIVE SAFETY STANDARD (“SAFETY
+DESIGN”). CUSTOMER SHALL, PRIOR TO USING OR DISTRIBUTING ANY SYSTEMS THAT INCORPORATE PRODUCTS, THOROUGHLY
+TEST SUCH SYSTEMS FOR SAFETY PURPOSES. USE OF PRODUCTS IN A SAFETY APPLICATION WITHOUT A SAFETY DESIGN IS FULLY
+AT THE RISK OF CUSTOMER, SUBJECT ONLY TO APPLICABLE LAWS AND REGULATIONS GOVERNING LIMITATIONS ON PRODUCT
+LIABILITY.
+© Copyright 2012–2019 Xilinx, Inc. Xilinx, the Xilinx logo, Artix, ISE, Kintex, Spartan, Virtex, Vivado, Zynq, and other designated
+brands included herein are trademarks of Xilinx in the United States and other countries. All other trademarks are the property of
+their respective owners.
+
+KC705 Evaluation Board
+UG810 (v1.9) February 4, 2019
+
+www.xilinx.com
+
+Send Feedback
+
+98
+
+
