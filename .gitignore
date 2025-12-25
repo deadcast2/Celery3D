@@ -28,3 +28,11 @@ celery_ref
 
 # macOS
 .DS_Store
+
+# Vivado
+.Xil/
+vivado*.log
+vivado*.jou
+vivado*.backup.log
+*.dcp
+clockInfo.txt
