@@ -61,6 +61,9 @@ module rasterizer_top
     output logic        fb_clearing,
 
     // Framebuffer read interface (for video output)
+    // Uses video_clk domain for cross-clock-domain video output
+    input  logic        video_clk,
+    input  logic        video_rst_n,
     input  logic [$clog2(FB_WIDTH)-1:0]  fb_read_x,
     input  logic [$clog2(FB_HEIGHT)-1:0] fb_read_y,
     input  logic                          fb_read_en,
@@ -252,6 +255,8 @@ module rasterizer_top
     ) u_framebuffer (
         .clk             (clk),
         .rst_n           (rst_n),
+        .video_clk       (video_clk),
+        .video_rst_n     (video_rst_n),
         .frag_in         (ab_frag),
         .color_in        (ab_color),
         .frag_in_valid   (ab_frag_valid),

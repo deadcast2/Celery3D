@@ -18,6 +18,15 @@ file mkdir $output_dir
 puts "Reading RTL sources..."
 read_verilog -sv {
     core/celery_pkg.sv
+    core/edge_eval.sv
+    core/triangle_setup.sv
+    core/rasterizer.sv
+    core/perspective_correct.sv
+    core/texture_unit.sv
+    core/depth_buffer.sv
+    core/alpha_blend.sv
+    core/framebuffer.sv
+    core/rasterizer_top.sv
     video/video_pkg.sv
     video/clk_gen_kc705.sv
     video/video_timing_gen.sv
@@ -26,6 +35,7 @@ read_verilog -sv {
     video/i2c_master.sv
     video/adv7511_init.sv
     video/hdmi_top.sv
+    video/gpu_hdmi_top.sv
     video/hdmi_synth_top.sv
 }
 

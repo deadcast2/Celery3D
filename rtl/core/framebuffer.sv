@@ -12,20 +12,25 @@ module framebuffer
     input  logic        clk,
     input  logic        rst_n,
 
+    // Optional: separate clock for video read port (for cross-domain access)
+    // If not used, tie to clk. Xilinx BRAM supports true dual-port dual-clock.
+    input  logic        video_clk,
+    input  logic        video_rst_n,
+
     // Fragment write interface (from depth buffer / rasterizer)
     input  fragment_t   frag_in,
     input  rgb565_t     color_in,
     input  logic        frag_in_valid,
     output logic        frag_in_ready,
 
-    // Read interface (for video output)
+    // Read interface (for video output) - uses video_clk domain
     input  logic [$clog2(FB_WIDTH)-1:0]  read_x,
     input  logic [$clog2(FB_HEIGHT)-1:0] read_y,
     input  logic                          read_en,
     output rgb565_t                       read_data,
     output logic                          read_valid,
 
-    // Blend read interface (for alpha blending - second read port)
+    // Blend read interface (for alpha blending - second read port) - uses clk domain
     input  logic [$clog2(FB_WIDTH)-1:0]  blend_read_x,
     input  logic [$clog2(FB_HEIGHT)-1:0] blend_read_y,
     input  logic                          blend_read_en,
@@ -95,11 +100,12 @@ module framebuffer
     end
 
     // Read logic - synchronous read with one cycle latency (video output)
+    // Uses video_clk domain for cross-clock-domain video output
     logic [ADDR_BITS-1:0] read_addr;
     logic read_en_r;
 
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
+    always_ff @(posedge video_clk or negedge video_rst_n) begin
+        if (!video_rst_n) begin
             read_data <= 16'h0;
             read_valid <= 1'b0;
             read_en_r <= 1'b0;

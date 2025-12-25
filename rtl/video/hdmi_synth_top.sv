@@ -121,30 +121,18 @@ module hdmi_synth_top (
     );
 
     // =========================================================================
-    // Framebuffer Interface (unused for standalone test)
-    // =========================================================================
-    import celery_pkg::rgb565_t;
-
-    logic [9:0]  fb_read_x;
-    logic [9:0]  fb_read_y;
-    logic        fb_read_en;
-    rgb565_t     fb_read_data;
-    logic        fb_read_valid;
-
-    // Tie off framebuffer interface - not used in standalone test
-    assign fb_read_data = 16'h0000;
-    assign fb_read_valid = 1'b0;
-
-    // =========================================================================
-    // Internal HDMI signals
+    // GPU + HDMI Integrated Top
+    // Renders a test triangle and displays it via HDMI
     // =========================================================================
 
-    // =========================================================================
-    // HDMI Top Instance
-    // =========================================================================
-    hdmi_top u_hdmi_top (
+    logic render_done;
+
+    gpu_hdmi_top #(
+        .FB_WIDTH  (64),
+        .FB_HEIGHT (64)
+    ) u_gpu_hdmi (
         .clk_50mhz      (clk_50mhz),
-        .clk_25mhz      (clk_25mhz),     // Pass 25 MHz directly (no second MMCM)
+        .clk_25mhz      (clk_25mhz),
         .rst_n          (rst_n & mmcm_locked),
 
         // HDMI outputs
@@ -162,20 +150,10 @@ module hdmi_synth_top (
         .i2c_sda_oen    (i2c_sda_oen),
         .i2c_sda_i      (i2c_sda_i),
 
-        // Framebuffer interface (unused)
-        .fb_read_x      (fb_read_x),
-        .fb_read_y      (fb_read_y),
-        .fb_read_en     (fb_read_en),
-        .fb_read_data   (fb_read_data),
-        .fb_read_valid  (fb_read_valid),
-
-        // Control - force test pattern mode for debugging
-        .pattern_sel    (2'b00),           // Force color bars
-        .use_framebuffer(1'b0),            // Force test pattern (ignore DIP switch)
-
         // Status
         .hdmi_init_done (hdmi_init_done),
-        .hdmi_init_error(hdmi_init_error)
+        .hdmi_init_error(hdmi_init_error),
+        .render_done    (render_done)
     );
 
     // Use single MMCM lock status

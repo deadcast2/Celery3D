@@ -5,7 +5,14 @@
 module hdmi_top
     import video_pkg::*;
     import celery_pkg::rgb565_t;
-(
+#(
+    // Framebuffer dimensions (for coordinate scaling)
+    // 640/64 = 10x horizontal scale, 480/64 = 7.5 (use 7, with 32 black lines at bottom)
+    parameter FB_WIDTH  = 64,
+    parameter FB_HEIGHT = 64,
+    parameter H_SCALE   = 10,    // 640 / 64 = 10
+    parameter V_SCALE   = 7      // 448 / 64 = 7 (480 - 32 = 448)
+)(
     input  logic        clk_50mhz,    // 50 MHz system clock (for I2C)
     input  logic        clk_25mhz,    // 25 MHz pixel clock (from parent MMCM)
     input  logic        rst_n,        // Active-low reset
@@ -26,8 +33,9 @@ module hdmi_top
     input  logic        i2c_sda_i,
 
     // Optional: Framebuffer interface (directly from rasterizer)
-    output logic [9:0]  fb_read_x,
-    output logic [9:0]  fb_read_y,
+    // Note: Coordinates are scaled down from 640x480 to FB_WIDTH x FB_HEIGHT
+    output logic [$clog2(FB_WIDTH)-1:0]  fb_read_x,
+    output logic [$clog2(FB_HEIGHT)-1:0] fb_read_y,
     output logic        fb_read_en,
     input  rgb565_t     fb_read_data,
     input  logic        fb_read_valid,
@@ -138,35 +146,56 @@ module hdmi_top
     // Source Selection (Test Pattern vs Framebuffer)
     // =========================================================================
 
-    // Framebuffer read interface
-    // Note: For now, always use test pattern. Framebuffer integration requires
-    // handling the 64x64 -> 640x480 scaling or DDR3 framebuffer.
-    assign fb_read_x = timing_x;
-    assign fb_read_y = timing_y;
-    assign fb_read_en = timing_de && use_framebuffer;
+    // Framebuffer read interface with coordinate scaling
+    // Scale 640x480 display coordinates to 64x64 framebuffer
+    // Each framebuffer pixel maps to a H_SCALE x V_SCALE block on screen
+    localparam V_ACTIVE = FB_HEIGHT * V_SCALE;  // 64 * 7 = 448 active lines
+
+    // Scaled coordinates (integer division for nearest-neighbor upscaling)
+    logic [$clog2(FB_WIDTH)-1:0]  scaled_x;
+    logic [$clog2(FB_HEIGHT)-1:0] scaled_y;
+    logic in_active_region;
+
+    always_comb begin
+        scaled_x = timing_x / H_SCALE;  // 0-639 -> 0-63
+        scaled_y = timing_y / V_SCALE;  // 0-447 -> 0-63 (448-479 = black)
+        in_active_region = (timing_y < V_ACTIVE);
+    end
+
+    assign fb_read_x = scaled_x;
+    assign fb_read_y = scaled_y;
+    assign fb_read_en = timing_de && use_framebuffer && in_active_region;
 
     // Pipeline register to match test pattern timing
     logic        fb_de_r;
     logic        fb_hsync_r;
     logic        fb_vsync_r;
+    logic        fb_in_active_r;  // Track if we're in the active framebuffer region
 
     always_ff @(posedge pixel_clk or negedge rst_pixel_n) begin
         if (!rst_pixel_n) begin
             fb_de_r <= 1'b0;
             fb_hsync_r <= 1'b1;
             fb_vsync_r <= 1'b1;
+            fb_in_active_r <= 1'b0;
         end else begin
             fb_de_r <= timing_de;
             fb_hsync_r <= timing_hsync;
             fb_vsync_r <= timing_vsync;
+            fb_in_active_r <= in_active_region;
         end
     end
 
     // Select between test pattern and framebuffer
+    // When in framebuffer mode but outside active region (y >= 448), output black
     always_comb begin
         if (use_framebuffer) begin
-            selected_rgb = fb_read_data;
-            selected_de = fb_de_r && fb_read_valid;
+            if (fb_in_active_r && fb_read_valid) begin
+                selected_rgb = fb_read_data;
+            end else begin
+                selected_rgb = 16'h0000;  // Black for inactive region
+            end
+            selected_de = fb_de_r;
         end else begin
             selected_rgb = pattern_rgb;
             selected_de = pattern_de;
