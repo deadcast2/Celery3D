@@ -34,7 +34,7 @@ module adv7511_init
     localparam [6:0] PCA9548_I2C_ADDR = 7'h74;  // I2C mux address
 
     // Number of registers to program (including mux config)
-    localparam REG_COUNT = 21;
+    localparam REG_COUNT = 22;
 
     // ROM containing configuration entries
     // Format: {slave_addr[6:0], is_mux_write, reg_addr[7:0], data[7:0]}
@@ -51,31 +51,28 @@ module adv7511_init
         config_rom[1]  = {ADV7511_I2C_ADDR, 1'b0, 8'h41, 8'h10};  // Power up
         config_rom[2]  = {ADV7511_I2C_ADDR, 1'b0, 8'hD6, 8'hC0};  // HPD: always hot plug
 
-        // Input video format
+        // Input video format - YCbCr 4:2:2 mode (required for KC705 16-bit wiring)
         // 0x15: Input ID register
-        //   [3:0] = Input ID: 1 = 16-bit YCbCr 4:2:2 (style 1, Cb/Y, Cr/Y)
-        //   [4]   = DDR input edge: 0 = falling edge
-        //   [7:5] = Reserved
+        //   [3:0] = Input ID: 1 = 16-bit YCbCr 4:2:2
         config_rom[3]  = {ADV7511_I2C_ADDR, 1'b0, 8'h15, 8'h01};
 
-        // 0x16: Output format
-        //   [0]   = Output colorspace: 0 = RGB, 1 = YCbCr
+        // 0x16: Input/Output format
+        //   [0]   = Output colorspace: 0 = RGB
         //   [2:1] = Input color depth: 00 = 8-bit
-        //   [4:3] = Input style: 01 = style 2 (separate sync)
-        //   [5]   = DDR input alignment
+        //   [4:3] = Input style: 01 = style 1
+        //   [5]   = DDR input: 0 = SDR
         //   [7:6] = Output color depth: 00 = 8-bit
-        config_rom[4]  = {ADV7511_I2C_ADDR, 1'b0, 8'h16, 8'h38};
+        config_rom[4]  = {ADV7511_I2C_ADDR, 1'b0, 8'h16, 8'h08};
 
         // 0x17: Aspect ratio and sync
         //   [1]   = Aspect ratio: 0 = 4:3
-        //   [5]   = HSYNC polarity: 0 = no invert
-        //   [6]   = VSYNC polarity: 0 = no invert
         //   [7]   = External DE: 1 = use input DE
         config_rom[5]  = {ADV7511_I2C_ADDR, 1'b0, 8'h17, 8'h02};
 
-        // 0x18: VIC (Video Identification Code)
-        //   VIC 1 = 640x480 @ 60Hz
-        config_rom[6]  = {ADV7511_I2C_ADDR, 1'b0, 8'h18, 8'h01};
+        // 0x18: CSC enable + scaling for YCbCr to RGB conversion
+        //   [7]   = CSC enable: 1 = enable
+        //   [6:5] = CSC scaling: 10 = higher scaling
+        config_rom[6]  = {ADV7511_I2C_ADDR, 1'b0, 8'h18, 8'hC0};
 
         // 0x48: Video input justification
         config_rom[7]  = {ADV7511_I2C_ADDR, 1'b0, 8'h48, 8'h08};
@@ -92,16 +89,21 @@ module adv7511_init
         // 0x56: AVI InfoFrame aspect ratio
         config_rom[11] = {ADV7511_I2C_ADDR, 1'b0, 8'h56, 8'h08};
 
+        // 0x57: AVI InfoFrame quantization range
+        //   [3:2] = Q1Q0: 00=default, 01=limited range, 10=full range
+        //   Set to 01 (limited) so monitor expands 16-235 to full display range
+        config_rom[12] = {ADV7511_I2C_ADDR, 1'b0, 8'h57, 8'h04};
+
         // Fixed registers (required per ADV7511 programming guide)
-        config_rom[12] = {ADV7511_I2C_ADDR, 1'b0, 8'h98, 8'h03};
-        config_rom[13] = {ADV7511_I2C_ADDR, 1'b0, 8'h99, 8'h02};
-        config_rom[14] = {ADV7511_I2C_ADDR, 1'b0, 8'h9A, 8'hE0};
-        config_rom[15] = {ADV7511_I2C_ADDR, 1'b0, 8'h9C, 8'h30};
-        config_rom[16] = {ADV7511_I2C_ADDR, 1'b0, 8'h9D, 8'h01};  // HDMI mode
-        config_rom[17] = {ADV7511_I2C_ADDR, 1'b0, 8'hA2, 8'hA4};
-        config_rom[18] = {ADV7511_I2C_ADDR, 1'b0, 8'hA3, 8'hA4};
-        config_rom[19] = {ADV7511_I2C_ADDR, 1'b0, 8'hE0, 8'hD0};
-        config_rom[20] = {ADV7511_I2C_ADDR, 1'b0, 8'hF9, 8'h00};
+        config_rom[13] = {ADV7511_I2C_ADDR, 1'b0, 8'h98, 8'h03};
+        config_rom[14] = {ADV7511_I2C_ADDR, 1'b0, 8'h99, 8'h02};
+        config_rom[15] = {ADV7511_I2C_ADDR, 1'b0, 8'h9A, 8'hE0};
+        config_rom[16] = {ADV7511_I2C_ADDR, 1'b0, 8'h9C, 8'h30};
+        config_rom[17] = {ADV7511_I2C_ADDR, 1'b0, 8'h9D, 8'h01};  // HDMI mode
+        config_rom[18] = {ADV7511_I2C_ADDR, 1'b0, 8'hA2, 8'hA4};
+        config_rom[19] = {ADV7511_I2C_ADDR, 1'b0, 8'hA3, 8'hA4};
+        config_rom[20] = {ADV7511_I2C_ADDR, 1'b0, 8'hE0, 8'hD0};
+        config_rom[21] = {ADV7511_I2C_ADDR, 1'b0, 8'hF9, 8'h00};
     end
 
     // =========================================================================

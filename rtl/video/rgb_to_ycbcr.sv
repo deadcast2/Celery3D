@@ -2,9 +2,9 @@
 // Converts RGB565 to 16-bit YCbCr 4:2:2 for ADV7511
 // Uses BT.601 coefficients (standard definition)
 //
-// Output format (4:2:2):
-//   Even pixels: {Cb, Y0} - Cb is shared with next pixel
-//   Odd pixels:  {Cr, Y1} - Cr is shared with previous pixel
+// Output format (4:2:2) - ADV7511 Style 1:
+//   Even pixels: {Cb, Y0} - Cb on high byte, Y on low byte
+//   Odd pixels:  {Cr, Y1} - Cr on high byte, Y on low byte
 
 module rgb_to_ycbcr
     import video_pkg::*;
@@ -91,7 +91,7 @@ module rgb_to_ycbcr
     end
 
     // =========================================================================
-    // Stage 2: RGB to YCbCr Conversion (BT.601)
+    // Stage 2: RGB to YCbCr Conversion (BT.601 Limited Range)
     // =========================================================================
     //
     // BT.601 equations (full range input, limited range output):
@@ -100,7 +100,7 @@ module rgb_to_ycbcr
     //   Cr = 128 + (112.0*R - 93.786*G - 18.214*B) / 256
     //
     // Fixed-point coefficients (multiply by 256):
-    //   Y  = 16 + (66*R + 129*G + 25*B + 128) >> 8
+    //   Y  = 16 + (66*R + 129*G + 25*B) >> 8
     //   Cb = 128 + ((-38*R - 74*G + 112*B) + 128) >> 8
     //   Cr = 128 + ((112*R - 94*G - 18*B) + 128) >> 8
 
@@ -129,14 +129,14 @@ module rgb_to_ycbcr
     logic [7:0] y_val, cb_val, cr_val;
 
     always_comb begin
-        // Y = 16 + (y_prod + 128) >> 8, clamp to [16, 235]
+        // Y = 16 + (y_prod + 128) >> 8, range [16, 235]
         y_val = 8'd16 + y_prod[15:8];
 
-        // Cb = 128 + (cb_prod + 128) >> 8, clamp to [16, 240]
+        // Cb = 128 + (cb_prod + 128) >> 8, range [16, 240]
         // Add 128*256 = 32768 before shifting
         cb_val = 8'((cb_prod + 16'sd128 + 16'sd32768) >>> 8);
 
-        // Cr = 128 + (cr_prod + 128) >> 8, clamp to [16, 240]
+        // Cr = 128 + (cr_prod + 128) >> 8, range [16, 240]
         cr_val = 8'((cr_prod + 16'sd128 + 16'sd32768) >>> 8);
     end
 
@@ -159,7 +159,7 @@ module rgb_to_ycbcr
     // Output: even pixels get {Cb, Y}, odd pixels get {Cr, Y}
     always_ff @(posedge pixel_clk or negedge rst_n) begin
         if (!rst_n) begin
-            ycbcr_out <= 16'h8010;  // Black in YCbCr
+            ycbcr_out <= 16'h8010;  // Black in YCbCr (Cb/Cr=128, Y=16)
             de_out    <= 1'b0;
             hsync_out <= 1'b1;
             vsync_out <= 1'b1;
@@ -178,7 +178,7 @@ module rgb_to_ycbcr
                 end
             end else begin
                 // Blanking: output black
-                ycbcr_out <= 16'h8010;
+                ycbcr_out <= 16'h8010;  // Cb/Cr=128, Y=16
             end
         end
     end
