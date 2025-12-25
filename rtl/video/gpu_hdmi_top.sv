@@ -1,6 +1,6 @@
 // Celery3D GPU - Integrated GPU + HDMI Top Level
 // Combines rasterization pipeline with HDMI output
-// Includes startup controller to render a test triangle on power-up
+// UART command interface for triangle submission from host
 
 module gpu_hdmi_top
     import celery_pkg::*;
@@ -12,6 +12,9 @@ module gpu_hdmi_top
     input  logic        clk_50mhz,    // System clock (rasterizer, I2C)
     input  logic        clk_25mhz,    // Pixel clock (video timing)
     input  logic        rst_n,        // Active-low reset
+
+    // UART input
+    input  logic        uart_rx,      // UART receive pin (directly from FPGA GPIO or USB-UART)
 
     // HDMI output pins (directly to ADV7511)
     output logic [15:0] hdmi_d,
@@ -31,23 +34,38 @@ module gpu_hdmi_top
     // Status outputs
     output logic        hdmi_init_done,
     output logic        hdmi_init_error,
-    output logic        render_done       // Triangle rendering complete
+    output logic        rast_busy,        // Rasterizer busy status
+    output logic        uart_byte_valid   // Pulses when UART byte received (debug)
 );
 
     // =========================================================================
     // Internal Signals
     // =========================================================================
 
-    // Rasterizer control
+    // UART signals
+    logic [7:0] uart_data;
+    logic uart_valid;
+
+    // Rasterizer control (from cmd_parser)
     vertex_t v0, v1, v2;
     logic tri_valid;
     logic tri_ready;
-    logic rast_busy;
+    logic rast_busy_int;
 
     // Framebuffer control
     logic fb_clear;
     rgb565_t fb_clear_color;
     logic fb_clearing;
+
+    // Depth buffer control
+    logic depth_clear;
+    logic depth_clearing;
+
+    // Render configuration (from cmd_parser)
+    logic tex_enable;
+    logic depth_test_enable;
+    logic depth_write_enable;
+    logic blend_enable;
 
     // Framebuffer read interface (from HDMI, on video_clk domain)
     logic [$clog2(FB_WIDTH)-1:0]  fb_read_x;
@@ -56,13 +74,16 @@ module gpu_hdmi_top
     rgb565_t fb_read_data;
     logic fb_read_valid;
 
-    // Depth buffer control (not used for simple test, but need to tie off)
-    logic depth_clearing;
-
     // Fragment output (unused - just for visibility)
     fragment_t frag_out;
     rgb565_t color_out;
     logic frag_valid;
+
+    // Export busy status
+    assign rast_busy = rast_busy_int;
+
+    // Export UART valid for debug LED
+    assign uart_byte_valid = uart_valid;
 
     // Pixel clock domain reset
     logic rst_pixel_n;
@@ -90,7 +111,7 @@ module gpu_hdmi_top
         .clk               (clk_50mhz),
         .rst_n             (rst_n),
 
-        // Vertex input
+        // Vertex input (from cmd_parser)
         .v0                (v0),
         .v1                (v1),
         .v2                (v2),
@@ -103,31 +124,31 @@ module gpu_hdmi_top
         .frag_valid        (frag_valid),
         .frag_ready        (1'b1),  // Always accept
 
-        // Texture config (disabled for simple test)
-        .tex_enable        (1'b0),
-        .modulate_enable   (1'b0),
-        .tex_filter_bilinear(1'b0),
-        .tex_format_rgba4444(1'b0),
+        // Texture config (controlled via cmd_parser)
+        .tex_enable        (tex_enable),
+        .modulate_enable   (tex_enable),       // Modulate when texturing
+        .tex_filter_bilinear(1'b1),            // Always use bilinear
+        .tex_format_rgba4444(1'b0),            // RGB565 format
         .tex_wr_addr       ('0),
         .tex_wr_data       ('0),
         .tex_wr_en         (1'b0),
 
-        // Depth buffer config (disabled for simple test)
-        .depth_test_enable (1'b0),
-        .depth_write_enable(1'b0),
-        .depth_func        (GR_CMP_ALWAYS),
-        .depth_clear       (1'b0),
-        .depth_clear_value (16'hFFFF),
+        // Depth buffer config (controlled via cmd_parser)
+        .depth_test_enable (depth_test_enable),
+        .depth_write_enable(depth_write_enable),
+        .depth_func        (GR_CMP_LESS),      // Standard depth test
+        .depth_clear       (depth_clear),
+        .depth_clear_value (16'hFFFF),         // Clear to far plane
         .depth_clearing    (depth_clearing),
 
-        // Alpha blend config (disabled for simple test)
-        .blend_enable      (1'b0),
-        .blend_src_factor  (GR_BLEND_ONE),
-        .blend_dst_factor  (GR_BLEND_ZERO),
-        .blend_alpha_source(ALPHA_SRC_ONE),
+        // Alpha blend config (controlled via cmd_parser)
+        .blend_enable      (blend_enable),
+        .blend_src_factor  (GR_BLEND_SRC_ALPHA),
+        .blend_dst_factor  (GR_BLEND_ONE_MINUS_SRC_ALPHA),
+        .blend_alpha_source(ALPHA_SRC_TEXTURE),
         .blend_constant_alpha(8'hFF),
 
-        // Framebuffer control
+        // Framebuffer control (from cmd_parser)
         .fb_clear          (fb_clear),
         .fb_clear_color    (fb_clear_color),
         .fb_clearing       (fb_clearing),
@@ -142,7 +163,7 @@ module gpu_hdmi_top
         .fb_read_valid     (fb_read_valid),
 
         // Status
-        .busy              (rast_busy)
+        .busy              (rast_busy_int)
     );
 
     // =========================================================================
@@ -189,116 +210,53 @@ module gpu_hdmi_top
     );
 
     // =========================================================================
-    // Startup Controller - Renders test triangle on power-up
+    // UART Receiver
     // =========================================================================
 
-    typedef enum logic [2:0] {
-        ST_WAIT_INIT,    // Wait for HDMI init complete
-        ST_CLEAR_FB,     // Start framebuffer clear
-        ST_WAIT_CLEAR,   // Wait for clear to complete
-        ST_RENDER_TRI,   // Submit triangle vertices
-        ST_WAIT_RENDER,  // Wait for rasterizer to complete
-        ST_DONE          // Display continuously
-    } startup_state_t;
-
-    startup_state_t state;
-    logic [15:0] init_delay;
-
-    // Define test triangle vertices (Gouraud-shaded RGB)
-    // Triangle covers most of the 64x64 framebuffer
-    // v0: top center (red), v1: bottom left (green), v2: bottom right (blue)
-
-    function automatic vertex_t make_vertex(
-        input int x, input int y,
-        input int r, input int g, input int b
+    uart_rx #(
+        .CLK_FREQ  (50_000_000),
+        .BAUD_RATE (115200)
+    ) u_uart_rx (
+        .clk   (clk_50mhz),
+        .rst_n (rst_n),
+        .rx    (uart_rx),
+        .data  (uart_data),
+        .valid (uart_valid)
     );
-        vertex_t v;
-        v.x = int_to_fp(x);
-        v.y = int_to_fp(y);
-        v.z = FP_HALF;           // Middle depth
-        v.w = FP_ONE;            // No perspective (w=1)
-        v.u = FP_ZERO;           // No texture
-        v.v = FP_ZERO;
-        v.r = r == 255 ? FP_ONE : (r == 0 ? FP_ZERO : int_to_fp(r) >>> 8);
-        v.g = g == 255 ? FP_ONE : (g == 0 ? FP_ZERO : int_to_fp(g) >>> 8);
-        v.b = b == 255 ? FP_ONE : (b == 0 ? FP_ZERO : int_to_fp(b) >>> 8);
-        v.a = FP_ONE;            // Fully opaque
-        return v;
-    endfunction
 
-    always_ff @(posedge clk_50mhz or negedge rst_n) begin
-        if (!rst_n) begin
-            state <= ST_WAIT_INIT;
-            init_delay <= '0;
-            tri_valid <= 1'b0;
-            fb_clear <= 1'b0;
-            fb_clear_color <= 16'h001F;  // Blue background (RGB565)
-            render_done <= 1'b0;
+    // =========================================================================
+    // Command Parser
+    // =========================================================================
 
-            // Initialize vertices (will be set properly in state machine)
-            v0 <= '0;
-            v1 <= '0;
-            v2 <= '0;
+    cmd_parser u_cmd_parser (
+        .clk               (clk_50mhz),
+        .rst_n             (rst_n),
 
-        end else begin
-            // Default: deassert one-shot signals
-            tri_valid <= 1'b0;
-            fb_clear <= 1'b0;
+        // UART interface
+        .uart_data         (uart_data),
+        .uart_valid        (uart_valid),
 
-            case (state)
-                ST_WAIT_INIT: begin
-                    // Wait for HDMI init and a brief delay
-                    if (hdmi_init_done && !hdmi_init_error) begin
-                        if (init_delay == 16'hFFFF) begin
-                            state <= ST_CLEAR_FB;
-                        end else begin
-                            init_delay <= init_delay + 1'b1;
-                        end
-                    end
-                end
+        // Triangle output (to rasterizer)
+        .v0                (v0),
+        .v1                (v1),
+        .v2                (v2),
+        .tri_valid         (tri_valid),
+        .tri_ready         (tri_ready),
 
-                ST_CLEAR_FB: begin
-                    // Start framebuffer clear to blue
-                    fb_clear <= 1'b1;
-                    state <= ST_WAIT_CLEAR;
-                end
+        // Framebuffer control
+        .fb_clear          (fb_clear),
+        .fb_clear_color    (fb_clear_color),
+        .fb_clearing       (fb_clearing),
 
-                ST_WAIT_CLEAR: begin
-                    // Wait for clear to complete
-                    if (!fb_clearing) begin
-                        state <= ST_RENDER_TRI;
-                    end
-                end
+        // Depth buffer control
+        .depth_clear       (depth_clear),
+        .depth_clearing    (depth_clearing),
 
-                ST_RENDER_TRI: begin
-                    // Set up triangle vertices and submit
-                    // v0: top center (RED)
-                    v0 <= make_vertex(32, 5, 255, 0, 0);
-                    // v1: bottom left (GREEN)
-                    v1 <= make_vertex(5, 58, 0, 255, 0);
-                    // v2: bottom right (BLUE)
-                    v2 <= make_vertex(58, 58, 0, 0, 255);
-
-                    if (tri_ready) begin
-                        tri_valid <= 1'b1;
-                        state <= ST_WAIT_RENDER;
-                    end
-                end
-
-                ST_WAIT_RENDER: begin
-                    // Wait for rasterizer to finish
-                    if (!rast_busy && tri_ready) begin
-                        state <= ST_DONE;
-                        render_done <= 1'b1;
-                    end
-                end
-
-                ST_DONE: begin
-                    // Triangle rendered, display continuously
-                    render_done <= 1'b1;
-                end
-            endcase
-        end
-    end
+        // Render configuration
+        .tex_enable        (tex_enable),
+        .depth_test_enable (depth_test_enable),
+        .depth_write_enable(depth_write_enable),
+        .blend_enable      (blend_enable)
+    );
 
 endmodule

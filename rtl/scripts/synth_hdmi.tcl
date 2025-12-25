@@ -27,6 +27,8 @@ read_verilog -sv {
     core/alpha_blend.sv
     core/framebuffer.sv
     core/rasterizer_top.sv
+    uart/uart_rx.sv
+    uart/cmd_parser.sv
     video/video_pkg.sv
     video/clk_gen_kc705.sv
     video/video_timing_gen.sv

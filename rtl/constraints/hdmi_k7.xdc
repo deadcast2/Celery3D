@@ -127,6 +127,20 @@ set_property IOSTANDARD LVCMOS15 [get_ports heartbeat]
 set_property PACKAGE_PIN AE26 [get_ports alive]
 set_property IOSTANDARD LVCMOS25 [get_ports alive]
 
+# LED 5 - UART activity (toggles on each byte received)
+set_property PACKAGE_PIN G19 [get_ports uart_activity]
+set_property IOSTANDARD LVCMOS25 [get_ports uart_activity]
+
+# ==============================================================================
+# UART (USB-UART via Silicon Labs CP2103)
+# ==============================================================================
+# FPGA receives from USB-UART on M19 (USB_TX = data FROM USB chip TO FPGA)
+set_property PACKAGE_PIN M19 [get_ports uart_rx]
+set_property IOSTANDARD LVCMOS25 [get_ports uart_rx]
+
+# UART is async - relax timing
+set_false_path -from [get_ports uart_rx]
+
 # ==============================================================================
 # Bitstream Configuration (match KC705 board test settings)
 # ==============================================================================

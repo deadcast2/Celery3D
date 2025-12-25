@@ -9,6 +9,9 @@ module hdmi_synth_top (
 
     // NOTE: No external reset - use internal power-on reset like working board test
 
+    // UART input (from USB-UART bridge)
+    input  logic        uart_rx,
+
     // HDMI output pins (directly to ADV7511)
     output logic [15:0] hdmi_d,       // YCbCr 4:2:2 data
     output logic        hdmi_clk,     // Pixel clock to ADV7511
@@ -21,7 +24,7 @@ module hdmi_synth_top (
     inout  wire         i2c_sda,
     output logic        i2c_mux_reset_n,  // PCA9548 mux reset (active low)
 
-    // Control inputs (directly from DIP switches)
+    // Control inputs (directly from DIP switches) - unused, kept for compatibility
     input  logic [1:0]  pattern_sel,      // Test pattern selection
     input  logic        use_framebuffer,  // 0=test pattern, 1=framebuffer
 
@@ -30,7 +33,8 @@ module hdmi_synth_top (
     output logic        hdmi_init_error,
     output logic        pixel_clk_locked,
     output logic        heartbeat,        // Debug: blinks to show design is running
-    output logic        alive             // Debug: always ON to verify pin mapping
+    output logic        alive,            // Debug: always ON to verify pin mapping
+    output logic        uart_activity     // Debug: toggles on each UART byte received
 );
 
     // =========================================================================
@@ -122,10 +126,11 @@ module hdmi_synth_top (
 
     // =========================================================================
     // GPU + HDMI Integrated Top
-    // Renders a test triangle and displays it via HDMI
+    // UART command interface for triangle submission from host
     // =========================================================================
 
-    logic render_done;
+    logic rast_busy;
+    logic uart_byte_valid;
 
     gpu_hdmi_top #(
         .FB_WIDTH  (64),
@@ -134,6 +139,9 @@ module hdmi_synth_top (
         .clk_50mhz      (clk_50mhz),
         .clk_25mhz      (clk_25mhz),
         .rst_n          (rst_n & mmcm_locked),
+
+        // UART input
+        .uart_rx        (uart_rx),
 
         // HDMI outputs
         .hdmi_d         (hdmi_d),
@@ -153,10 +161,21 @@ module hdmi_synth_top (
         // Status
         .hdmi_init_done (hdmi_init_done),
         .hdmi_init_error(hdmi_init_error),
-        .render_done    (render_done)
+        .rast_busy      (rast_busy),
+        .uart_byte_valid(uart_byte_valid)
     );
 
     // Use single MMCM lock status
     assign pixel_clk_locked = mmcm_locked;
+
+    // UART activity LED - toggles on each byte received
+    logic uart_activity_reg;
+    always_ff @(posedge clk_50mhz) begin
+        if (!rst_n)
+            uart_activity_reg <= 1'b0;
+        else if (uart_byte_valid)
+            uart_activity_reg <= ~uart_activity_reg;
+    end
+    assign uart_activity = uart_activity_reg;
 
 endmodule
