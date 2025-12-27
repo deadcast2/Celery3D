@@ -38,5 +38,9 @@ vivado*.zip
 *.dcp
 clockInfo.txt
 build_hdmi/
+build_ddr3/
 *.bit
 *.rpt
+
+# Vivado IP projects (XCI files tracked explicitly with git add -f)
+rtl/vivado/
