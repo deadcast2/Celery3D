@@ -39,7 +39,7 @@ OBJ_DIR = obj_dir
 # Top module
 TOP = rasterizer_top
 
-.PHONY: all sim cube hdmi clean lint wave help synth synth-hdmi program-hdmi synth-ddr3 program-ddr3 impl timing
+.PHONY: all sim cube hdmi clean lint wave help synth synth-hdmi program-hdmi synth-ddr3 program-ddr3 synth-ddr3-fb program-ddr3-fb impl timing
 
 all: sim
 
@@ -156,6 +156,19 @@ program-ddr3: build_ddr3/ddr3_test.bit
 	@echo "Programming KC705 with DDR3 test..."
 	$(VIVADO) $(VIVADO_FLAGS) -source scripts/program_ddr3.tcl
 
+# DDR3 Framebuffer Test (Phase 1: DDR3 -> HDMI video path)
+synth-ddr3-fb:
+	@echo "Running Vivado build (DDR3 Framebuffer Test)..."
+	@mkdir -p build_ddr3_fb
+	$(VIVADO) $(VIVADO_FLAGS) -source scripts/synth_ddr3_fb_test.tcl 2>&1 | tee build_ddr3_fb/vivado.log
+	@echo ""
+	@echo "Build complete. Check build_ddr3_fb/ddr3_fb_test.bit"
+
+# Program DDR3 Framebuffer test bitstream to KC705 via JTAG
+program-ddr3-fb: build_ddr3_fb/ddr3_fb_test.bit
+	@echo "Programming KC705 with DDR3 Framebuffer Test..."
+	$(VIVADO) $(VIVADO_FLAGS) -source scripts/program_ddr3_fb.tcl
+
 # Full implementation (synthesis + place + route)
 impl: synth
 
@@ -174,6 +187,7 @@ clean-vivado:
 	rm -rf $(BUILD_DIR)
 	rm -rf build_hdmi
 	rm -rf build_ddr3
+	rm -rf build_ddr3_fb
 	rm -rf .Xil
 	rm -f vivado*.log vivado*.jou
 	rm -f *.dcp
@@ -191,12 +205,14 @@ help:
 	@echo "  wave  - Open waveform viewer"
 	@echo ""
 	@echo "Synthesis (Vivado):"
-	@echo "  synth        - Run rasterizer synthesis"
-	@echo "  synth-hdmi   - Build HDMI bitstream (full flow)"
-	@echo "  program-hdmi - Program KC705 with HDMI test"
-	@echo "  synth-ddr3   - Build DDR3 test bitstream"
-	@echo "  program-ddr3 - Program KC705 with DDR3 test"
-	@echo "  timing       - Show timing summary"
+	@echo "  synth           - Run rasterizer synthesis"
+	@echo "  synth-hdmi      - Build HDMI bitstream (full flow)"
+	@echo "  program-hdmi    - Program KC705 with HDMI test"
+	@echo "  synth-ddr3      - Build DDR3 test bitstream"
+	@echo "  program-ddr3    - Program KC705 with DDR3 test"
+	@echo "  synth-ddr3-fb   - Build DDR3 Framebuffer test (DDR3->HDMI)"
+	@echo "  program-ddr3-fb - Program KC705 with DDR3 FB test"
+	@echo "  timing          - Show timing summary"
 	@echo ""
 	@echo "Cleanup:"
 	@echo "  clean       - Remove Verilator artifacts"
