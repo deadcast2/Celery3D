@@ -110,12 +110,9 @@ wave: rasterizer.vcd
 clean:
 	rm -rf $(OBJ_DIR)
 	rm -f rasterizer.vcd
-	rm -f rasterizer_output.ppm
-	rm -f frame_*.ppm
-	rm -f cube_animation.gif
-	rm -f output_*.ppm
+	rm -f *.gif
+	rm -f *.ppm
 	rm -f hdmi.vcd
-	rm -f hdmi_output.ppm
 
 # ==============================================================================
 # Vivado Synthesis & Implementation

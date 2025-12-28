@@ -294,22 +294,22 @@ void clear_hw_framebuffer(Vrasterizer_top* dut, uint16_t color, uint64_t& sim_ti
     dut->fb_clear = 1;
 
     for (int i = 0; i < 5; i++) {
-        dut->clk = 1; dut->eval(); sim_time++;
-        dut->clk = 0; dut->eval(); sim_time++;
+        dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+        dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
     }
 
     int clear_cycles = SCREEN_WIDTH * SCREEN_HEIGHT + 100;
     for (int i = 0; i < clear_cycles; i++) {
-        dut->clk = 1; dut->eval(); sim_time++;
-        dut->clk = 0; dut->eval(); sim_time++;
+        dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+        dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
         if (!dut->fb_clearing && i > 10) break;
     }
 
     dut->fb_clear = 0;
 
     for (int i = 0; i < 5; i++) {
-        dut->clk = 1; dut->eval(); sim_time++;
-        dut->clk = 0; dut->eval(); sim_time++;
+        dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+        dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
     }
 }
 
@@ -320,15 +320,15 @@ void clear_depth_buffer(Vrasterizer_top* dut, uint16_t clear_value, uint64_t& si
 
     int clear_cycles = SCREEN_WIDTH * SCREEN_HEIGHT + 10;
     for (int i = 0; i < clear_cycles; i++) {
-        dut->clk = 1; dut->eval(); sim_time++;
-        dut->clk = 0; dut->eval(); sim_time++;
+        dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+        dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
     }
 
     dut->depth_clear = 0;
 
     for (int i = 0; i < 5; i++) {
-        dut->clk = 1; dut->eval(); sim_time++;
-        dut->clk = 0; dut->eval(); sim_time++;
+        dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+        dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
     }
 }
 
@@ -340,16 +340,16 @@ void read_hw_framebuffer(Vrasterizer_top* dut, uint64_t& sim_time) {
             dut->fb_read_y = y;
             dut->fb_read_en = 1;
 
-            dut->clk = 1; dut->eval(); sim_time++;
-            dut->clk = 0; dut->eval(); sim_time++;
+            dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+            dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
 
             dut->fb_read_en = 0;
 
-            dut->clk = 1; dut->eval(); sim_time++;
-            dut->clk = 0; dut->eval(); sim_time++;
+            dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+            dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
 
-            dut->clk = 1; dut->eval(); sim_time++;
-            dut->clk = 0; dut->eval(); sim_time++;
+            dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+            dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
 
             framebuffer[y * SCREEN_WIDTH + x] = dut->fb_read_data;
         }
@@ -405,6 +405,7 @@ void render_triangle(Vrasterizer_top* dut, ScreenVertex v0, ScreenVertex v1, Scr
     for (int cycle = 0; cycle < 200000; cycle++) {
         // Rising edge
         dut->clk = 1;
+        dut->video_clk = 1;
         dut->eval();
         sim_time++;
 
@@ -436,6 +437,7 @@ void render_triangle(Vrasterizer_top* dut, ScreenVertex v0, ScreenVertex v1, Scr
 
         // Falling edge
         dut->clk = 0;
+        dut->video_clk = 0;
         dut->eval();
         sim_time++;
     }
@@ -481,8 +483,8 @@ void load_checkerboard_texture(Vrasterizer_top* dut, uint64_t& sim_time) {
             dut->tex_wr_data = color;
             dut->tex_wr_en = 1;
 
-            dut->clk = 1; dut->eval(); sim_time++;
-            dut->clk = 0; dut->eval(); sim_time++;
+            dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+            dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
         }
     }
     dut->tex_wr_en = 0;
@@ -528,14 +530,20 @@ int main(int argc, char** argv) {
     dut->fb_read_y = 0;
     dut->fb_read_en = 0;
 
+    // Video clock domain - tie to main clock for simulation
+    dut->video_clk = 0;
+    dut->video_rst_n = 0;
+
     // Reset sequence
     uint64_t sim_time = 0;
     for (int i = 0; i < 10; i++) {
         dut->clk = !dut->clk;
+        dut->video_clk = dut->clk;
         dut->eval();
         sim_time++;
     }
     dut->rst_n = 1;
+    dut->video_rst_n = 1;
 
     printf("==============================================\n");
     printf("Celery3D - 3D Cube Animation\n");

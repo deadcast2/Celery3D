@@ -138,15 +138,15 @@ void clear_hw_framebuffer(Vrasterizer_top* dut, uint16_t color, uint64_t& sim_ti
 
     // Wait for clear to start
     for (int i = 0; i < 5; i++) {
-        dut->clk = 1; dut->eval(); sim_time++;
-        dut->clk = 0; dut->eval(); sim_time++;
+        dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+        dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
     }
 
     // Wait for clear to complete (FB_WIDTH * FB_HEIGHT cycles)
     int clear_cycles = FB_WIDTH * FB_HEIGHT + 100;
     for (int i = 0; i < clear_cycles; i++) {
-        dut->clk = 1; dut->eval(); sim_time++;
-        dut->clk = 0; dut->eval(); sim_time++;
+        dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+        dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
         if (!dut->fb_clearing && i > 10) break;
     }
 
@@ -154,8 +154,8 @@ void clear_hw_framebuffer(Vrasterizer_top* dut, uint16_t color, uint64_t& sim_ti
 
     // A few extra cycles to settle
     for (int i = 0; i < 5; i++) {
-        dut->clk = 1; dut->eval(); sim_time++;
-        dut->clk = 0; dut->eval(); sim_time++;
+        dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+        dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
     }
 
     printf("  Framebuffer cleared to 0x%04X\n", color);
@@ -171,18 +171,18 @@ void read_hw_framebuffer(Vrasterizer_top* dut, uint64_t& sim_time) {
             dut->fb_read_en = 1;
 
             // Clock cycle 1: request registered
-            dut->clk = 1; dut->eval(); sim_time++;
-            dut->clk = 0; dut->eval(); sim_time++;
+            dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+            dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
 
             dut->fb_read_en = 0;
 
             // Clock cycle 2: address latched, read issued
-            dut->clk = 1; dut->eval(); sim_time++;
-            dut->clk = 0; dut->eval(); sim_time++;
+            dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+            dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
 
             // Clock cycle 3: data valid
-            dut->clk = 1; dut->eval(); sim_time++;
-            dut->clk = 0; dut->eval(); sim_time++;
+            dut->clk = 1; dut->video_clk = 1; dut->eval(); sim_time++;
+            dut->clk = 0; dut->video_clk = 0; dut->eval(); sim_time++;
 
             // Read the data
             framebuffer[y * FB_WIDTH + x] = dut->fb_read_data;
@@ -343,10 +343,10 @@ bool load_png_texture(Vrasterizer_top* dut, const char* filename, uint64_t& sim_
             dut->tex_wr_data = color;
             dut->tex_wr_en = 1;
 
-            dut->clk = 1;
+            dut->clk = 1; dut->video_clk = 1;
             dut->eval();
             sim_time++;
-            dut->clk = 0;
+            dut->clk = 0; dut->video_clk = 0;
             dut->eval();
             sim_time++;
         }
@@ -374,10 +374,10 @@ void load_checkerboard_texture(Vrasterizer_top* dut, int check_size, uint64_t& s
             dut->tex_wr_en = 1;
 
             // Clock cycle for write
-            dut->clk = 1;
+            dut->clk = 1; dut->video_clk = 1;
             dut->eval();
             sim_time++;
-            dut->clk = 0;
+            dut->clk = 0; dut->video_clk = 0;
             dut->eval();
             sim_time++;
         }
@@ -397,10 +397,10 @@ void clear_depth_buffer(Vrasterizer_top* dut, uint16_t clear_value, uint64_t& si
     dut->depth_clear = 1;
 
     for (int i = 0; i < clear_cycles; i++) {
-        dut->clk = 1;
+        dut->clk = 1; dut->video_clk = 1;
         dut->eval();
         sim_time++;
-        dut->clk = 0;
+        dut->clk = 0; dut->video_clk = 0;
         dut->eval();
         sim_time++;
     }
@@ -409,10 +409,10 @@ void clear_depth_buffer(Vrasterizer_top* dut, uint16_t clear_value, uint64_t& si
 
     // A few extra cycles to settle
     for (int i = 0; i < 5; i++) {
-        dut->clk = 1;
+        dut->clk = 1; dut->video_clk = 1;
         dut->eval();
         sim_time++;
-        dut->clk = 0;
+        dut->clk = 0; dut->video_clk = 0;
         dut->eval();
         sim_time++;
     }
@@ -433,6 +433,7 @@ void render_scene(Vrasterizer_top* dut, Triangle* triangles, int num_triangles,
     for (int cycle = 0; cycle < max_cycles; cycle++) {
         // Rising edge
         dut->clk = 1;
+        dut->video_clk = 1;
         dut->eval();
         sim_time++;
 
@@ -473,6 +474,7 @@ void render_scene(Vrasterizer_top* dut, Triangle* triangles, int num_triangles,
 
         // Falling edge
         dut->clk = 0;
+        dut->video_clk = 0;
         dut->eval();
         sim_time++;
     }
@@ -522,14 +524,21 @@ int main(int argc, char** argv) {
     dut->fb_read_y = 0;
     dut->fb_read_en = 0;
 
+    // Video clock domain - tie to main clock for simulation
+    // (In hardware, this would be a separate 25MHz pixel clock)
+    dut->video_clk = 0;
+    dut->video_rst_n = 0;
+
     // Reset sequence
     uint64_t sim_time = 0;
     for (int i = 0; i < 10; i++) {
         dut->clk = !dut->clk;
+        dut->video_clk = dut->clk;  // Keep video_clk in sync
         dut->eval();
         sim_time++;
     }
     dut->rst_n = 1;
+    dut->video_rst_n = 1;
 
     printf("==============================================\n");
     printf("Celery3D Rasterizer - Filter Comparison\n");
