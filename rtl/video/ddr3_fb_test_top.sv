@@ -1,9 +1,9 @@
 // DDR3 Framebuffer Test Top Level for KC705
-// Phase 1: Writes test pattern to DDR3, displays via HDMI
+// Phase 2: Test pattern + dynamic pixel writes via pixel_write_master
 //
-// This validates the DDR3 -> HDMI read path before integrating the rasterizer.
-// A gradient test pattern is written to DDR3 at startup, then continuously
-// read and displayed on HDMI.
+// This validates both the DDR3 -> HDMI read path and the pixel write path.
+// A gradient test pattern is written to DDR3 at startup, then a red rectangle
+// is drawn using the pixel_write_master to prove dynamic writes work.
 
 module ddr3_fb_test_top (
     // 200 MHz differential system clock (to MIG)
@@ -369,6 +369,176 @@ module ddr3_fb_test_top (
     end
 
     // =========================================================================
+    // Pixel Write Master - for dynamic pixel writes
+    // =========================================================================
+
+    // Pixel write master signals
+    logic [9:0]  px_pixel_x;
+    logic [9:0]  px_pixel_y;
+    rgb565_t     px_pixel_color;
+    logic        px_pixel_valid;
+    logic        px_pixel_ready;
+    logic        px_busy;
+
+    // Pixel write master AXI signals
+    logic [3:0]   px_axi_awid;
+    logic [29:0]  px_axi_awaddr;
+    logic [7:0]   px_axi_awlen;
+    logic [2:0]   px_axi_awsize;
+    logic [1:0]   px_axi_awburst;
+    logic [0:0]   px_axi_awlock;
+    logic [3:0]   px_axi_awcache;
+    logic [2:0]   px_axi_awprot;
+    logic [3:0]   px_axi_awqos;
+    logic         px_axi_awvalid;
+    logic         px_axi_awready;
+    logic [255:0] px_axi_wdata;
+    logic [31:0]  px_axi_wstrb;
+    logic         px_axi_wlast;
+    logic         px_axi_wvalid;
+    logic         px_axi_wready;
+    logic         px_axi_bready;
+
+    pixel_write_master #(
+        .FB_WIDTH     (FB_WIDTH),
+        .FB_HEIGHT    (FB_HEIGHT),
+        .FB_BASE_ADDR (FB_BASE_ADDR)
+    ) u_pixel_write (
+        .clk           (ui_clk),
+        .rst_n         (~ui_clk_sync_rst),
+
+        // Pixel interface
+        .pixel_x       (px_pixel_x),
+        .pixel_y       (px_pixel_y),
+        .pixel_color   (px_pixel_color),
+        .pixel_valid   (px_pixel_valid),
+        .pixel_ready   (px_pixel_ready),
+
+        // AXI Write Address
+        .m_axi_awid    (px_axi_awid),
+        .m_axi_awaddr  (px_axi_awaddr),
+        .m_axi_awlen   (px_axi_awlen),
+        .m_axi_awsize  (px_axi_awsize),
+        .m_axi_awburst (px_axi_awburst),
+        .m_axi_awlock  (px_axi_awlock),
+        .m_axi_awcache (px_axi_awcache),
+        .m_axi_awprot  (px_axi_awprot),
+        .m_axi_awqos   (px_axi_awqos),
+        .m_axi_awvalid (px_axi_awvalid),
+        .m_axi_awready (px_axi_awready),
+
+        // AXI Write Data
+        .m_axi_wdata   (px_axi_wdata),
+        .m_axi_wstrb   (px_axi_wstrb),
+        .m_axi_wlast   (px_axi_wlast),
+        .m_axi_wvalid  (px_axi_wvalid),
+        .m_axi_wready  (px_axi_wready),
+
+        // AXI Write Response
+        .m_axi_bid     (s_axi_bid),
+        .m_axi_bresp   (s_axi_bresp),
+        .m_axi_bvalid  (s_axi_bvalid),
+        .m_axi_bready  (px_axi_bready),
+
+        // Status
+        .busy          (px_busy)
+    );
+
+    // =========================================================================
+    // Test Rectangle Generator
+    // =========================================================================
+    // After pattern write is done, draws a red rectangle in the center
+    // Rectangle: 80x80 pixels centered at (320, 240) -> (280,200) to (359,279)
+
+    localparam RECT_X_START = 280;
+    localparam RECT_X_END   = 359;
+    localparam RECT_Y_START = 200;
+    localparam RECT_Y_END   = 279;
+    localparam RECT_COLOR   = 16'hF800;  // Pure red in RGB565
+
+    typedef enum logic [2:0] {
+        RECT_IDLE,
+        RECT_WAIT_PATTERN,
+        RECT_WRITE_PIXEL,
+        RECT_WAIT_READY,
+        RECT_NEXT,
+        RECT_DONE
+    } rect_state_t;
+
+    rect_state_t rect_state;
+    logic [9:0] rect_x;
+    logic [9:0] rect_y;
+    logic       rect_write_done;
+
+    always_ff @(posedge ui_clk) begin
+        if (ui_clk_sync_rst) begin
+            rect_state <= RECT_IDLE;
+            rect_x <= RECT_X_START;
+            rect_y <= RECT_Y_START;
+            rect_write_done <= 1'b0;
+            px_pixel_valid <= 1'b0;
+        end else begin
+            case (rect_state)
+                RECT_IDLE: begin
+                    rect_state <= RECT_WAIT_PATTERN;
+                end
+
+                RECT_WAIT_PATTERN: begin
+                    // Wait for pattern write to complete
+                    if (pattern_write_done) begin
+                        rect_x <= RECT_X_START;
+                        rect_y <= RECT_Y_START;
+                        rect_state <= RECT_WRITE_PIXEL;
+                    end
+                end
+
+                RECT_WRITE_PIXEL: begin
+                    // Present pixel to write master
+                    px_pixel_valid <= 1'b1;
+                    rect_state <= RECT_WAIT_READY;
+                end
+
+                RECT_WAIT_READY: begin
+                    // Wait for write master to accept
+                    if (px_pixel_ready) begin
+                        px_pixel_valid <= 1'b0;
+                        rect_state <= RECT_NEXT;
+                    end
+                end
+
+                RECT_NEXT: begin
+                    // Move to next pixel
+                    if (rect_x == RECT_X_END) begin
+                        rect_x <= RECT_X_START;
+                        if (rect_y == RECT_Y_END) begin
+                            // Done with rectangle
+                            rect_state <= RECT_DONE;
+                            rect_write_done <= 1'b1;
+                        end else begin
+                            rect_y <= rect_y + 1'b1;
+                            rect_state <= RECT_WRITE_PIXEL;
+                        end
+                    end else begin
+                        rect_x <= rect_x + 1'b1;
+                        rect_state <= RECT_WRITE_PIXEL;
+                    end
+                end
+
+                RECT_DONE: begin
+                    // Stay here
+                end
+
+                default: rect_state <= RECT_IDLE;
+            endcase
+        end
+    end
+
+    // Pixel data to write master
+    assign px_pixel_x = rect_x;
+    assign px_pixel_y = rect_y;
+    assign px_pixel_color = RECT_COLOR;
+
+    // =========================================================================
     // Line Buffer for Video Readout
     // =========================================================================
 
@@ -444,30 +614,73 @@ module ddr3_fb_test_top (
     );
 
     // =========================================================================
-    // AXI Arbitration (Writer vs Reader)
+    // AXI Arbitration (Pattern Writer vs Pixel Writer vs Reader)
     // =========================================================================
-    // Simple: Writer has priority during startup, Reader takes over after
+    // Priority: Pattern writer first, then pixel writer, reader runs concurrently
+    // Pattern writer and pixel writer are sequential (pattern finishes before pixels)
+    // Reader can run concurrently with pixel writer (different AXI channels)
 
-    // Write channel - only active during pattern write
-    assign s_axi_awid    = 4'd0;
-    assign s_axi_awaddr  = wr_addr;
-    assign s_axi_awlen   = 8'd0;           // Single beat
-    assign s_axi_awsize  = 3'b101;         // 32 bytes
-    assign s_axi_awburst = 2'b01;          // INCR
-    assign s_axi_awlock  = 1'b0;
-    assign s_axi_awcache = 4'b0011;
-    assign s_axi_awprot  = 3'b000;
-    assign s_axi_awqos   = 4'd0;
-    assign s_axi_awvalid = (wr_state == WR_ADDR);
+    // Determine which writer is active
+    logic pattern_writer_active;
+    logic pixel_writer_active;
 
-    assign s_axi_wdata   = generate_gradient_pattern(wr_line, wr_beat);
-    assign s_axi_wstrb   = 32'hFFFFFFFF;
-    assign s_axi_wlast   = 1'b1;
-    assign s_axi_wvalid  = (wr_state == WR_DATA);
+    assign pattern_writer_active = (wr_state == WR_ADDR) || (wr_state == WR_DATA) || (wr_state == WR_RESP);
+    assign pixel_writer_active = px_axi_awvalid || px_axi_wvalid || px_axi_bready;
 
-    assign s_axi_bready  = (wr_state == WR_RESP);
+    // Write Address Channel - mux between pattern writer and pixel writer
+    always_comb begin
+        if (pattern_writer_active) begin
+            // Pattern writer active
+            s_axi_awid    = 4'd0;
+            s_axi_awaddr  = wr_addr;
+            s_axi_awlen   = 8'd0;           // Single beat
+            s_axi_awsize  = 3'b101;         // 32 bytes
+            s_axi_awburst = 2'b01;          // INCR
+            s_axi_awlock  = 1'b0;
+            s_axi_awcache = 4'b0011;
+            s_axi_awprot  = 3'b000;
+            s_axi_awqos   = 4'd0;
+            s_axi_awvalid = (wr_state == WR_ADDR);
+        end else begin
+            // Pixel writer active (or idle)
+            s_axi_awid    = px_axi_awid;
+            s_axi_awaddr  = px_axi_awaddr;
+            s_axi_awlen   = px_axi_awlen;
+            s_axi_awsize  = px_axi_awsize;
+            s_axi_awburst = px_axi_awburst;
+            s_axi_awlock  = px_axi_awlock;
+            s_axi_awcache = px_axi_awcache;
+            s_axi_awprot  = px_axi_awprot;
+            s_axi_awqos   = px_axi_awqos;
+            s_axi_awvalid = px_axi_awvalid;
+        end
+    end
 
-    // Read channel - from line buffer after pattern write done
+    // Pixel write master gets ready when pattern writer is not active
+    assign px_axi_awready = !pattern_writer_active && s_axi_awready;
+
+    // Write Data Channel - mux between pattern writer and pixel writer
+    always_comb begin
+        if (pattern_writer_active) begin
+            s_axi_wdata  = generate_gradient_pattern(wr_line, wr_beat);
+            s_axi_wstrb  = 32'hFFFFFFFF;
+            s_axi_wlast  = 1'b1;
+            s_axi_wvalid = (wr_state == WR_DATA);
+        end else begin
+            s_axi_wdata  = px_axi_wdata;
+            s_axi_wstrb  = px_axi_wstrb;
+            s_axi_wlast  = px_axi_wlast;
+            s_axi_wvalid = px_axi_wvalid;
+        end
+    end
+
+    // Pixel write master gets ready when pattern writer is not active
+    assign px_axi_wready = !pattern_writer_active && s_axi_wready;
+
+    // Write Response Channel - both writers need responses
+    assign s_axi_bready = pattern_writer_active ? (wr_state == WR_RESP) : px_axi_bready;
+
+    // Read channel - from line buffer, can run concurrently after pattern write done
     assign s_axi_arid    = lb_axi_arid;
     assign s_axi_araddr  = lb_axi_araddr;
     assign s_axi_arlen   = lb_axi_arlen;
@@ -679,9 +892,9 @@ module ddr3_fb_test_top (
     // LED assignments
     // LED[0] = MMCM locked
     // LED[1] = DDR3 calibration complete
-    // LED[2] = Pattern write in progress (heartbeat)
+    // LED[2] = Pattern write in progress (heartbeat) / Rect write in progress
     // LED[3] = Pattern write done
-    // LED[4] = Video clock locked
+    // LED[4] = Rectangle write done (pixel_write_master test)
     // LED[5] = HDMI init done
     // LED[6] = HDMI init error
     // LED[7] = Heartbeat
@@ -689,10 +902,13 @@ module ddr3_fb_test_top (
     always_comb begin
         gpio_led[0] = mmcm_locked;
         gpio_led[1] = init_calib_complete;
+        // LED[2] blinks during pattern write, then during rect write
         gpio_led[2] = (wr_state != WR_DONE && wr_state != WR_IDLE && wr_state != WR_WAIT_CALIB)
-                      ? heartbeat_cnt[22] : 1'b0;
+                      ? heartbeat_cnt[22]
+                      : (rect_state != RECT_DONE && rect_state != RECT_IDLE && rect_state != RECT_WAIT_PATTERN)
+                        ? heartbeat_cnt[20] : 1'b0;
         gpio_led[3] = pattern_write_done;
-        gpio_led[4] = video_clk_locked;
+        gpio_led[4] = rect_write_done;
         gpio_led[5] = hdmi_init_done;
         gpio_led[6] = hdmi_init_error;
         gpio_led[7] = heartbeat_cnt[24];

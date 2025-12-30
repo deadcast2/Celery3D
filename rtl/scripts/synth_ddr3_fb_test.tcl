@@ -70,6 +70,7 @@ add_files -norecurse {
     video/i2c_master.sv
     video/adv7511_init.sv
     video/ddr3_fb_line_buffer.sv
+    video/pixel_write_master.sv
     video/ddr3_fb_test_top.sv
 }
 

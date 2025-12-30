@@ -32,6 +32,12 @@ HDMI_SRCS = \
 TB_SRC = sim/tb_rasterizer.cpp
 TB_CUBE_SRC = sim/tb_cube_animation.cpp
 TB_HDMI_SRC = sim/tb_hdmi.cpp
+TB_PIXEL_WRITE_SRC = sim/tb_pixel_write_master.cpp
+
+# Pixel write master sources
+PIXEL_WRITE_SRCS = \
+    core/celery_pkg.sv \
+    video/pixel_write_master.sv
 
 # Output directory
 OBJ_DIR = obj_dir
@@ -39,7 +45,7 @@ OBJ_DIR = obj_dir
 # Top module
 TOP = rasterizer_top
 
-.PHONY: all sim cube hdmi clean lint wave help synth synth-hdmi program-hdmi synth-ddr3 program-ddr3 synth-ddr3-fb program-ddr3-fb impl timing
+.PHONY: all sim cube hdmi pixel-write clean lint wave help synth synth-hdmi program-hdmi synth-ddr3 program-ddr3 synth-ddr3-fb program-ddr3-fb impl timing
 
 all: sim
 
@@ -93,6 +99,22 @@ $(OBJ_DIR)/Vhdmi_top: $(HDMI_SRCS) $(TB_HDMI_SRC)
 		$(HDMI_SRCS) \
 		$(TB_HDMI_SRC) \
 		-o Vhdmi_top
+
+# Build and run pixel write master test
+pixel-write: $(OBJ_DIR)/Vpixel_write_master
+	@echo "Running pixel write master test..."
+	./$(OBJ_DIR)/Vpixel_write_master
+
+# Build pixel write master testbench
+$(OBJ_DIR)/Vpixel_write_master: $(PIXEL_WRITE_SRCS) $(TB_PIXEL_WRITE_SRC)
+	@echo "Building pixel write master testbench..."
+	$(VERILATOR) $(VERILATOR_FLAGS) \
+		--top-module pixel_write_master \
+		-I./core \
+		-I./video \
+		$(PIXEL_WRITE_SRCS) \
+		$(TB_PIXEL_WRITE_SRC) \
+		-o Vpixel_write_master
 
 # Lint check (no simulation, just syntax/style check)
 lint:
@@ -197,12 +219,13 @@ help:
 	@echo "Celery3D RTL Build System"
 	@echo ""
 	@echo "Simulation (Verilator):"
-	@echo "  all   - Build and run simulation (default)"
-	@echo "  sim   - Build and run simulation"
-	@echo "  cube  - Render 3D cube animation (60 frames)"
-	@echo "  hdmi  - Simulate HDMI output (test pattern)"
-	@echo "  lint  - Run Verilator linting"
-	@echo "  wave  - Open waveform viewer"
+	@echo "  all         - Build and run simulation (default)"
+	@echo "  sim         - Build and run simulation"
+	@echo "  cube        - Render 3D cube animation (60 frames)"
+	@echo "  hdmi        - Simulate HDMI output (test pattern)"
+	@echo "  pixel-write - Test pixel write master (AXI4)"
+	@echo "  lint        - Run Verilator linting"
+	@echo "  wave        - Open waveform viewer"
 	@echo ""
 	@echo "Synthesis (Vivado):"
 	@echo "  synth           - Run rasterizer synthesis"
