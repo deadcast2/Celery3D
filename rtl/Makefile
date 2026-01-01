@@ -45,7 +45,7 @@ OBJ_DIR = obj_dir
 # Top module
 TOP = rasterizer_top
 
-.PHONY: all sim cube hdmi pixel-write clean lint wave help synth synth-hdmi program-hdmi synth-ddr3 program-ddr3 synth-ddr3-fb program-ddr3-fb impl timing
+.PHONY: all sim cube hdmi pixel-write clean lint wave help synth synth-hdmi program-hdmi synth-ddr3 program-ddr3 synth-ddr3-fb program-ddr3-fb synth-gpu-ddr3 program-gpu-ddr3 impl timing
 
 all: sim
 
@@ -191,6 +191,19 @@ program-ddr3-fb: build_ddr3_fb/ddr3_fb_test.bit
 	@echo "Programming KC705 with DDR3 Framebuffer Test..."
 	$(VIVADO) $(VIVADO_FLAGS) -source scripts/program_ddr3_fb.tcl
 
+# GPU + DDR3 Framebuffer (Full GPU with DDR3)
+synth-gpu-ddr3:
+	@echo "Running Vivado build (GPU + DDR3)..."
+	@mkdir -p build_gpu_ddr3
+	$(VIVADO) $(VIVADO_FLAGS) -source scripts/synth_gpu_ddr3.tcl 2>&1 | tee build_gpu_ddr3/vivado.log
+	@echo ""
+	@echo "Build complete. Check build_gpu_ddr3/gpu_ddr3.bit"
+
+# Program GPU + DDR3 bitstream to KC705 via JTAG
+program-gpu-ddr3: build_gpu_ddr3/gpu_ddr3.bit
+	@echo "Programming KC705 with GPU + DDR3..."
+	$(VIVADO) $(VIVADO_FLAGS) -source scripts/program_gpu_ddr3.tcl
+
 # Full implementation (synthesis + place + route)
 impl: synth
 
@@ -228,14 +241,16 @@ help:
 	@echo "  wave        - Open waveform viewer"
 	@echo ""
 	@echo "Synthesis (Vivado):"
-	@echo "  synth           - Run rasterizer synthesis"
-	@echo "  synth-hdmi      - Build HDMI bitstream (full flow)"
-	@echo "  program-hdmi    - Program KC705 with HDMI test"
-	@echo "  synth-ddr3      - Build DDR3 test bitstream"
-	@echo "  program-ddr3    - Program KC705 with DDR3 test"
-	@echo "  synth-ddr3-fb   - Build DDR3 Framebuffer test (DDR3->HDMI)"
-	@echo "  program-ddr3-fb - Program KC705 with DDR3 FB test"
-	@echo "  timing          - Show timing summary"
+	@echo "  synth             - Run rasterizer synthesis"
+	@echo "  synth-hdmi        - Build HDMI bitstream (full flow)"
+	@echo "  program-hdmi      - Program KC705 with HDMI test"
+	@echo "  synth-ddr3        - Build DDR3 test bitstream"
+	@echo "  program-ddr3      - Program KC705 with DDR3 test"
+	@echo "  synth-ddr3-fb     - Build DDR3 Framebuffer test (DDR3->HDMI)"
+	@echo "  program-ddr3-fb   - Program KC705 with DDR3 FB test"
+	@echo "  synth-gpu-ddr3    - Build full GPU + DDR3 (UART->Rasterizer->DDR3->HDMI)"
+	@echo "  program-gpu-ddr3  - Program KC705 with GPU + DDR3"
+	@echo "  timing            - Show timing summary"
 	@echo ""
 	@echo "Cleanup:"
 	@echo "  clean       - Remove Verilator artifacts"

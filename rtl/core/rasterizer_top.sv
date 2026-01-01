@@ -112,6 +112,7 @@ module rasterizer_top
     rgb565_t ab_color;
     logic ab_frag_valid;
     logic ab_frag_ready;
+    logic fb_frag_ready;  // Ready from internal framebuffer
 
     // Framebuffer blend read interface
     logic [$clog2(FB_WIDTH)-1:0]  fb_blend_read_x;
@@ -248,7 +249,11 @@ module rasterizer_top
     );
 
     // Framebuffer (stores rendered pixels)
+    // Note: ab_frag_ready combines internal FB ready with external frag_ready
+    // This allows external backpressure (e.g., for DDR3 writes)
     logic fb_busy;
+    assign ab_frag_ready = fb_frag_ready && frag_ready;
+
     framebuffer #(
         .FB_WIDTH (FB_WIDTH),
         .FB_HEIGHT(FB_HEIGHT)
@@ -260,7 +265,7 @@ module rasterizer_top
         .frag_in         (ab_frag),
         .color_in        (ab_color),
         .frag_in_valid   (ab_frag_valid),
-        .frag_in_ready   (ab_frag_ready),
+        .frag_in_ready   (fb_frag_ready),
         .read_x          (fb_read_x),
         .read_y          (fb_read_y),
         .read_en         (fb_read_en),

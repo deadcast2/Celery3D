@@ -40,6 +40,7 @@ clockInfo.txt
 build_hdmi/
 build_ddr3/
 build_ddr3_fb/
+build_gpu_ddr3/
 *.bit
 *.rpt
 
