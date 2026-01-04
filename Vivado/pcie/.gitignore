@@ -1,0 +1,18 @@
+# Vivado generated files (can be regenerated)
+*.gen/
+*.runs/
+*.cache/
+*.hw/
+*.ip_user_files/
+*.sim/
+
+# Vivado temp/log files
+*.jou
+*.log
+*.str
+*.zip
+.Xil/
+
+# Backup files
+*~
+*.bak
